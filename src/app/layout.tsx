@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Questrial } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
 const questrial = Questrial({
@@ -21,9 +23,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${questrial.variable} h-full antialiased dark`}
+      suppressHydrationWarning
+      className={`${questrial.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ThemeToggle />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
