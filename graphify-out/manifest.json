@@ -1,0 +1,137 @@
+{
+  "C:\\Users\\exodu\\Desktop\\next-app\\.claude\\settings.local.json": {
+    "mtime": 1781183266.5461202,
+    "ast_hash": "41adeb79ae6be22de47c171ab7f7dcf2",
+    "semantic_hash": "41adeb79ae6be22de47c171ab7f7dcf2"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\components.json": {
+    "mtime": 1781107907.7345767,
+    "ast_hash": "fc5c9e9a7b93eeb2f7b4e1ce0959e4a6",
+    "semantic_hash": "fc5c9e9a7b93eeb2f7b4e1ce0959e4a6"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\eslint.config.mjs": {
+    "mtime": 1781107907.7345767,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": "dfa1f5f6a7037bf39dc510f30b180002"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\next.config.ts": {
+    "mtime": 1781107907.7355764,
+    "ast_hash": "9b77af189a21a7a64e4bd7a426f64176",
+    "semantic_hash": "9b77af189a21a7a64e4bd7a426f64176"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\package.json": {
+    "mtime": 1781179086.225538,
+    "ast_hash": "b42beafe7380083920a5d2bac6476154",
+    "semantic_hash": "b42beafe7380083920a5d2bac6476154"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\postcss.config.mjs": {
+    "mtime": 1781107907.7375762,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": "239f3ebf717465dc636818a1a619398d"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\api\\webhooks\\wix\\route.ts": {
+    "mtime": 1781175233.0510676,
+    "ast_hash": "32cbb153c9ee90d305c0c90d849f23b6",
+    "semantic_hash": "32cbb153c9ee90d305c0c90d849f23b6"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\dashboard\\page.tsx": {
+    "mtime": 1781183103.5711162,
+    "ast_hash": "1714644cc58197714ffcec4845b41da8",
+    "semantic_hash": "1714644cc58197714ffcec4845b41da8"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\forgot-password\\page.tsx": {
+    "mtime": 1781176207.646235,
+    "ast_hash": "51d0782004745ce0ac24af786f321af1",
+    "semantic_hash": "51d0782004745ce0ac24af786f321af1"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\layout.tsx": {
+    "mtime": 1781175233.0650742,
+    "ast_hash": "e7f772614420c24b55fd461d4c2b8dfb",
+    "semantic_hash": "e7f772614420c24b55fd461d4c2b8dfb"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\login\\page.tsx": {
+    "mtime": 1781177169.1571803,
+    "ast_hash": "fa464b1dac2b694fc7f6cbedbe675b29",
+    "semantic_hash": "fa464b1dac2b694fc7f6cbedbe675b29"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\reset-password\\page.tsx": {
+    "mtime": 1781176830.8232465,
+    "ast_hash": "3dcf284d03e8d18cf81a225d07cd46b4",
+    "semantic_hash": "3dcf284d03e8d18cf81a225d07cd46b4"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\logo\\logo.tsx": {
+    "mtime": 1781178282.843061,
+    "ast_hash": "509cef915ba6cb77540da4596ebb3c7a",
+    "semantic_hash": "509cef915ba6cb77540da4596ebb3c7a"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\theme-provider.tsx": {
+    "mtime": 1781175233.0705776,
+    "ast_hash": "c00fa9d4a460ac4f9c808ad29d573581",
+    "semantic_hash": "c00fa9d4a460ac4f9c808ad29d573581"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\theme-toggle.tsx": {
+    "mtime": 1781177719.2492237,
+    "ast_hash": "dd3a3bd46a2e641985e1be3dd3967a13",
+    "semantic_hash": "dd3a3bd46a2e641985e1be3dd3967a13"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\avatar.tsx": {
+    "mtime": 1781177672.7457333,
+    "ast_hash": "8b41492907a73176027427a3f0fd2302",
+    "semantic_hash": "8b41492907a73176027427a3f0fd2302"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\button.tsx": {
+    "mtime": 1781107907.743576,
+    "ast_hash": "e04ce5251d6b0dd04020988126c905e9",
+    "semantic_hash": "e04ce5251d6b0dd04020988126c905e9"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\card.tsx": {
+    "mtime": 1781107907.743576,
+    "ast_hash": "bd5f88ad2d983dd6c4561d63824c80ba",
+    "semantic_hash": "bd5f88ad2d983dd6c4561d63824c80ba"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\dropdown-menu.tsx": {
+    "mtime": 1781177672.6573164,
+    "ast_hash": "e6107cbb2088437e76a858f75b5a0280",
+    "semantic_hash": "e6107cbb2088437e76a858f75b5a0280"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\input.tsx": {
+    "mtime": 1781107907.7445762,
+    "ast_hash": "0607b02d99a2e92f9509223f36ccc6ec",
+    "semantic_hash": "0607b02d99a2e92f9509223f36ccc6ec"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\label.tsx": {
+    "mtime": 1781107907.7445762,
+    "ast_hash": "a70440da86bfc6a07f15197cca48cb08",
+    "semantic_hash": "a70440da86bfc6a07f15197cca48cb08"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\progress.tsx": {
+    "mtime": 1781177438.6628287,
+    "ast_hash": "aa71e8ceb68b33af5ed5799f42cd873e",
+    "semantic_hash": "aa71e8ceb68b33af5ed5799f42cd873e"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\lib\\utils.ts": {
+    "mtime": 1781107907.7445762,
+    "ast_hash": "5a6fd53fdcf2be529e9cc0b718fde352",
+    "semantic_hash": "5a6fd53fdcf2be529e9cc0b718fde352"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\tsconfig.json": {
+    "mtime": 1781107907.745576,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": "ee17fd1c97c735e9f3564e3f5251f125"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\AGENTS.md": {
+    "mtime": 1781107907.7325764,
+    "ast_hash": "9e09241799026ac05be315a2f0b50055",
+    "semantic_hash": "9e09241799026ac05be315a2f0b50055"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\CLAUDE.md": {
+    "mtime": 1781107907.7335768,
+    "ast_hash": "5c27369b226fcf2be8a6cfe52224e767",
+    "semantic_hash": "5c27369b226fcf2be8a6cfe52224e767"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\README.md": {
+    "mtime": 1781107907.7335768,
+    "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
+    "semantic_hash": "f15aaa42d5d299d091b1171097ea56ad"
+  }
+}
