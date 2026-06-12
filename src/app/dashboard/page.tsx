@@ -730,90 +730,139 @@ export default function Dashboard() {
                   </button>
 
                   {openResource === currentModule.quiz.id && !isLocked(currentModule.quiz.id) && (
-                    <div className={fullscreenItem === currentModule.quiz.id ? 'fixed inset-0 z-[80] bg-background flex flex-col overflow-y-auto p-4 gap-4' : 'flex flex-col gap-4 p-4 rounded-lg border border-border'}>
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium m-0">{currentModuleIndex + 1}.{currentModule.resources.length + 1} {currentModule.quiz.title}</p>
-                        {fullscreenItem === currentModule.quiz.id ? (
-                          <Button type="button" variant="outline" size="sm" onClick={() => setFullscreenItem('')}>
-                            <Minimize2 size={14} />
-                            Exit Fullscreen
-                          </Button>
-                        ) : (
-                          <Button type="button" variant="outline" size="sm" onClick={() => setFullscreenItem(currentModule.quiz.id)}>
-                            <Maximize2 size={14} />
-                            Fullscreen
-                          </Button>
-                        )}
-                      </div>
-                      {SAMPLE_QUIZ_QUESTIONS.map((q, qIndex) => {
-                        const qKey = `${currentModule.quiz.id}-${q.id}`;
-                        const selected = quizAnswers[qKey];
-                        const submitted = !!quizSubmitted[currentModule.quiz.id];
-                        return (
-                          <div key={q.id} className="flex flex-col gap-2">
-                            <p className="text-sm font-medium m-0">{qIndex + 1}. {q.question}</p>
-                            <div className="flex flex-col gap-1.5">
-                              {q.options.map((option, oIndex) => {
-                                const isSelected = selected === oIndex;
-                                const isCorrect = oIndex === q.answer;
-                                let style = 'border-border hover:bg-muted/50';
-                                if (submitted) {
-                                  if (isCorrect) style = 'border-green-500 bg-green-500/10';
-                                  else if (isSelected) style = 'border-red-500 bg-red-500/10';
-                                } else if (isSelected) {
-                                  style = 'border-[#7e55f6] bg-[#7e55f6]/10';
-                                }
-                                return (
-                                  <button
-                                    key={oIndex}
-                                    type="button"
-                                    disabled={submitted}
-                                    onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: oIndex }))}
-                                    className={`text-left text-sm px-3 py-2 rounded-md border transition-colors ${style}`}
-                                  >
-                                    {option}
-                                  </button>
-                                );
-                              })}
-                            </div>
+                    <div className={fullscreenItem === currentModule.quiz.id ? 'fixed inset-0 z-[80] bg-background overflow-y-auto' : 'bg-card/50 rounded-xl border border-border mt-2'}>
+                      <div className={fullscreenItem === currentModule.quiz.id ? 'max-w-4xl mx-auto w-full p-6 sm:p-12 min-h-screen flex flex-col' : 'p-5 sm:p-8 flex flex-col'}>
+                        {/* Header */}
+                        <div className="flex items-center justify-between pb-6 mb-6 border-b border-border">
+                          <div>
+                            <p className="text-sm font-semibold text-[#7e55f6] uppercase tracking-wider mb-1">Module Quiz</p>
+                            <h3 className="text-2xl font-medium m-0">{currentModule.quiz.title}</h3>
                           </div>
-                        );
-                      })}
-
-                      {quizSubmitted[currentModule.quiz.id] ? (
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-green-500 m-0">
-                            Score: {SAMPLE_QUIZ_QUESTIONS.filter((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === q.answer).length} / {SAMPLE_QUIZ_QUESTIONS.length}
-                          </p>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: false }));
-                              setQuizAnswers((prev) => {
-                                const next = { ...prev };
-                                SAMPLE_QUIZ_QUESTIONS.forEach((q) => delete next[`${currentModule.quiz.id}-${q.id}`]);
-                                return next;
-                              });
-                            }}
-                          >
-                            Retake Quiz
-                          </Button>
+                          {fullscreenItem === currentModule.quiz.id ? (
+                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-4" onClick={() => setFullscreenItem('')}>
+                              <Minimize2 size={16} className="mr-2" />
+                              Exit Fullscreen
+                            </Button>
+                          ) : (
+                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-4" onClick={() => setFullscreenItem(currentModule.quiz.id)}>
+                              <Maximize2 size={16} className="mr-2" />
+                              Fullscreen
+                            </Button>
+                          )}
                         </div>
-                      ) : (
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: true }));
-                            if (!completed[currentModule.quiz.id]) toggleItem(currentModule.quiz.id, allItems);
-                          }}
-                          disabled={SAMPLE_QUIZ_QUESTIONS.some((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === undefined)}
-                          className="bg-[#7e55f6] hover:bg-[#6742d4] text-white self-start disabled:opacity-50"
-                        >
-                          Submit Quiz
-                        </Button>
-                      )}
+
+                        {/* Questions List */}
+                        <div className="flex flex-col gap-10 mb-10">
+                          {SAMPLE_QUIZ_QUESTIONS.map((q, qIndex) => {
+                            const qKey = `${currentModule.quiz.id}-${q.id}`;
+                            const selected = quizAnswers[qKey];
+                            const submitted = !!quizSubmitted[currentModule.quiz.id];
+                            
+                            return (
+                              <div key={q.id} className="flex flex-col gap-4">
+                                <h4 className="text-lg font-medium m-0 leading-snug">
+                                  <span className="text-muted-foreground mr-2">{qIndex + 1}.</span>
+                                  {q.question}
+                                </h4>
+                                <div className="flex flex-col gap-3 ml-6">
+                                  {q.options.map((option, oIndex) => {
+                                    const isSelected = selected === oIndex;
+                                    const isCorrect = oIndex === q.answer;
+                                    
+                                    let style = 'border-border bg-background hover:border-[#7e55f6]/50 hover:bg-muted/30';
+                                    let radioStyle = 'border-muted-foreground/30';
+                                    
+                                    if (submitted) {
+                                      if (isCorrect) {
+                                        style = 'border-green-500 bg-green-500/10 shadow-[0_0_0_1px_rgba(34,197,94,1)]';
+                                        radioStyle = 'border-green-500 bg-green-500';
+                                      } else if (isSelected) {
+                                        style = 'border-red-500 bg-red-500/10 shadow-[0_0_0_1px_rgba(239,68,68,1)]';
+                                        radioStyle = 'border-red-500 bg-red-500';
+                                      }
+                                    } else if (isSelected) {
+                                      style = 'border-[#7e55f6] bg-[#7e55f6]/5 shadow-[0_0_0_1px_rgba(126,85,246,1)]';
+                                      radioStyle = 'border-[#7e55f6]';
+                                    }
+                                    
+                                    return (
+                                      <button
+                                        key={oIndex}
+                                        type="button"
+                                        disabled={submitted}
+                                        onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: oIndex }))}
+                                        className={`text-left p-4 rounded-xl border transition-all duration-200 group ${style}`}
+                                      >
+                                        <div className="flex items-start gap-4">
+                                          <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${radioStyle} ${!submitted && !isSelected ? 'group-hover:border-[#7e55f6]/50' : ''}`}>
+                                            {isSelected && !submitted && <div className="w-2.5 h-2.5 rounded-full bg-[#7e55f6]" />}
+                                            {submitted && isCorrect && <CheckCircle2 size={12} className="text-white" />}
+                                            {submitted && isSelected && !isCorrect && <X size={12} className="text-white" />}
+                                          </div>
+                                          <span className={`text-base ${submitted && isCorrect ? 'font-medium' : ''}`}>{option}</span>
+                                        </div>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Footer Action */}
+                        <div className="mt-auto pt-6 border-t border-border flex items-center justify-between">
+                          {quizSubmitted[currentModule.quiz.id] ? (
+                            <>
+                              <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                                  <CheckCircle2 size={24} className="text-green-500" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-muted-foreground m-0">Your Score</p>
+                                  <p className="text-2xl font-bold text-green-500 m-0 leading-none">
+                                    {SAMPLE_QUIZ_QUESTIONS.filter((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === q.answer).length} <span className="text-base font-normal text-muted-foreground">/ {SAMPLE_QUIZ_QUESTIONS.length}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="lg"
+                                className="h-12 px-8 rounded-full"
+                                onClick={() => {
+                                  setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: false }));
+                                  setQuizAnswers((prev) => {
+                                    const next = { ...prev };
+                                    SAMPLE_QUIZ_QUESTIONS.forEach((q) => delete next[`${currentModule.quiz.id}-${q.id}`]);
+                                    return next;
+                                  });
+                                }}
+                              >
+                                Retake Quiz
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-sm text-muted-foreground">
+                                Answer all questions to submit.
+                              </p>
+                              <Button
+                                type="button"
+                                size="lg"
+                                onClick={() => {
+                                  setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: true }));
+                                  if (!completed[currentModule.quiz.id]) toggleItem(currentModule.quiz.id, allItems);
+                                }}
+                                disabled={SAMPLE_QUIZ_QUESTIONS.some((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === undefined)}
+                                className="bg-[#7e55f6] hover:bg-[#6742d4] text-white h-12 px-8 rounded-full font-semibold shadow-md disabled:opacity-50 transition-all"
+                              >
+                                Submit Quiz
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </CardContent>
