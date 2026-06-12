@@ -191,6 +191,18 @@ export default function Dashboard() {
   const [fullscreenItem, setFullscreenItem] = useState<string>('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [topBarVisible, setTopBarVisible] = useState(true);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setTopBarVisible(y <= lastY || y < 50);
+      lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     if (mounted && !user) {
@@ -284,49 +296,78 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Mobile sidebar trigger */}
-      <button
-        type="button"
-        onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-50 flex items-center justify-center h-10 w-10 rounded-lg border border-border hover:bg-muted transition-colors md:hidden"
-      >
-        <Menu size={20} />
-      </button>
-
-      {/* Desktop sidebar collapse toggle */}
-      <button
-        type="button"
-        onClick={() => setSidebarCollapsed((c) => !c)}
-        className={`fixed top-4 z-[60] hidden md:flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted transition-[left] duration-200 ease-in-out ${
-          sidebarCollapsed ? 'left-4' : 'left-[21rem]'
+      {/* Mobile/tablet top bar */}
+      <div
+        className={`fixed top-0 inset-x-0 z-50 h-14 flex items-center justify-between px-4 bg-card border-b border-border transition-transform duration-200 lg:hidden ${
+          topBarVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <PanelLeftIcon size={18} />
-      </button>
-
-      {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Top-right account menu */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          disabled={sidebarOpen}
-          className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted transition-colors text-left ${
-            sidebarOpen ? 'pointer-events-none opacity-50 md:pointer-events-auto md:opacity-100' : ''
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          className={`flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted transition-colors ${
+            sidebarOpen ? 'pointer-events-none opacity-50' : ''
           }`}
         >
+          <Menu size={20} />
+        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            disabled={sidebarOpen}
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-muted transition-colors text-left ${
+              sidebarOpen ? 'pointer-events-none opacity-50' : ''
+            }`}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium leading-none">
+                {user.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <ChevronsUpDown size={16} className="text-muted-foreground shrink-0 self-center" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <p className="px-1.5 py-1.5 text-sm font-medium text-foreground capitalize">{user}</p>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-base py-2 [&_svg]:size-[18px]">
+              <Settings size={18} />
+              Account Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-base py-2 [&_svg]:size-[18px]" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              Toggle Theme
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" className="text-base py-2 [&_svg]:size-[18px]" onClick={handleLogout}>
+              <LogOut size={18} />
+              Log Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Desktop sidebar expand toggle (when collapsed) */}
+      {sidebarCollapsed && (
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed(false)}
+          className="hidden lg:flex fixed top-9 -translate-y-1/2 left-4 z-50 items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
+        >
+          <PanelLeftIcon size={16} />
+        </button>
+      )}
+
+      {/* Top-right account menu (desktop) */}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted transition-colors text-left"
+        >
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium">
+            <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium leading-none">
               {user.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium capitalize hidden sm:block">{user}</span>
-          <ChevronsUpDown size={16} className="text-muted-foreground shrink-0" />
+          <ChevronsUpDown size={16} className="text-muted-foreground shrink-0 self-center" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <p className="px-1.5 py-1.5 text-sm font-medium text-foreground capitalize">{user}</p>
@@ -347,17 +388,34 @@ export default function Dashboard() {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <div className="flex flex-1">
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed md:sticky inset-y-0 md:inset-y-auto md:top-0 left-0 z-50 md:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border] duration-200 ease-in-out ${
+        className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border] duration-200 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 ${sidebarCollapsed ? 'md:w-0 md:border-0' : 'w-80'} ${
-          sidebarOpen ? 'w-80' : ''
-        }`}
+        } lg:translate-x-0 ${sidebarCollapsed ? 'lg:w-0 lg:border-0' : sidebarOpen ? 'w-80 lg:w-72 xl:w-80' : 'w-72 lg:w-72 xl:w-80'}`}
       >
-      <div className="w-80 h-full flex flex-col p-4 gap-6 overflow-hidden">
-        <div className="flex items-center justify-between gap-2 px-2">
-          <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal">
+      {/* Desktop sidebar collapse toggle */}
+      {!sidebarCollapsed && (
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed(true)}
+          className="hidden lg:flex absolute top-9 -translate-y-1/2 right-3 z-10 items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
+        >
+          <PanelLeftIcon size={16} />
+        </button>
+      )}
+      <div className="w-80 lg:w-72 xl:w-80 h-full flex flex-col p-4 gap-6 overflow-hidden">
+        <div className="flex items-center justify-between gap-2 px-1">
+          <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal whitespace-nowrap">
             <Logo width="22" height="42" color="var(--foreground)" className="shrink-0" style={{ marginRight: '0.7rem' }} />
             <div>
               <span className="text-foreground">Blackmont</span> <span className="text-foreground">Academy</span>
@@ -366,7 +424,7 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
-            className="flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted transition-colors md:hidden"
+            className="flex items-center justify-center h-8 w-8 shrink-0 rounded-lg hover:bg-muted transition-colors lg:hidden"
           >
             <X size={18} />
           </button>
@@ -374,7 +432,7 @@ export default function Dashboard() {
 
         {/* Programme switcher */}
         {(
-          <div className="px-2 flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Programme</p>
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-border hover:bg-muted transition-colors text-left w-full">
@@ -400,8 +458,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        <nav className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground px-2 mb-1">Modules</p>
+        <nav className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground px-3 mb-1">Modules</p>
           {programme.modules.map((module, moduleIndex) => {
             const isActive = activeModule === module.id;
             const isExpanded = expandedModule === module.id;
@@ -450,7 +508,7 @@ export default function Dashboard() {
                             setFullscreenItem('');
                             setSidebarOpen(false);
                           }}
-                          className={`flex items-center gap-2 text-left px-2 py-1.5 rounded-md text-xs hover:bg-muted transition-colors ${
+                          className={`flex items-center gap-2 text-left px-3 py-1.5 rounded-md text-xs hover:bg-muted transition-colors ${
                             locked ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''
                           } ${
                             openResource === resource.id ? 'bg-muted text-foreground' : 'text-muted-foreground'
@@ -475,7 +533,7 @@ export default function Dashboard() {
                         setFullscreenItem('');
                         setSidebarOpen(false);
                       }}
-                      className={`flex items-center gap-2 text-left px-2 py-1.5 rounded-md text-xs hover:bg-muted transition-colors ${
+                      className={`flex items-center gap-2 text-left px-3 py-1.5 rounded-md text-xs hover:bg-muted transition-colors ${
                         isLocked(module.quiz.id) ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''
                       } ${
                         openResource === module.quiz.id ? 'bg-muted text-foreground' : 'text-muted-foreground'
@@ -503,7 +561,7 @@ export default function Dashboard() {
               setActiveModule(GRADE_VIEW);
               setSidebarOpen(false);
             }}
-            className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm ${
+            className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm w-full ${
               showGrade ? 'bg-[#7e55f6] text-white' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
             }`}
           >
@@ -516,7 +574,7 @@ export default function Dashboard() {
               setActiveModule(CERTIFICATE_VIEW);
               setSidebarOpen(false);
             }}
-            className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm ${
+            className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm w-full ${
               showCertificate ? 'bg-[#7e55f6] text-white' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
             }`}
           >
@@ -528,7 +586,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-4 pt-20 sm:p-8 md:pt-8">
+      <main className="flex-1 p-4 pt-20 sm:p-6 sm:pt-20 lg:p-8">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6">
             <h1 className="text-3xl font-normal m-0">{programme.title}</h1>
@@ -647,7 +705,7 @@ export default function Dashboard() {
                                 <iframe src={SAMPLE_PDF_URL} className="w-full h-full" title={resource.title} />
                               )}
                               <div className="absolute top-0 inset-x-0 h-12 z-10 peer/top hidden md:block" />
-                              <div className="absolute top-0 inset-x-0 p-3 flex items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm transition-opacity md:opacity-0 md:peer-hover/top:opacity-100 md:hover:opacity-100 z-20">
+                              <div className="absolute top-0 inset-x-0 p-3 flex items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm transition-opacity opacity-100 pointer-events-auto md:opacity-0 md:pointer-events-none md:peer-hover/top:opacity-100 md:peer-hover/top:pointer-events-auto md:hover:opacity-100 md:hover:pointer-events-auto z-20">
                                 <p className="text-sm font-medium m-0 truncate">{resource.title}</p>
                                 <Button type="button" variant="outline" size="sm" onClick={() => setFullscreenItem('')}>
                                   <Minimize2 size={14} />
@@ -655,7 +713,7 @@ export default function Dashboard() {
                                 </Button>
                               </div>
                               <div className="absolute bottom-0 inset-x-0 h-12 z-10 peer/bottom hidden md:block" />
-                              <div className="absolute bottom-0 inset-x-0 p-3 flex items-center justify-end border-t border-border bg-background/95 backdrop-blur-sm transition-opacity md:opacity-0 md:peer-hover/bottom:opacity-100 md:hover:opacity-100 z-20">
+                              <div className="absolute bottom-0 inset-x-0 p-3 flex items-center justify-end border-t border-border bg-background/95 backdrop-blur-sm transition-opacity opacity-100 pointer-events-auto md:opacity-0 md:pointer-events-none md:peer-hover/bottom:opacity-100 md:peer-hover/bottom:pointer-events-auto md:hover:opacity-100 md:hover:pointer-events-auto z-20">
                                 <Button
                                   type="button"
                                   size="sm"
@@ -731,45 +789,45 @@ export default function Dashboard() {
 
                   {openResource === currentModule.quiz.id && !isLocked(currentModule.quiz.id) && (
                     <div className={fullscreenItem === currentModule.quiz.id ? 'fixed inset-0 z-[80] bg-background overflow-y-auto' : 'bg-card/50 rounded-xl border border-border mt-2'}>
-                      <div className={fullscreenItem === currentModule.quiz.id ? 'max-w-4xl mx-auto w-full p-6 sm:p-12 min-h-screen flex flex-col' : 'p-5 sm:p-8 flex flex-col'}>
+                      <div className={fullscreenItem === currentModule.quiz.id ? 'max-w-3xl mx-auto w-full p-4 sm:p-8 min-h-screen flex flex-col' : 'p-4 sm:p-6 flex flex-col'}>
                         {/* Header */}
-                        <div className="flex items-center justify-between pb-6 mb-6 border-b border-border">
+                        <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">
                           <div>
-                            <p className="text-sm font-semibold text-[#7e55f6] uppercase tracking-wider mb-1">Module Quiz</p>
-                            <h3 className="text-2xl font-medium m-0">{currentModule.quiz.title}</h3>
+                            <p className="text-xs font-semibold text-[#7e55f6] uppercase tracking-wider mb-1">Module Quiz</p>
+                            <h3 className="text-base font-medium m-0">{currentModule.quiz.title}</h3>
                           </div>
                           {fullscreenItem === currentModule.quiz.id ? (
-                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-4" onClick={() => setFullscreenItem('')}>
-                              <Minimize2 size={16} className="mr-2" />
+                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-3" onClick={() => setFullscreenItem('')}>
+                              <Minimize2 size={14} className="mr-1.5" />
                               Exit Fullscreen
                             </Button>
                           ) : (
-                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-4" onClick={() => setFullscreenItem(currentModule.quiz.id)}>
-                              <Maximize2 size={16} className="mr-2" />
+                            <Button type="button" variant="outline" size="sm" className="shrink-0 rounded-full px-3" onClick={() => setFullscreenItem(currentModule.quiz.id)}>
+                              <Maximize2 size={14} className="mr-1.5" />
                               Fullscreen
                             </Button>
                           )}
                         </div>
 
                         {/* Questions List */}
-                        <div className="flex flex-col gap-10 mb-10">
+                        <div className="flex flex-col gap-6 mb-6">
                           {SAMPLE_QUIZ_QUESTIONS.map((q, qIndex) => {
                             const qKey = `${currentModule.quiz.id}-${q.id}`;
                             const selected = quizAnswers[qKey];
                             const submitted = !!quizSubmitted[currentModule.quiz.id];
-                            
+
                             return (
-                              <div key={q.id} className="flex flex-col gap-4">
-                                <h4 className="text-lg font-medium m-0 leading-snug">
+                              <div key={q.id} className="flex flex-col gap-3">
+                                <h4 className="text-sm font-medium m-0 leading-snug">
                                   <span className="text-muted-foreground mr-2">{qIndex + 1}.</span>
                                   {q.question}
                                 </h4>
-                                <div className="flex flex-col gap-3 ml-6">
+                                <div className="flex flex-col gap-2 ml-5">
                                   {q.options.map((option, oIndex) => {
                                     const isSelected = selected === oIndex;
                                     const isCorrect = oIndex === q.answer;
                                     
-                                    let style = 'border-border bg-background hover:border-[#7e55f6]/50 hover:bg-muted/30';
+                                    let style = 'border-border bg-muted/20 hover:border-[#7e55f6]/50 hover:bg-muted/40';
                                     let radioStyle = 'border-muted-foreground/30';
                                     
                                     if (submitted) {
@@ -791,15 +849,15 @@ export default function Dashboard() {
                                         type="button"
                                         disabled={submitted}
                                         onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: oIndex }))}
-                                        className={`text-left p-4 rounded-xl border transition-all duration-200 group ${style}`}
+                                        className={`text-left p-3 rounded-lg border transition-all duration-200 group ${style}`}
                                       >
-                                        <div className="flex items-start gap-4">
-                                          <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${radioStyle} ${!submitted && !isSelected ? 'group-hover:border-[#7e55f6]/50' : ''}`}>
-                                            {isSelected && !submitted && <div className="w-2.5 h-2.5 rounded-full bg-[#7e55f6]" />}
-                                            {submitted && isCorrect && <CheckCircle2 size={12} className="text-white" />}
-                                            {submitted && isSelected && !isCorrect && <X size={12} className="text-white" />}
+                                        <div className="flex items-start gap-3">
+                                          <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${radioStyle} ${!submitted && !isSelected ? 'group-hover:border-[#7e55f6]/50' : ''}`}>
+                                            {isSelected && !submitted && <div className="w-2 h-2 rounded-full bg-[#7e55f6]" />}
+                                            {submitted && isCorrect && <CheckCircle2 size={10} className="text-white" />}
+                                            {submitted && isSelected && !isCorrect && <X size={10} className="text-white" />}
                                           </div>
-                                          <span className={`text-base ${submitted && isCorrect ? 'font-medium' : ''}`}>{option}</span>
+                                          <span className={`text-sm ${submitted && isCorrect ? 'font-medium' : ''}`}>{option}</span>
                                         </div>
                                       </button>
                                     );
@@ -811,25 +869,25 @@ export default function Dashboard() {
                         </div>
 
                         {/* Footer Action */}
-                        <div className="mt-auto pt-6 border-t border-border flex items-center justify-between">
+                        <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
                           {quizSubmitted[currentModule.quiz.id] ? (
                             <>
                               <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                                  <CheckCircle2 size={24} className="text-green-500" />
+                                <div className="w-9 h-9 rounded-full bg-green-500/10 flex items-center justify-center">
+                                  <CheckCircle2 size={18} className="text-green-500" />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-medium text-muted-foreground m-0">Your Score</p>
-                                  <p className="text-2xl font-bold text-green-500 m-0 leading-none">
-                                    {SAMPLE_QUIZ_QUESTIONS.filter((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === q.answer).length} <span className="text-base font-normal text-muted-foreground">/ {SAMPLE_QUIZ_QUESTIONS.length}</span>
+                                  <p className="text-xs font-medium text-muted-foreground m-0">Your Score</p>
+                                  <p className="text-lg font-bold text-green-500 m-0 leading-none">
+                                    {SAMPLE_QUIZ_QUESTIONS.filter((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === q.answer).length} <span className="text-sm font-normal text-muted-foreground">/ {SAMPLE_QUIZ_QUESTIONS.length}</span>
                                   </p>
                                 </div>
                               </div>
                               <Button
                                 type="button"
                                 variant="outline"
-                                size="lg"
-                                className="h-12 px-8 rounded-full"
+                                size="sm"
+                                className="h-9 px-5 rounded-full"
                                 onClick={() => {
                                   setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: false }));
                                   setQuizAnswers((prev) => {
@@ -844,18 +902,18 @@ export default function Dashboard() {
                             </>
                           ) : (
                             <>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-xs text-muted-foreground">
                                 Answer all questions to submit.
                               </p>
                               <Button
                                 type="button"
-                                size="lg"
+                                size="sm"
                                 onClick={() => {
                                   setQuizSubmitted((prev) => ({ ...prev, [currentModule.quiz.id]: true }));
                                   if (!completed[currentModule.quiz.id]) toggleItem(currentModule.quiz.id, allItems);
                                 }}
                                 disabled={SAMPLE_QUIZ_QUESTIONS.some((q) => quizAnswers[`${currentModule.quiz.id}-${q.id}`] === undefined)}
-                                className="bg-[#7e55f6] hover:bg-[#6742d4] text-white h-12 px-8 rounded-full font-semibold shadow-md disabled:opacity-50 transition-all"
+                                className="h-9 px-5 rounded-full font-semibold"
                               >
                                 Submit Quiz
                               </Button>
@@ -871,6 +929,7 @@ export default function Dashboard() {
           ) : null}
         </div>
       </main>
+      </div>
     </div>
   );
 }
