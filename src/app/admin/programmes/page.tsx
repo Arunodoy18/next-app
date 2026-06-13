@@ -124,7 +124,7 @@ export default function ProgrammesPage() {
               return (
                 <button
                   key={p.id}
-                  onClick={() => setSelectedId(p.id)}
+                  onClick={() => setSelectedId(active ? null : p.id)}
                   className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"

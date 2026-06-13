@@ -70,6 +70,7 @@ export interface StudentRecord {
   name: string;
   email: string;
   programmeId: string;
+  signupDate: string;
   moduleProgress: StudentModuleProgress[];
   writtenAnswers: WrittenAnswer[];
 }
@@ -257,6 +258,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Oliver Smith",
     email: "oliver.smith@student.co.uk",
     programmeId: "p1",
+    signupDate: "2023-11-12T10:00:00Z",
     moduleProgress: [
       { moduleId: "p1-m1", completed: true, mcqScore: 100 },
       { moduleId: "p1-m2", completed: true, mcqScore: 80 },
@@ -283,6 +285,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Charlotte Jones",
     email: "charlotte.jones@student.co.uk",
     programmeId: "p1",
+    signupDate: "2024-01-05T14:30:00Z",
     moduleProgress: [
       { moduleId: "p1-m1", completed: true, mcqScore: 100 },
       { moduleId: "p1-m2", completed: false, mcqScore: null },
@@ -294,6 +297,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Harry Williams",
     email: "harry.williams@student.co.uk",
     programmeId: "p2",
+    signupDate: "2023-10-20T09:15:00Z",
     moduleProgress: [
       { moduleId: "p2-m1", completed: true, mcqScore: 100 },
       { moduleId: "p2-m2", completed: true, mcqScore: 100 },
@@ -313,6 +317,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Amelia Taylor",
     email: "amelia.taylor@student.co.uk",
     programmeId: "p2",
+    signupDate: "2024-02-18T11:45:00Z",
     moduleProgress: [
       { moduleId: "p2-m1", completed: true, mcqScore: 100 },
       { moduleId: "p2-m2", completed: false, mcqScore: null },
@@ -324,6 +329,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Thomas Brown",
     email: "thomas.brown@student.co.uk",
     programmeId: "p1",
+    signupDate: "2024-03-01T16:20:00Z",
     moduleProgress: [
       { moduleId: "p1-m1", completed: false, mcqScore: null },
       { moduleId: "p1-m2", completed: false, mcqScore: null },
@@ -335,6 +341,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Olivia Davies",
     email: "olivia.davies@student.co.uk",
     programmeId: "p2",
+    signupDate: "2023-12-05T08:10:00Z",
     moduleProgress: [
       { moduleId: "p2-m1", completed: true, mcqScore: 80 },
       { moduleId: "p2-m2", completed: true, mcqScore: 90 },
@@ -354,6 +361,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "William Evans",
     email: "william.evans@student.co.uk",
     programmeId: "p1",
+    signupDate: "2024-01-22T13:05:00Z",
     moduleProgress: [
       { moduleId: "p1-m1", completed: true, mcqScore: 90 },
       { moduleId: "p1-m2", completed: false, mcqScore: null },
@@ -365,6 +373,7 @@ export const STUDENTS: StudentRecord[] = [
     name: "Emily Thomas",
     email: "emily.thomas@student.co.uk",
     programmeId: "p2",
+    signupDate: "2023-09-10T09:40:00Z",
     moduleProgress: [
       { moduleId: "p2-m1", completed: true, mcqScore: 100 },
       { moduleId: "p2-m2", completed: true, mcqScore: 100 },

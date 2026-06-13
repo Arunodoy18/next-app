@@ -89,17 +89,18 @@ export default function StudentDetailDialog({
 
   return (
     <Dialog open={!!student} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
         {view && (
           <>
-            <DialogHeader>
+            <div className="px-6 py-5 border-b border-border shrink-0 bg-card/50">
+              <DialogHeader>
               <DialogTitle>{view.student.name}</DialogTitle>
               <DialogDescription>
                 {view.student.email} · {view.programme.name}
               </DialogDescription>
-            </DialogHeader>
+            </div>
 
-            <div className="flex flex-col gap-6 mt-2">
+            <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-8">
               <div>
                 <h3 className="text-sm font-medium mb-3">Module Progress</h3>
                 <div className="flex flex-col gap-2">
@@ -146,44 +147,57 @@ export default function StudentDetailDialog({
                       if (!ans) return null;
                       const draft = drafts[q.id] ?? { score: "", feedback: "" };
                       return (
-                        <div key={q.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium m-0">{q.question}</p>
+                        <div key={q.id} className="flex flex-col gap-4 p-5 rounded-xl border border-border/60 bg-card shadow-sm">
+                          <div className="flex items-start justify-between gap-4">
+                            <h4 className="text-base font-medium m-0 leading-snug text-foreground">{q.question}</h4>
                             {ans.score !== null && (
-                              <Badge className="bg-green-500/10 text-green-600 border-transparent shrink-0">
+                              <Badge className="bg-green-500/10 text-green-600 border-transparent shrink-0 text-sm py-1 px-2.5 font-medium">
                                 Scored {ans.score}%
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground bg-muted/30 rounded-md p-3 m-0 whitespace-pre-wrap">
-                            {ans.answer}
-                          </p>
+                          
+                          <div className="relative mt-1">
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-muted-foreground/20 rounded-full" />
+                            <p className="text-[15px] text-muted-foreground pl-5 py-1 m-0 whitespace-pre-wrap leading-relaxed">
+                              {ans.answer}
+                            </p>
+                          </div>
 
                           {mode === "evaluate" && (
-                            <div className="flex flex-col gap-2 mt-1">
-                              <div className="flex items-center gap-2">
-                                <label className="text-xs text-muted-foreground w-20 shrink-0">Score (%)</label>
-                                <Input
-                                  type="number"
-                                  min={0}
-                                  max={100}
-                                  placeholder="Enter the score"
-                                  value={draft.score}
+                            <div className="flex flex-col gap-5 mt-3 pt-5 border-t border-border/50">
+                              <div className="flex items-center gap-4">
+                                <label className="text-sm font-medium text-foreground shrink-0 w-24">Score</label>
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    placeholder="0-100"
+                                    value={draft.score}
+                                    onChange={(e) => {
+                                      setSavedFlash(false);
+                                      setDrafts((prev) => ({ ...prev, [q.id]: { ...draft, score: e.target.value } }));
+                                    }}
+                                    className="h-10 w-32 pr-8 font-medium bg-background text-base"
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">%</span>
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-2">
+                                <label className="text-sm font-medium text-foreground">
+                                  Feedback <span className="text-muted-foreground font-normal text-xs ml-1">(Optional)</span>
+                                </label>
+                                <Textarea
+                                  placeholder="Provide constructive feedback for this answer..."
+                                  value={draft.feedback}
                                   onChange={(e) => {
                                     setSavedFlash(false);
-                                    setDrafts((prev) => ({ ...prev, [q.id]: { ...draft, score: e.target.value } }));
+                                    setDrafts((prev) => ({ ...prev, [q.id]: { ...draft, feedback: e.target.value } }));
                                   }}
-                                  className="h-8 w-40"
+                                  className="min-h-[100px] resize-y bg-background text-[15px] leading-relaxed p-3"
                                 />
                               </div>
-                              <Textarea
-                                placeholder="Feedback for the student"
-                                value={draft.feedback}
-                                onChange={(e) => {
-                                  setSavedFlash(false);
-                                  setDrafts((prev) => ({ ...prev, [q.id]: { ...draft, feedback: e.target.value } }));
-                                }}
-                              />
                             </div>
                           )}
                         </div>
@@ -194,29 +208,37 @@ export default function StudentDetailDialog({
               </div>
             </div>
 
+            </div>
+
             {mode === "view" && submitted && onEvaluate && (
-              <DialogFooter>
-                <Button
-                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                  onClick={() => onEvaluate(view.student.id)}
-                >
-                  <ClipboardCheck size={15} />
-                  {pendingCount > 0 ? "Evaluate written test" : "Review evaluation"}
-                </Button>
-              </DialogFooter>
+              <div className="px-6 py-4 border-t border-border bg-card/50 shrink-0">
+                <DialogFooter>
+                  <Button
+                    className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                    onClick={() => onEvaluate(view.student.id)}
+                  >
+                    <ClipboardCheck size={15} className="mr-2" />
+                    {pendingCount > 0 ? "Evaluate written test" : "Review evaluation"}
+                  </Button>
+                </DialogFooter>
+              </div>
             )}
 
             {mode === "evaluate" && submitted && onSaveEvaluation && (
-              <DialogFooter className="items-center">
-                {savedFlash && (
-                  <span className="text-xs text-green-600 flex items-center gap-1 mr-auto">
-                    <CheckCircle2 size={13} /> Evaluation saved
-                  </span>
-                )}
-                <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={save}>
-                  Save Evaluation
-                </Button>
-              </DialogFooter>
+              <div className="px-6 py-4 border-t border-border bg-card/50 shrink-0">
+                <DialogFooter className="items-center sm:justify-between w-full">
+                  <div className="flex items-center">
+                    {savedFlash && (
+                      <span className="text-sm font-medium text-green-600 flex items-center gap-1.5 bg-green-500/10 px-3 py-1.5 rounded-full">
+                        <CheckCircle2 size={16} /> Evaluation saved successfully
+                      </span>
+                    )}
+                  </div>
+                  <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white px-8 h-10 rounded-full font-medium" onClick={save}>
+                    Save Evaluation
+                  </Button>
+                </DialogFooter>
+              </div>
             )}
           </>
         )}

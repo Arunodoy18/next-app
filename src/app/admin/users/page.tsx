@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -108,42 +109,55 @@ export default function AdminUsersPage() {
       </div>
 
       <Card className="shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
-          <div>
-            <CardTitle className="text-base font-medium m-0">All Users</CardTitle>
-            <CardDescription>Click a row to edit details, role, or enrolment.</CardDescription>
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search name or email"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 h-8 w-56"
-              />
+        <CardHeader className="flex flex-col gap-4 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-medium m-0">All Users</CardTitle>
+              <CardDescription>Click a row to edit details, role, or enrolment.</CardDescription>
             </div>
-            <Select value={roleFilter} onValueChange={(v) => setRoleFilter((v ?? "all") as UserRole | "all")}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All roles</SelectItem>
-                <SelectItem value="Student">Students</SelectItem>
-                <SelectItem value="Instructor">Instructors</SelectItem>
-                <SelectItem value="Admin">Admins</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm" onClick={exportUsers}>
-              <Download size={14} /> Export CSV
-            </Button>
-            <Button
-              size="sm"
-              className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-              onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student" })}
-            >
-              <Plus size={14} /> New User
-            </Button>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Tabs value={roleFilter} onValueChange={(v) => setRoleFilter(v as UserRole | "all")}>
+                <TabsList className="bg-background">
+                  <TabsTrigger value="all">All Users</TabsTrigger>
+                  <TabsTrigger value="Student">Students</TabsTrigger>
+                  <TabsTrigger value="Instructor">Instructors</TabsTrigger>
+                  <TabsTrigger value="Admin">Admins</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <div className="relative w-full sm:w-auto hidden sm:block">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search name or email"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 h-9 w-full sm:w-64 bg-background"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="h-9" onClick={exportUsers}>
+                <Download size={14} className="mr-1.5" /> Export CSV
+              </Button>
+              <Button
+                size="sm"
+                className="h-9 bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student" })}
+              >
+                <Plus size={14} className="mr-1.5" /> New User
+              </Button>
+            </div>
+          </div>
+          {/* Mobile search bar */}
+          <div className="relative w-full sm:hidden">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search name or email"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-9 w-full bg-background"
+            />
           </div>
         </CardHeader>
         <CardContent>
@@ -159,7 +173,7 @@ export default function AdminUsersPage() {
             </TableHeader>
             <TableBody>
               {filtered.map((u) => (
-                <TableRow key={u.id} className="cursor-pointer" onClick={() => openUser({ ...u })}>
+                <TableRow key={u.id} className="cursor-pointer group hover:bg-muted/50 transition-colors" onClick={() => openUser({ ...u })}>
                   <TableCell className="font-medium">{u.name}</TableCell>
                   <TableCell className="text-muted-foreground">{u.email}</TableCell>
                   <TableCell>
@@ -169,7 +183,7 @@ export default function AdminUsersPage() {
                     {u.programmeId ? programmeName(u.programmeId) : "N/A"}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-0.5">
+                    <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="icon-sm"
@@ -199,7 +213,7 @@ export default function AdminUsersPage() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
                     No users match your filters.
                   </TableCell>
                 </TableRow>
