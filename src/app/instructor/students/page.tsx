@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +88,7 @@ export default function InstructorStudentsPage() {
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   // Reset page when filters change
-  useMemo(() => {
+  useEffect(() => {
     setPage(1);
   }, [search, programmeFilter, sortBy]);
 
@@ -148,7 +148,7 @@ export default function InstructorStudentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <ArrowUpDown size={14} className="text-muted-foreground" />
-                <Select value={sortBy} onValueChange={setSortBy}>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
                   <SelectTrigger className="h-9 w-[180px] bg-background">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>

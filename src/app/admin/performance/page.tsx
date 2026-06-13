@@ -139,7 +139,7 @@ export default function AdminPerformancePage() {
               </div>
               <div className="flex items-center gap-2">
                 <ArrowUpDown size={14} className="text-muted-foreground" />
-                <Select value={sortBy} onValueChange={setSortBy}>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
                   <SelectTrigger className="h-9 w-[180px] bg-background">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>

@@ -98,6 +98,7 @@ export default function StudentDetailDialog({
               <DialogDescription>
                 {view.student.email} · {view.programme.name}
               </DialogDescription>
+              </DialogHeader>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-8">
@@ -206,8 +207,6 @@ export default function StudentDetailDialog({
                   </div>
                 )}
               </div>
-            </div>
-
             </div>
 
             {mode === "view" && submitted && onEvaluate && (
