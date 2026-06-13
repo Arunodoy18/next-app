@@ -44,11 +44,18 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
+      render={render}
+      // When `render` swaps in a non-<button> (e.g. a Link/anchor), Base UI
+      // needs nativeButton=false so it applies button a11y semantics instead
+      // of assuming a real <button>.
+      nativeButton={nativeButton ?? (render !== undefined ? false : undefined)}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
