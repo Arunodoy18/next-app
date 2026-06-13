@@ -89,8 +89,8 @@ export default function AdminUsersPage() {
     setDialogOpen(false);
   };
 
-  const header = ["Name", "Email", "Role", "Programme"];
-  const userRow = (u: AppUser) => [u.name, u.email, u.role, u.programmeId ? programmeName(u.programmeId) : ""];
+  const header = ["Name", "Email", "Role", "Programme", "Signup Date"];
+  const userRow = (u: AppUser) => [u.name, u.email, u.role, u.programmeId ? programmeName(u.programmeId) : "", new Date(u.signupDate).toLocaleDateString("en-GB")];
 
   const exportUsers = () => {
     downloadCsv("users.csv", toCsv([header, ...users.map(userRow)]));
@@ -116,7 +116,7 @@ export default function AdminUsersPage() {
               <CardDescription>Click a row to edit details, role, or enrolment.</CardDescription>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
+          <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <Tabs value={roleFilter} onValueChange={(v) => setRoleFilter(v as UserRole | "all")}>
                 <TabsList className="bg-background">
@@ -143,7 +143,7 @@ export default function AdminUsersPage() {
               <Button
                 size="sm"
                 className="h-9 bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student" })}
+                onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student", signupDate: new Date().toISOString() })}
               >
                 <Plus size={14} className="mr-1.5" /> New User
               </Button>
@@ -168,11 +168,20 @@ export default function AdminUsersPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Programme</TableHead>
+                <TableHead>Signup Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((u) => (
+              {filtered.map((u) => {
+                const signupDateObj = new Date(u.signupDate);
+                const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }).format(signupDateObj);
+
+                return (
                 <TableRow key={u.id} className="cursor-pointer group hover:bg-muted/50 transition-colors" onClick={() => openUser({ ...u })}>
                   <TableCell className="font-medium">{u.name}</TableCell>
                   <TableCell className="text-muted-foreground">{u.email}</TableCell>
@@ -182,6 +191,7 @@ export default function AdminUsersPage() {
                   <TableCell className="text-muted-foreground">
                     {u.programmeId ? programmeName(u.programmeId) : "N/A"}
                   </TableCell>
+                  <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
@@ -210,7 +220,7 @@ export default function AdminUsersPage() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
               {filtered.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-muted-foreground py-12">

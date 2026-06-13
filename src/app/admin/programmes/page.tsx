@@ -20,6 +20,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import ResourcePreviewDialog, { type PreviewTarget } from "@/components/resource-preview-dialog";
 import { usePortalStore } from "@/lib/portal-store";
 import {
@@ -45,6 +46,7 @@ import {
   GraduationCap,
   BookOpen,
   Pencil,
+  GripVertical,
 } from "lucide-react";
 
 const ITEM_META: Record<ModuleItem["type"], { icon: typeof PlayCircle; label: string }> = {
@@ -212,6 +214,8 @@ function ProgrammeEditor({
     () => new Set(programme.modules.slice(0, 1).map((m) => m.id))
   );
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editingDetails, setEditingDetails] = useState(false);
+  const [editingTest, setEditingTest] = useState(false);
   const [editing, setEditing] = useState(false);
 
   const toggleModule = (id: string) => {
@@ -233,6 +237,43 @@ function ProgrammeEditor({
     setExpandedModules((prev) => new Set(prev).add(created.id));
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination, type } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+
+    if (type === "module") {
+      onChange({ modules: moveInArray(programme.modules, source.index, destination.index) });
+      return;
+    }
+
+    if (type === "item") {
+      const moduleId = source.droppableId.replace("items-", "");
+      const module = programme.modules.find((m) => m.id === moduleId);
+      if (!module) return;
+      const reorderedItems = moveInArray(module.items, source.index, destination.index);
+      onChange({
+        modules: programme.modules.map((m) => (m.id === moduleId ? { ...m, items: reorderedItems } : m)),
+      });
+      return;
+    }
+
+    if (type === "quiz") {
+      const itemId = source.droppableId.replace("quiz-", "");
+      for (const m of programme.modules) {
+        const item = m.items.find((i) => i.id === itemId);
+        if (item && item.type === "quiz") {
+          const reorderedQuestions = moveInArray(item.questions, source.index, destination.index);
+          const newItems = m.items.map((i) => (i.id === itemId ? { ...i, questions: reorderedQuestions } : i));
+          onChange({
+            modules: programme.modules.map((mod) => (mod.id === m.id ? { ...mod, items: newItems } : mod)),
+          });
+          return;
+        }
+      }
+    }
+  };
+
   const toggleInstructor = (instructorId: string) => {
     onChange({
       instructorIds: programme.instructorIds.includes(instructorId)
@@ -250,61 +291,115 @@ function ProgrammeEditor({
             <CardTitle className="text-base font-medium m-0">Programme Details</CardTitle>
             <CardDescription>Name the programme and assign its instructors.</CardDescription>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-destructive hover:text-destructive shrink-0"
-            onClick={() => setConfirmDelete(true)}
-          >
-            <Trash2 size={14} /> Delete
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            {editingDetails && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive shrink-0"
+                onClick={() => setConfirmDelete(true)}
+              >
+                <Trash2 size={14} /> Delete
+              </Button>
+            )}
+            <Button
+              size="sm"
+              className={editingDetails ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
+              variant={editingDetails ? "default" : "outline"}
+              onClick={() => setEditingDetails((v) => !v)}
+            >
+              {editingDetails ? (
+                <>
+                  <Check size={14} /> Done
+                </>
+              ) : (
+                <>
+                  <Pencil size={14} /> Edit
+                </>
+              )}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="programme-name">Name</Label>
-            <Input
-              id="programme-name"
-              value={programme.name}
-              onChange={(e) => onChange({ name: e.target.value })}
-              placeholder="e.g. Investment Banking Foundations"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="programme-description">Description</Label>
-            <Textarea
-              id="programme-description"
-              value={programme.description}
-              onChange={(e) => onChange({ description: e.target.value })}
-              placeholder="A short summary of what students will learn"
-              className="min-h-16 resize-none"
-            />
-          </div>
-          {/* Instructor assignment: click a chip to assign or unassign */}
-          <div className="flex flex-col gap-1.5">
-            <Label>Instructors</Label>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {INSTRUCTORS.map((ins) => {
-                const assigned = programme.instructorIds.includes(ins.id);
-                return (
-                  <button
-                    key={ins.id}
-                    type="button"
-                    onClick={() => toggleInstructor(ins.id)}
-                    title={ins.email}
-                    className={`inline-flex items-center gap-1.5 h-7 rounded-full border px-2.5 text-xs font-medium transition-colors ${
-                      assigned
-                        ? "border-transparent bg-[#7e55f6] text-white hover:bg-[#6742d4]"
-                        : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
-                  >
-                    {assigned ? <Check size={12} /> : <Plus size={12} />}
-                    {ins.name}
-                  </button>
-                );
-              })}
+          {editingDetails ? (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="programme-name">Name</Label>
+                <Input
+                  id="programme-name"
+                  value={programme.name}
+                  onChange={(e) => onChange({ name: e.target.value })}
+                  placeholder="e.g. Investment Banking Foundations"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="programme-description">Description</Label>
+                <Textarea
+                  id="programme-description"
+                  value={programme.description}
+                  onChange={(e) => onChange({ description: e.target.value })}
+                  placeholder="A short summary of what students will learn"
+                  className="min-h-16 resize-none"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>Instructors</Label>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {INSTRUCTORS.map((ins) => {
+                    const assigned = programme.instructorIds.includes(ins.id);
+                    return (
+                      <button
+                        key={ins.id}
+                        type="button"
+                        onClick={() => toggleInstructor(ins.id)}
+                        title={ins.email}
+                        className={`inline-flex items-center gap-1.5 h-7 rounded-full border px-2.5 text-xs font-medium transition-colors ${
+                          assigned
+                            ? "border-transparent bg-[#7e55f6] text-white hover:bg-[#6742d4]"
+                            : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
+                      >
+                        {assigned ? <Check size={12} /> : <Plus size={12} />}
+                        {ins.name}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground m-0">Tap an instructor to assign or remove them.</p>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground m-0">Tap an instructor to assign or remove them.</p>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div>
+                <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Name</Label>
+                <p className="text-base text-foreground mt-1">{programme.name || "Untitled Programme"}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Description</Label>
+                <p className="text-sm text-foreground mt-1 leading-relaxed whitespace-pre-wrap">
+                  {programme.description || "No description provided."}
+                </p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-2 block">Instructors</Label>
+                <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                  {programme.instructorIds.length === 0 ? (
+                    <span className="text-sm text-muted-foreground">No instructors assigned.</span>
+                  ) : (
+                    programme.instructorIds.map((id) => {
+                      const ins = INSTRUCTORS.find((i) => i.id === id);
+                      if (!ins) return null;
+                      return (
+                        <div key={id} className="inline-flex items-center gap-1.5 h-7 rounded-full bg-muted px-2.5 text-xs font-medium text-foreground" title={ins.email}>
+                          {ins.name}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -344,26 +439,40 @@ function ProgrammeEditor({
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {programme.modules.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              {editing ? "No modules yet. Add the first module to start building." : "No modules added yet."}
-            </p>
-          )}
-          {programme.modules.map((module, mIndex) => (
-            <ModuleCard
-              key={module.id}
-              module={module}
-              index={mIndex}
-              total={programme.modules.length}
-              editing={editing}
-              expanded={expandedModules.has(module.id)}
-              onToggle={() => toggleModule(module.id)}
-              onUpdate={(updates) => updateModule(module.id, updates)}
-              onMove={(dir) => onChange({ modules: moveInArray(programme.modules, mIndex, mIndex + dir) })}
-              onRemove={() => onChange({ modules: programme.modules.filter((m) => m.id !== module.id) })}
-              onPreview={onPreview}
-            />
-          ))}
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="modules" type="module">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-col gap-3">
+                  {programme.modules.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-6">
+                      {editing ? "No modules yet. Add the first module to start building." : "No modules added yet."}
+                    </p>
+                  )}
+                  {programme.modules.map((module, mIndex) => (
+                    <Draggable key={module.id} draggableId={module.id} index={mIndex} isDragDisabled={!editing}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps}>
+                          <ModuleCard
+                            module={module}
+                            index={mIndex}
+                            total={programme.modules.length}
+                            editing={editing}
+                            expanded={expandedModules.has(module.id)}
+                            onToggle={() => toggleModule(module.id)}
+                            onUpdate={(updates) => updateModule(module.id, updates)}
+                            onRemove={() => onChange({ modules: programme.modules.filter((m) => m.id !== module.id) })}
+                            onPreview={onPreview}
+                            dragHandleProps={provided.dragHandleProps}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </CardContent>
       </Card>
 
@@ -374,42 +483,70 @@ function ProgrammeEditor({
             <CardTitle className="text-base font-medium m-0">Programme-End Written Test</CardTitle>
             <CardDescription>Free-text questions, evaluated by assigned instructors.</CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onChange({ writtenTest: [...programme.writtenTest, { id: nextId("w"), question: "" }] })}
-          >
-            <Plus size={14} /> Add Question
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            {editingTest && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onChange({ writtenTest: [...programme.writtenTest, { id: nextId("w"), question: "" }] })}
+              >
+                <Plus size={14} /> Add Question
+              </Button>
+            )}
+            <Button
+              size="sm"
+              className={editingTest ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
+              variant={editingTest ? "default" : "outline"}
+              onClick={() => setEditingTest((v) => !v)}
+            >
+              {editingTest ? (
+                <>
+                  <Check size={14} /> Done
+                </>
+              ) : (
+                <>
+                  <Pencil size={14} /> Edit
+                </>
+              )}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           {programme.writtenTest.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-4">No questions yet.</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">No questions added.</p>
           )}
           {programme.writtenTest.map((w, i) => (
             <div key={w.id} className="flex items-start gap-2">
               <span className="text-xs text-muted-foreground shrink-0 mt-2.5 w-4 text-right">{i + 1}.</span>
-              <Textarea
-                value={w.question}
-                placeholder="Write the question"
-                onChange={(e) =>
-                  onChange({
-                    writtenTest: programme.writtenTest.map((q) =>
-                      q.id === w.id ? { ...q, question: e.target.value } : q
-                    ),
-                  })
-                }
-                className="flex-1 min-h-12 resize-none"
-              />
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="text-muted-foreground hover:text-destructive"
-                title="Remove question"
-                onClick={() => onChange({ writtenTest: programme.writtenTest.filter((q) => q.id !== w.id) })}
-              >
-                <Trash2 size={14} />
-              </Button>
+              {editingTest ? (
+                <Textarea
+                  value={w.question}
+                  placeholder="Write the question"
+                  onChange={(e) =>
+                    onChange({
+                      writtenTest: programme.writtenTest.map((q) =>
+                        q.id === w.id ? { ...q, question: e.target.value } : q
+                      ),
+                    })
+                  }
+                  className="flex-1 min-h-12 resize-none"
+                />
+              ) : (
+                <p className="flex-1 text-sm text-foreground m-0 p-2.5 bg-muted/40 rounded-md border border-border/50 whitespace-pre-wrap min-h-12">
+                  {w.question || "Empty question"}
+                </p>
+              )}
+              {editingTest && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="text-muted-foreground hover:text-destructive"
+                  title="Remove question"
+                  onClick={() => onChange({ writtenTest: programme.writtenTest.filter((q) => q.id !== w.id) })}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              )}
             </div>
           ))}
         </CardContent>
@@ -453,9 +590,9 @@ function ModuleCard({
   expanded,
   onToggle,
   onUpdate,
-  onMove,
   onRemove,
   onPreview,
+  dragHandleProps,
 }: {
   module: ProgrammeModule;
   index: number;
@@ -464,9 +601,9 @@ function ModuleCard({
   expanded: boolean;
   onToggle: () => void;
   onUpdate: (updates: Partial<ProgrammeModule>) => void;
-  onMove: (dir: -1 | 1) => void;
   onRemove: () => void;
   onPreview: (target: PreviewTarget) => void;
+  dragHandleProps?: any;
 }) {
   const lessonCount = module.items.filter((i) => i.type !== "quiz").length;
   const quizCount = module.items.filter((i) => i.type === "quiz").length;
@@ -517,19 +654,10 @@ function ModuleCard({
           {lessonCount} lesson{lessonCount === 1 ? "" : "s"} · {quizCount} quiz{quizCount === 1 ? "" : "zes"}
         </span>
         {editing && (
-          <div className="flex shrink-0">
-            <Button variant="ghost" size="icon-sm" disabled={index === 0} title="Move up" onClick={() => onMove(-1)}>
-              <ChevronUp size={14} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              disabled={index === total - 1}
-              title="Move down"
-              onClick={() => onMove(1)}
-            >
-              <ChevronDown size={14} />
-            </Button>
+          <div className="flex shrink-0 items-center gap-1">
+            <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
+              <GripVertical size={14} />
+            </div>
             <Button
               variant="ghost"
               size="icon-sm"
@@ -544,53 +672,63 @@ function ModuleCard({
       </div>
 
       {expanded && (
-        <div className="p-2.5 flex flex-col gap-1.5">
-          {module.items.length === 0 && (
-            <p className="text-sm text-muted-foreground py-2 px-1">
-              {editing ? "This module is empty. Add videos, PDFs, links, or a quiz below." : "No content yet."}
-            </p>
-          )}
-          {module.items.map((item, iIndex) => (
-            <ContentItemRow
-              key={item.id}
-              item={item}
-              index={iIndex}
-              total={module.items.length}
-              editing={editing}
-              onUpdate={(updates) => updateItem(item.id, updates)}
-              onMove={(dir) => onUpdate({ items: moveInArray(module.items, iIndex, iIndex + dir) })}
-              onRemove={() => onUpdate({ items: module.items.filter((it) => it.id !== item.id) })}
-              onPreview={onPreview}
-            />
-          ))}
+        <Droppable droppableId={"items-" + module.id} type="item">
+          {(provided) => (
+            <div className="p-2.5 flex flex-col gap-1.5" ref={provided.innerRef} {...provided.droppableProps}>
+              {module.items.length === 0 && (
+                <p className="text-sm text-muted-foreground py-2 px-1">
+                  {editing ? "This module is empty. Add videos, PDFs, links, or a quiz below." : "No content yet."}
+                </p>
+              )}
+              {module.items.map((item, iIndex) => (
+                <Draggable key={item.id} draggableId={item.id} index={iIndex} isDragDisabled={!editing}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                      <ContentItemRow
+                        item={item}
+                        index={iIndex}
+                        total={module.items.length}
+                        editing={editing}
+                        onUpdate={(updates) => updateItem(item.id, updates)}
+                        onRemove={() => onUpdate({ items: module.items.filter((it) => it.id !== item.id) })}
+                        onPreview={onPreview}
+                        dragHandleProps={provided.dragHandleProps}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
 
-          {editing && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-center mt-1 border border-dashed border-border text-muted-foreground hover:text-foreground"
-                  />
-                }
-              >
-                <Plus size={14} /> Add content
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-44">
-                {(Object.keys(ITEM_META) as ModuleItem["type"][]).map((type) => {
-                  const Meta = ITEM_META[type];
-                  return (
-                    <DropdownMenuItem key={type} onClick={() => addItem(type)}>
-                      <Meta.icon size={15} className="text-[#7e55f6]" />
-                      {Meta.label}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              {editing && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full justify-center mt-1 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-sm"
+                      />
+                    }
+                  >
+                    <Plus size={14} /> Add content
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-44">
+                    {(Object.keys(ITEM_META) as ModuleItem["type"][]).map((type) => {
+                      const Meta = ITEM_META[type];
+                      return (
+                        <DropdownMenuItem key={type} onClick={() => addItem(type)}>
+                          <Meta.icon size={15} className="text-[#7e55f6]" />
+                          {Meta.label}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           )}
-        </div>
+        </Droppable>
       )}
     </div>
   );
@@ -604,36 +742,27 @@ function ContentItemRow({
   total,
   editing,
   onUpdate,
-  onMove,
   onRemove,
   onPreview,
+  dragHandleProps,
 }: {
   item: ModuleItem;
   index: number;
   total: number;
   editing: boolean;
   onUpdate: (updates: Partial<ModuleItem>) => void;
-  onMove: (dir: -1 | 1) => void;
   onRemove: () => void;
   onPreview: (target: PreviewTarget) => void;
+  dragHandleProps?: any;
 }) {
   const [quizOpen, setQuizOpen] = useState(false);
   const Meta = ITEM_META[item.type];
 
   const actions = (
-    <div className="flex shrink-0">
-      <Button variant="ghost" size="icon-sm" disabled={index === 0} title="Move up" onClick={() => onMove(-1)}>
-        <ChevronUp size={14} />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        disabled={index === total - 1}
-        title="Move down"
-        onClick={() => onMove(1)}
-      >
-        <ChevronDown size={14} />
-      </Button>
+    <div className="flex shrink-0 items-center gap-1">
+      <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
+        <GripVertical size={14} />
+      </div>
       <Button
         variant="ghost"
         size="icon-sm"
@@ -771,38 +900,49 @@ function ContentItemRow({
       </div>
 
       {quizOpen && (
-        <div className="px-2.5 pb-2.5 flex flex-col gap-2">
-          {item.questions.length === 0 && (
-            <p className="text-xs text-muted-foreground m-0 px-1">
-              No questions yet. Add one below and pick the correct answer with the radio button.
-            </p>
+        <Droppable droppableId={"quiz-" + item.id} type="quiz">
+          {(provided) => (
+            <div className="px-2.5 pb-2.5 flex flex-col gap-2" ref={provided.innerRef} {...provided.droppableProps}>
+              {item.questions.length === 0 && (
+                <p className="text-xs text-muted-foreground m-0 px-1">
+                  No questions yet. Add one below and pick the correct answer with the radio button.
+                </p>
+              )}
+              {item.questions.map((q, qIndex) => (
+                <Draggable key={q.id} draggableId={q.id} index={qIndex} isDragDisabled={!editing}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                      <McqEditor
+                        question={q}
+                        onUpdate={(updates) =>
+                          onUpdate({ questions: item.questions.map((x) => (x.id === q.id ? { ...x, ...updates } : x)) })
+                        }
+                        onRemove={() => onUpdate({ questions: item.questions.filter((x) => x.id !== q.id) })}
+                        dragHandleProps={provided.dragHandleProps}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+              <Button
+                variant="outline"
+                size="xs"
+                className="self-start mt-1"
+                onClick={() =>
+                  onUpdate({
+                    questions: [
+                      ...item.questions,
+                      { id: nextId("q"), question: "", options: ["Option A", "Option B"], answer: 0 },
+                    ],
+                  })
+                }
+              >
+                <Plus size={12} /> Question
+              </Button>
+            </div>
           )}
-          {item.questions.map((q) => (
-            <McqEditor
-              key={q.id}
-              question={q}
-              onUpdate={(updates) =>
-                onUpdate({ questions: item.questions.map((x) => (x.id === q.id ? { ...x, ...updates } : x)) })
-              }
-              onRemove={() => onUpdate({ questions: item.questions.filter((x) => x.id !== q.id) })}
-            />
-          ))}
-          <Button
-            variant="outline"
-            size="xs"
-            className="self-start"
-            onClick={() =>
-              onUpdate({
-                questions: [
-                  ...item.questions,
-                  { id: nextId("q"), question: "", options: ["Option A", "Option B"], answer: 0 },
-                ],
-              })
-            }
-          >
-            <Plus size={12} /> Question
-          </Button>
-        </div>
+        </Droppable>
       )}
     </div>
   );
@@ -812,14 +952,19 @@ function McqEditor({
   question,
   onUpdate,
   onRemove,
+  dragHandleProps,
 }: {
   question: McqQuestion;
   onUpdate: (updates: Partial<McqQuestion>) => void;
   onRemove: () => void;
+  dragHandleProps?: any;
 }) {
   return (
     <div className="rounded-lg border border-border bg-background p-2 flex flex-col gap-1.5">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
+        <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
+          <GripVertical size={14} />
+        </div>
         <Input
           value={question.question}
           onChange={(e) => onUpdate({ question: e.target.value })}

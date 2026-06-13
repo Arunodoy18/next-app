@@ -110,7 +110,7 @@ export default function AdminPerformancePage() {
               <CardDescription>Click a student for full detail. Admins can evaluate too.</CardDescription>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
+          <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
             <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input

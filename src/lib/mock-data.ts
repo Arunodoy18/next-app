@@ -50,6 +50,7 @@ export interface AppUser {
   email: string;
   role: UserRole;
   programmeId?: string;
+  signupDate: string;
 }
 
 export interface StudentModuleProgress {
@@ -238,18 +239,18 @@ export const PROGRAMMES: Programme[] = [
 ];
 
 export const USERS: AppUser[] = [
-  { id: "u1", name: "Oliver Smith", email: "oliver.smith@student.co.uk", role: "Student", programmeId: "p1" },
-  { id: "u2", name: "Charlotte Jones", email: "charlotte.jones@student.co.uk", role: "Student", programmeId: "p1" },
-  { id: "u3", name: "Harry Williams", email: "harry.williams@student.co.uk", role: "Student", programmeId: "p2" },
-  { id: "u4", name: "Amelia Taylor", email: "amelia.taylor@student.co.uk", role: "Student", programmeId: "p2" },
-  { id: "u9", name: "Thomas Brown", email: "thomas.brown@student.co.uk", role: "Student", programmeId: "p1" },
-  { id: "u10", name: "Olivia Davies", email: "olivia.davies@student.co.uk", role: "Student", programmeId: "p2" },
-  { id: "u11", name: "William Evans", email: "william.evans@student.co.uk", role: "Student", programmeId: "p1" },
-  { id: "u12", name: "Emily Thomas", email: "emily.thomas@student.co.uk", role: "Student", programmeId: "p2" },
-  { id: "u5", name: "Alastair Montgomery", email: "a.montgomery@blackmont.ac.uk", role: "Instructor" },
-  { id: "u6", name: "Eleanor Vance", email: "e.vance@blackmont.ac.uk", role: "Instructor" },
-  { id: "u7", name: "Arthur Pendelton", email: "a.pendelton@blackmont.ac.uk", role: "Instructor" },
-  { id: "u8", name: "Admin User", email: "admin@blackmont.ac.uk", role: "Admin" },
+  { id: "u1", name: "Oliver Smith", email: "oliver.smith@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2023-11-12T10:00:00Z" },
+  { id: "u2", name: "Charlotte Jones", email: "charlotte.jones@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-01-05T14:30:00Z" },
+  { id: "u3", name: "Harry Williams", email: "harry.williams@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-10-20T09:15:00Z" },
+  { id: "u4", name: "Amelia Taylor", email: "amelia.taylor@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2024-02-18T11:45:00Z" },
+  { id: "u9", name: "Thomas Brown", email: "thomas.brown@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-03-01T16:20:00Z" },
+  { id: "u10", name: "Olivia Davies", email: "olivia.davies@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-12-05T08:10:00Z" },
+  { id: "u11", name: "William Evans", email: "william.evans@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-01-22T13:05:00Z" },
+  { id: "u12", name: "Emily Thomas", email: "emily.thomas@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-09-10T09:40:00Z" },
+  { id: "u5", name: "Alastair Montgomery", email: "a.montgomery@blackmont.ac.uk", role: "Instructor", signupDate: "2022-05-15T09:00:00Z" },
+  { id: "u6", name: "Eleanor Vance", email: "e.vance@blackmont.ac.uk", role: "Instructor", signupDate: "2022-08-20T10:30:00Z" },
+  { id: "u7", name: "Arthur Pendelton", email: "a.pendelton@blackmont.ac.uk", role: "Instructor", signupDate: "2021-11-05T14:15:00Z" },
+  { id: "u8", name: "Admin User", email: "admin@blackmont.ac.uk", role: "Admin", signupDate: "2020-01-10T08:00:00Z" },
 ];
 
 export const STUDENTS: StudentRecord[] = [

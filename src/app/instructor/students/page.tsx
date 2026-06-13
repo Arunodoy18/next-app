@@ -119,7 +119,7 @@ export default function InstructorStudentsPage() {
               <CardDescription>Click a student for full progress and evaluation.</CardDescription>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
+          <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
             <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -170,6 +170,7 @@ export default function InstructorStudentsPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Programme</TableHead>
+                <TableHead>Signup Date</TableHead>
                 <TableHead>Module Progress</TableHead>
                 <TableHead>Written Test</TableHead>
                 <TableHead>Messages</TableHead>
@@ -183,6 +184,13 @@ export default function InstructorStudentsPage() {
                 const submitted = s.writtenAnswers.length > 0;
                 const pending = s.writtenAnswers.filter((a) => a.score === null).length;
                 const thread = threads.find((t) => t.studentId === s.id);
+                
+                const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }).format(new Date(s.signupDate));
+
                 return (
                   <TableRow key={s.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setSelectedId(s.id)}>
                     <TableCell>
@@ -190,6 +198,7 @@ export default function InstructorStudentsPage() {
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{programmeName(s.programmeId)}</TableCell>
+                    <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 min-w-[140px]">
                         <Progress value={totalModules ? (doneModules / totalModules) * 100 : 0} className="w-24 h-2" />

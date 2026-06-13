@@ -165,7 +165,7 @@ export default function StudentDetailDialog({
                             </p>
                           </div>
 
-                          {mode === "evaluate" && (
+                          {mode === "evaluate" && ans.score === null && (
                             <div className="flex flex-col gap-5 mt-3 pt-5 border-t border-border/50">
                               <div className="flex items-center gap-4">
                                 <label className="text-sm font-medium text-foreground shrink-0 w-24">Score</label>
@@ -201,6 +201,15 @@ export default function StudentDetailDialog({
                               </div>
                             </div>
                           )}
+
+                          {ans.score !== null && ans.feedback && (
+                            <div className="flex flex-col gap-2 mt-3 pt-5 border-t border-border/50">
+                              <label className="text-sm font-medium text-foreground">Instructor Feedback</label>
+                              <p className="text-[15px] text-muted-foreground m-0 whitespace-pre-wrap leading-relaxed">
+                                {ans.feedback}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -223,7 +232,7 @@ export default function StudentDetailDialog({
               </div>
             )}
 
-            {mode === "evaluate" && submitted && onSaveEvaluation && (
+            {mode === "evaluate" && submitted && onSaveEvaluation && pendingCount > 0 && (
               <div className="px-6 py-4 border-t border-border bg-card/50 shrink-0">
                 <DialogFooter className="items-center sm:justify-between w-full">
                   <div className="flex items-center">
