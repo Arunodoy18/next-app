@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from 'next-themes';
 import Logo from '@/components/logo/logo';
+import InstructorChat from '@/components/instructor-chat';
 import {
   PlayCircle,
   FileText,
@@ -28,6 +29,7 @@ import {
   Sun,
   Moon,
   GraduationCap,
+  MessageSquare,
   Menu,
   X,
   PanelLeftIcon,
@@ -192,6 +194,7 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [topBarVisible, setTopBarVisible] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -555,6 +558,17 @@ export default function Dashboard() {
         </nav>
 
         <div className="flex flex-col gap-1 border-t border-border pt-3">
+          <button
+            type="button"
+            onClick={() => {
+              setChatOpen(true);
+              setSidebarOpen(false);
+            }}
+            className="flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm w-full bg-secondary text-secondary-foreground hover:bg-secondary/80"
+          >
+            <MessageSquare size={18} />
+            <span className="font-medium">Message Instructor</span>
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -930,6 +944,13 @@ export default function Dashboard() {
         </div>
       </main>
       </div>
+
+      <InstructorChat
+        user={user}
+        programmeId={programme.id}
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+      />
     </div>
   );
 }
