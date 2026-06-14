@@ -49,7 +49,10 @@ export interface AppUser {
   name: string;
   email: string;
   role: UserRole;
+  // Students enrol in a single programme; instructors and admins can be
+  // allotted one or more programmes.
   programmeId?: string;
+  programmeIds?: string[];
   signupDate: string;
 }
 

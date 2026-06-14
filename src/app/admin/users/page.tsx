@@ -89,8 +89,15 @@ export default function AdminUsersPage() {
     setDialogOpen(false);
   };
 
+  // A user's programme label: students enrol in one; instructors/admins can
+  // be allotted several.
+  const programmeLabel = (u: AppUser) => {
+    if (u.role === "Student") return u.programmeId ? programmeName(u.programmeId) : "";
+    return (u.programmeIds ?? []).map(programmeName).join(", ");
+  };
+
   const header = ["Name", "Email", "Role", "Programme", "Signup Date"];
-  const userRow = (u: AppUser) => [u.name, u.email, u.role, u.programmeId ? programmeName(u.programmeId) : "", new Date(u.signupDate).toLocaleDateString("en-GB")];
+  const userRow = (u: AppUser) => [u.name, u.email, u.role, programmeLabel(u), new Date(u.signupDate).toLocaleDateString("en-GB")];
 
   const exportUsers = () => {
     downloadCsv("users.csv", toCsv([header, ...users.map(userRow)]));
@@ -192,7 +199,7 @@ export default function AdminUsersPage() {
                     <Badge className={ROLE_BADGE[u.role]}>{u.role}</Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {u.programmeId ? programmeName(u.programmeId) : "N/A"}
+                    {programmeLabel(u) || "N/A"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
                   <TableCell className="text-right">
@@ -275,10 +282,11 @@ export default function AdminUsersPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                {editingUser.role === "Student" && (
+                {editingUser.role === "Student" ? (
                   <div className="flex flex-col gap-1.5">
                     <Label>Enrolled Programme</Label>
                     <Select
+                      items={Object.fromEntries(programmes.map((p) => [p.id, p.name]))}
                       value={editingUser.programmeId ?? null}
                       onValueChange={(value) => setEditingUser({ ...editingUser, programmeId: value ?? undefined })}
                     >
@@ -293,6 +301,41 @@ export default function AdminUsersPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    <Label>Allotted Programmes</Label>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {programmes.map((p) => {
+                        const assigned = (editingUser.programmeIds ?? []).includes(p.id);
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() =>
+                              setEditingUser({
+                                ...editingUser,
+                                programmeIds: assigned
+                                  ? (editingUser.programmeIds ?? []).filter((id) => id !== p.id)
+                                  : [...(editingUser.programmeIds ?? []), p.id],
+                              })
+                            }
+                            className={`inline-flex items-center h-7 rounded-full border px-2.5 text-xs font-medium transition-colors ${
+                              assigned
+                                ? "border-transparent bg-[#7e55f6] text-white hover:bg-[#6742d4]"
+                                : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                            }`}
+                          >
+                            {p.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground m-0">
+                      {editingUser.role === "Admin"
+                        ? "Admins can be allotted one or more programmes."
+                        : "Tap a programme to assign or remove it."}
+                    </p>
                   </div>
                 )}
               </div>

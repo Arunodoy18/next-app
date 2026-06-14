@@ -53,6 +53,26 @@ export default function InstructorOverview() {
   const myThreads = threads.filter((t) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(t.programmeId));
   const unreadThreads = myThreads.filter((t) => t.unread);
 
+  // Per-programme breakdown for the programme-wise overview.
+  const programmeOverview = assignedProgrammes.map((p) => {
+    const enrolled = students.filter((s) => s.programmeId === p.id);
+    const moduleCount = p.modules.length;
+    const avgProg = enrolled.length
+      ? Math.round(
+          (enrolled.reduce(
+            (acc, s) => acc + (moduleCount ? s.moduleProgress.filter((m) => m.completed).length / moduleCount : 0),
+            0
+          ) /
+            enrolled.length) *
+            100
+        )
+      : 0;
+    const grades = enrolled.flatMap((s) => s.moduleProgress.map((m) => m.mcqScore).filter((x): x is number => x !== null));
+    const avgGr = grades.length ? Math.round(grades.reduce((a, b) => a + b, 0) / grades.length) : null;
+    const pending = enrolled.reduce((acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length, 0);
+    return { programme: p, students: enrolled.length, avgProgress: avgProg, avgGrade: avgGr, pending };
+  });
+
   const studentName = (id: string) => students.find((s) => s.id === id)?.name ?? "Student";
 
   const stats = [
@@ -111,6 +131,52 @@ export default function InstructorOverview() {
           </Link>
         ))}
       </div>
+
+      {/* Programme-wise overview */}
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base font-medium m-0">Programme Overview</CardTitle>
+            <CardDescription>Progress and review load for each programme you teach.</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          {programmeOverview.map(({ programme, students: count, avgProgress: prog, avgGrade: grade, pending }) => (
+            <Link
+              key={programme.id}
+              href={`/instructor/students?programme=${programme.id}`}
+              className="flex items-center gap-4 rounded-lg border border-border p-3 hover:bg-muted/50 transition-colors"
+            >
+              <div className="size-9 rounded-lg bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center shrink-0">
+                <GraduationCap size={17} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium m-0 truncate">{programme.name}</p>
+                <p className="text-xs text-muted-foreground m-0 mt-0.5">
+                  {count} student{count === 1 ? "" : "s"} · {programme.modules.length} module
+                  {programme.modules.length === 1 ? "" : "s"}
+                </p>
+              </div>
+              <div className="hidden sm:flex items-center gap-6 shrink-0 text-right">
+                <div>
+                  <p className="text-sm font-semibold m-0 leading-tight">{prog}%</p>
+                  <p className="text-[11px] text-muted-foreground m-0">Avg progress</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold m-0 leading-tight">{grade !== null ? `${grade}%` : "N/A"}</p>
+                  <p className="text-[11px] text-muted-foreground m-0">Avg grade</p>
+                </div>
+              </div>
+              {pending > 0 ? (
+                <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent shrink-0">{pending} pending</Badge>
+              ) : (
+                <Badge variant="secondary" className="shrink-0">Up to date</Badge>
+              )}
+              <ChevronRight size={15} className="text-muted-foreground shrink-0" />
+            </Link>
+          ))}
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         {/* Evaluation queue preview */}

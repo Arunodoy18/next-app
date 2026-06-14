@@ -47,6 +47,13 @@ export default function InstructorStudentsPage() {
 
   const ITEMS_PER_PAGE = 10;
 
+  // Pre-filter by programme when arriving from the overview
+  // (/instructor/students?programme=<id>).
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("programme");
+    if (id) setProgrammeFilter(id);
+  }, []);
+
   const assignedProgrammes = programmes.filter((p) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(p.id));
   const programmeFilterItems: Record<string, string> = {
     all: "All programmes",
