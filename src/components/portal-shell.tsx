@@ -172,7 +172,7 @@ export default function PortalShell({
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border] duration-200 ease-in-out ${
+          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border,transform] duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 ${
             sidebarCollapsed ? "lg:w-0 lg:border-0" : sidebarOpen ? "w-80 lg:w-72 xl:w-80" : "w-72 lg:w-72 xl:w-80"

@@ -191,7 +191,7 @@ export default function StudentDetailDialog({
                                   Feedback <span className="text-muted-foreground font-normal text-xs ml-1">(Optional)</span>
                                 </label>
                                 <Textarea
-                                  placeholder="Provide constructive feedback for this answer..."
+                                  placeholder="Provide constructive feedback for this answer"
                                   value={draft.feedback}
                                   onChange={(e) => {
                                     setSavedFlash(false);

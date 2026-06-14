@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -30,6 +31,7 @@ import {
   Moon,
   GraduationCap,
   MessageSquare,
+  ChevronRight,
   Menu,
   X,
   PanelLeftIcon,
@@ -162,9 +164,16 @@ const SAMPLE_QUIZ_QUESTIONS: { id: string; question: string; options: string[]; 
   },
 ];
 
+const SAMPLE_WRITTEN_QUESTIONS: { id: string; question: string }[] = [
+  { id: 'w1', question: 'Walk through how you would value a target company for an acquisition. Which methods would you prioritise and why?' },
+  { id: 'w2', question: 'Describe a situation where due diligence findings would lead you to renegotiate or walk away from a deal.' },
+  { id: 'w3', question: 'Explain how deal structure (cash vs. stock, earn-outs, etc.) affects both buyer and seller incentives.' },
+];
+
 const PROGRESS_KEY_PREFIX = 'programme-progress-';
 const CERTIFICATE_VIEW = 'certificate';
 const GRADE_VIEW = 'grade';
+const WRITTEN_EXAM_VIEW = 'written-exam';
 
 function gradeLetter(percent: number): string {
   if (percent >= 90) return 'A';
@@ -195,6 +204,8 @@ export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [topBarVisible, setTopBarVisible] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
+  const [writtenAnswers, setWrittenAnswers] = useState<Record<string, string>>({});
+  const [writtenSubmitted, setWrittenSubmitted] = useState(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -294,6 +305,15 @@ export default function Dashboard() {
   const currentModuleIndex = programme.modules.findIndex((m) => m.id === activeModule);
   const showCertificate = activeModule === CERTIFICATE_VIEW;
   const showGrade = activeModule === GRADE_VIEW;
+  const showWrittenExam = activeModule === WRITTEN_EXAM_VIEW;
+
+  // The next destination after a module: the following module, or the
+  // Written Exam once the last module is done.
+  const nextDestination =
+    currentModuleIndex >= 0 && currentModuleIndex < programme.modules.length - 1
+      ? { id: programme.modules[currentModuleIndex + 1].id, label: 'Next module' }
+      : { id: WRITTEN_EXAM_VIEW, label: 'Written Exam' };
+  const currentModuleComplete = currentModule ? moduleCompletionPercent(currentModule) === 100 : false;
 
   const currentModuleGrade = currentModule ? moduleGrade(currentModule) : null;
 
@@ -402,7 +422,7 @@ export default function Dashboard() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border] duration-200 ease-in-out ${
+        className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border,transform] duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 ${sidebarCollapsed ? 'lg:w-0 lg:border-0' : sidebarOpen ? 'w-80 lg:w-72 xl:w-80' : 'w-72 lg:w-72 xl:w-80'}`}
       >
@@ -555,6 +575,25 @@ export default function Dashboard() {
               </div>
             );
           })}
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveModule(WRITTEN_EXAM_VIEW);
+              setSidebarOpen(false);
+            }}
+            className={`flex items-center justify-between gap-2 text-left px-3 py-2 mt-1 rounded-lg text-sm ${
+              showWrittenExam ? 'bg-[#7e55f6] hover:bg-[#6742d4] text-white' : 'border border-border hover:bg-muted text-foreground'
+            }`}
+          >
+            <span className="flex items-center gap-2 font-medium truncate">
+              <FileText size={16} className={`shrink-0 ${showWrittenExam ? 'text-white' : 'text-[#7e55f6]'}`} />
+              Written Exam
+            </span>
+            {writtenSubmitted && (
+              <CheckCircle2 size={14} className={`shrink-0 ${showWrittenExam ? 'text-white' : 'text-green-500'}`} />
+            )}
+          </button>
         </nav>
 
         <div className="flex flex-col gap-1 border-t border-border pt-3">
@@ -619,17 +658,33 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                {programme.modules.map((module) => {
+                {programme.modules.map((module, moduleIndex) => {
                   const grade = moduleGrade(module);
                   return (
-                    <div key={module.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
-                      <span className="text-sm font-medium">{module.title}</span>
-                      <span className="text-sm text-muted-foreground">
+                    <div key={module.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium m-0 truncate">{moduleIndex + 1}. {module.title}</p>
+                        <p className="flex items-center gap-1.5 text-xs text-muted-foreground m-0 mt-0.5">
+                          <HelpCircle size={12} className="text-[#7e55f6] shrink-0" />
+                          {module.quiz.title}
+                        </p>
+                      </div>
+                      <span className="text-sm text-muted-foreground shrink-0">
                         {grade !== null ? `${gradeLetter(grade)} (${grade}%)` : 'No grade yet'}
                       </span>
                     </div>
                   );
                 })}
+
+                <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                  <span className="flex items-center gap-2 text-sm font-medium">
+                    <FileText size={15} className="text-[#7e55f6]" />
+                    Written Exam
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {writtenSubmitted ? 'Pending instructor review' : 'Not submitted'}
+                  </span>
+                </div>
               </CardContent>
             </Card>
           ) : showCertificate ? (
@@ -939,8 +994,153 @@ export default function Dashboard() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Next: advance to the next module, or the Written Exam after the last one */}
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  disabled={!currentModuleComplete}
+                  onClick={() => {
+                    setActiveModule(nextDestination.id);
+                    if (nextDestination.id !== WRITTEN_EXAM_VIEW) setExpandedModule(nextDestination.id);
+                  }}
+                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {nextDestination.label}
+                  <ChevronRight size={16} className="ml-1" />
+                </Button>
+              </div>
             </div>
-          ) : null}
+          ) : showWrittenExam ? (
+            <Card className="shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-start justify-between gap-3 border-b border-border bg-card/50">
+                <div>
+                  <p className="text-xs font-semibold text-[#7e55f6] uppercase tracking-wider mb-1">Programme-End</p>
+                  <CardTitle className="text-xl font-medium m-0">Written Exam</CardTitle>
+                  <CardDescription className="mt-1">
+                    Answer all questions in your own words. Your instructor will review and grade your responses.
+                  </CardDescription>
+                </div>
+                {writtenSubmitted ? (
+                  <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-green-500/10 text-green-600 text-xs font-medium px-3 py-1.5">
+                    <CheckCircle2 size={14} /> Submitted
+                  </span>
+                ) : (
+                  <span className="shrink-0 inline-flex items-center rounded-full bg-[#7e55f6]/10 text-[#7e55f6] text-xs font-medium px-3 py-1.5">
+                    Not submitted
+                  </span>
+                )}
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                {SAMPLE_WRITTEN_QUESTIONS.map((q, i) => (
+                  <div
+                    key={q.id}
+                    className="flex flex-col gap-3 p-4 sm:p-5 rounded-xl border border-border/60 bg-muted/20"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="size-6 shrink-0 rounded-md bg-[#7e55f6]/10 text-[#7e55f6] text-xs font-semibold flex items-center justify-center">
+                        {i + 1}
+                      </span>
+                      <h4 className="text-base font-medium m-0 leading-snug text-foreground">{q.question}</h4>
+                    </div>
+                    <Textarea
+                      value={writtenAnswers[q.id] ?? ''}
+                      disabled={writtenSubmitted}
+                      onChange={(e) => setWrittenAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                      placeholder="Write your answer here"
+                      className="min-h-[130px] resize-y bg-background text-[15px] leading-relaxed p-3 disabled:opacity-100"
+                    />
+                  </div>
+                ))}
+
+                <div className="flex items-center justify-between gap-3 border-t border-border pt-4 mt-1">
+                  {writtenSubmitted ? (
+                    <>
+                      <span className="flex items-center gap-2 text-sm font-medium text-green-600">
+                        <CheckCircle2 size={16} /> Submitted for review
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-5"
+                        onClick={() => setWrittenSubmitted(false)}
+                      >
+                        Edit answers
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs text-muted-foreground m-0">Answer every question to submit.</p>
+                      <Button
+                        type="button"
+                        disabled={SAMPLE_WRITTEN_QUESTIONS.some((q) => !(writtenAnswers[q.id] ?? '').trim())}
+                        onClick={() => setWrittenSubmitted(true)}
+                        className="h-9 px-6 rounded-full font-semibold bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                      >
+                        Submit Exam
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            /* No module selected: show the modules as rectangular cards */
+            <div className="flex flex-col gap-3">
+              {programme.modules.map((module, moduleIndex) => {
+                const percent = moduleCompletionPercent(module);
+                return (
+                  <button
+                    key={module.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveModule(module.id);
+                      setExpandedModule(module.id);
+                    }}
+                    className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card text-left hover:bg-muted/50 transition-colors"
+                  >
+                    <span className="size-10 rounded-lg bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center font-medium shrink-0">
+                      {moduleIndex + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium m-0 truncate">{module.title}</p>
+                      <p className="text-xs text-muted-foreground m-0 mt-1">
+                        {moduleCompletedCount(module)} / {moduleItemCount(module)} completed
+                      </p>
+                      <Progress value={percent} className="mt-2" />
+                    </div>
+                    {percent === 100 ? (
+                      <CheckCircle2 size={18} className="text-green-500 shrink-0" />
+                    ) : (
+                      <ChevronRight size={18} className="text-muted-foreground/40 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setActiveModule(WRITTEN_EXAM_VIEW)}
+                className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card text-left hover:bg-muted/50 transition-colors"
+              >
+                <span className="size-10 rounded-lg bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center shrink-0">
+                  <FileText size={18} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium m-0 truncate">Written Exam</p>
+                  <p className="text-xs text-muted-foreground m-0 mt-1">
+                    {writtenSubmitted ? 'Submitted for review' : 'Programme-end written exam'}
+                  </p>
+                </div>
+                {writtenSubmitted ? (
+                  <CheckCircle2 size={18} className="text-green-500 shrink-0" />
+                ) : (
+                  <ChevronRight size={18} className="text-muted-foreground/40 shrink-0" />
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </main>
       </div>

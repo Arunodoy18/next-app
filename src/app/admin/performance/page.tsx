@@ -128,7 +128,7 @@ export default function AdminPerformancePage() {
             <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search students..."
+                placeholder="Search students"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 h-9 w-full sm:w-64 bg-background"
