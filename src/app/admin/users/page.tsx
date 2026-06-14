@@ -39,9 +39,9 @@ const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
 
 // Each role gets its own colour so the table scans at a glance.
 const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-blue-500/10 text-blue-600 border-transparent",
-  Instructor: "bg-[#7e55f6]/10 text-[#7e55f6] border-transparent",
-  Admin: "bg-amber-500/10 text-amber-600 border-transparent",
+  Student: "bg-blue-500/10 text-blue-600 border-blue-600",
+  Instructor: "bg-[#7e55f6]/10 text-[#7e55f6] border-[#7e55f6]",
+  Admin: "bg-amber-500/10 text-amber-600 border-amber-600",
 };
 
 function toCsv(rows: string[][]): string {
@@ -209,9 +209,8 @@ export default function AdminUsersPage() {
                         <Download size={14} />
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant="destructive"
                         size="icon-sm"
-                        className="text-muted-foreground hover:text-destructive"
                         title="Delete user"
                         onClick={(e) => {
                           e.stopPropagation();

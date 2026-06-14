@@ -41,12 +41,12 @@ import {
   ChevronRight,
   ChevronUp,
   Eye,
-  ExternalLink,
   Check,
   GraduationCap,
   BookOpen,
   Pencil,
   GripVertical,
+  X,
 } from "lucide-react";
 
 const ITEM_META: Record<ModuleItem["type"], { icon: typeof PlayCircle; label: string }> = {
@@ -211,7 +211,18 @@ function ProgrammeEditor({
     () => new Set(programme.modules.slice(0, 1).map((m) => m.id))
   );
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [editingDetails, setEditingDetails] = useState(false);
+  // A brand-new programme (no name yet) opens straight in edit mode and hides
+  // the Edit button until it has been saved once.
+  const [isNew, setIsNew] = useState(() => !programme.name.trim());
+  const [editingDetails, setEditingDetails] = useState(() => !programme.name.trim());
+
+  const saveDetails = () => {
+    // Allow saving even with no name — it becomes "Untitled Programme".
+    const name = programme.name.trim() || "Untitled Programme";
+    if (name !== programme.name) onChange({ name });
+    setEditingDetails(false);
+    setIsNew(false);
+  };
   const [editingTest, setEditingTest] = useState(false);
   const [editing, setEditing] = useState(false);
 
@@ -297,22 +308,24 @@ function ProgrammeEditor({
             >
               <Trash2 size={14} /> Delete
             </Button>
-            <Button
-              size="sm"
-              className={editingDetails ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
-              variant={editingDetails ? "default" : "outline"}
-              onClick={() => setEditingDetails((v) => !v)}
-            >
-              {editingDetails ? (
-                <>
-                  <Check size={14} /> Done
-                </>
-              ) : (
-                <>
-                  <Pencil size={14} /> Edit
-                </>
-              )}
-            </Button>
+            {!isNew && !editingDetails && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setEditingDetails(true)}
+              >
+                <Pencil size={14} /> Edit
+              </Button>
+            )}
+            {editingDetails && (
+              <Button
+                size="sm"
+                className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                onClick={saveDetails}
+              >
+                <Check size={14} /> Save
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -423,7 +436,7 @@ function ProgrammeEditor({
             >
               {editing ? (
                 <>
-                  <Check size={14} /> Done
+                  <Check size={14} /> Save
                 </>
               ) : (
                 <>
@@ -496,7 +509,7 @@ function ProgrammeEditor({
             >
               {editingTest ? (
                 <>
-                  <Check size={14} /> Done
+                  <Check size={14} /> Save
                 </>
               ) : (
                 <>
@@ -527,15 +540,14 @@ function ProgrammeEditor({
                   className="flex-1 min-h-12 resize-none"
                 />
               ) : (
-                <p className="flex-1 text-sm text-foreground m-0 p-2.5 bg-muted/40 rounded-md border border-border/50 whitespace-pre-wrap min-h-12">
+                <p className="flex-1 text-sm text-foreground m-0 mt-2 whitespace-pre-wrap">
                   {w.question || "Empty question"}
                 </p>
               )}
               {editingTest && (
                 <Button
-                  variant="ghost"
+                  variant="destructive"
                   size="icon-sm"
-                  className="text-muted-foreground hover:text-destructive"
                   title="Remove question"
                   onClick={() => onChange({ writtenTest: programme.writtenTest.filter((q) => q.id !== w.id) })}
                 >
@@ -620,6 +632,11 @@ function ModuleCard({
   return (
     <div className="rounded-xl border border-border overflow-hidden bg-card">
       <div className="flex items-center gap-2 px-2 py-2 bg-muted/40">
+        {editing && (
+          <div {...dragHandleProps} className="flex items-center justify-center p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
+            <GripVertical size={14} />
+          </div>
+        )}
         <button
           type="button"
           onClick={onToggle}
@@ -650,13 +667,9 @@ function ModuleCard({
         </span>
         {editing && (
           <div className="flex shrink-0 items-center gap-1">
-            <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
-              <GripVertical size={14} />
-            </div>
             <Button
-              variant="ghost"
+              variant="destructive"
               size="icon-sm"
-              className="text-muted-foreground hover:text-destructive"
               title="Delete module"
               onClick={onRemove}
             >
@@ -696,30 +709,32 @@ function ModuleCard({
               {provided.placeholder}
 
               {editing && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="w-full justify-center mt-1 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-sm"
-                      />
-                    }
-                  >
-                    <Plus size={14} /> Add content
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-44">
-                    {(Object.keys(ITEM_META) as ModuleItem["type"][]).map((type) => {
-                      const Meta = ITEM_META[type];
-                      return (
-                        <DropdownMenuItem key={type} onClick={() => addItem(type)}>
-                          <Meta.icon size={15} className="text-[#7e55f6]" />
-                          {Meta.label}
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex justify-end mt-1">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-sm"
+                        />
+                      }
+                    >
+                      <Plus size={14} /> Add content
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-44">
+                      {(Object.keys(ITEM_META) as ModuleItem["type"][]).map((type) => {
+                        const Meta = ITEM_META[type];
+                        return (
+                          <DropdownMenuItem key={type} onClick={() => addItem(type)}>
+                            <Meta.icon size={15} className="text-[#7e55f6]" />
+                            {Meta.label}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               )}
             </div>
           )}
@@ -753,15 +768,17 @@ function ContentItemRow({
   const [quizOpen, setQuizOpen] = useState(false);
   const Meta = ITEM_META[item.type];
 
+  const dragHandle = (
+    <div {...dragHandleProps} className="flex items-center justify-center p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
+      <GripVertical size={14} />
+    </div>
+  );
+
   const actions = (
     <div className="flex shrink-0 items-center gap-1">
-      <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
-        <GripVertical size={14} />
-      </div>
       <Button
-        variant="ghost"
+        variant="destructive"
         size="icon-sm"
-        className="text-muted-foreground hover:text-destructive"
         title="Remove"
         onClick={onRemove}
       >
@@ -782,60 +799,60 @@ function ContentItemRow({
             <p className="text-sm font-medium m-0 truncate">{item.title || Meta.label}</p>
             <p className="text-xs text-muted-foreground m-0 truncate font-mono">{item.url || "No link added"}</p>
           </div>
-          {item.type === "link" ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0 h-8 text-xs text-[#7e55f6]"
-              disabled={!item.url}
-              onClick={() => window.open(item.url, "_blank", "noopener")}
-            >
-              <ExternalLink size={13} /> Open
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0 h-8 text-xs text-[#7e55f6]"
-              disabled={!item.url}
-              onClick={() => onPreview({ type: item.type as "video" | "pdf", title: item.title, url: item.url })}
-            >
-              <Eye size={13} /> Preview
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 h-8 text-xs text-[#7e55f6]"
+            disabled={!item.url}
+            onClick={() => onPreview({ type: item.type, title: item.title, url: item.url })}
+          >
+            <Eye size={13} /> Preview
+          </Button>
         </div>
       );
     }
     return (
-      <div className="rounded-lg border border-border bg-card px-2.5 py-2 flex flex-col gap-1.5">
-        <div className="flex items-center gap-2">
-          <div className="size-7 rounded-md bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center shrink-0">
-            <Meta.icon size={14} />
-          </div>
-          <span className="text-xs font-medium text-muted-foreground w-10 shrink-0 hidden sm:inline">
-            {Meta.label}
-          </span>
+      <div className="rounded-lg border border-border bg-card px-2.5 py-2 flex items-start gap-2">
+        {dragHandle}
+        <div className="size-7 mt-1 rounded-md bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center shrink-0">
+          <Meta.icon size={14} />
+        </div>
+        <span className="text-xs font-medium text-muted-foreground w-10 shrink-0 hidden sm:inline mt-2.5">
+          {Meta.label}
+        </span>
+        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
           <Input
             value={item.title}
             onChange={(e) => onUpdate({ title: e.target.value })}
             placeholder={`${Meta.label} title`}
-            className="flex-1 h-9 min-w-0"
+            className="h-9 w-full"
           />
-          {actions}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 text-xs text-[#7e55f6] shrink-0"
+              disabled={!item.url}
+              onClick={() => onPreview({ type: item.type, title: item.title, url: item.url })}
+            >
+              <Eye size={13} /> Preview
+            </Button>
+            <div className="relative flex-1 min-w-0">
+              <Link2 size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={item.url}
+                onChange={(e) => onUpdate({ url: e.target.value })}
+                placeholder={
+                  item.type === "link"
+                    ? "Paste a link (https://example.com)"
+                    : `Paste the ${Meta.label.toLowerCase()} URL`
+                }
+                className="h-9 w-full pl-8 text-sm"
+              />
+            </div>
+          </div>
         </div>
-        <div className="relative">
-          <Link2 size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={item.url}
-            onChange={(e) => onUpdate({ url: e.target.value })}
-            placeholder={
-              item.type === "link"
-                ? "Paste a link (https://example.com)"
-                : `Paste the ${Meta.label.toLowerCase()} URL`
-            }
-            className="h-9 w-full pl-8 text-sm"
-          />
-        </div>
+        <div className="mt-1">{actions}</div>
       </div>
     );
   }
@@ -843,24 +860,72 @@ function ContentItemRow({
   // Quiz read-only view.
   if (!editing) {
     return (
-      <div className="rounded-lg border border-[#7e55f6]/25 bg-[#7e55f6]/4 px-2.5 py-2 flex items-center gap-2">
-        <div className="size-7 rounded-md bg-[#7e55f6] text-white flex items-center justify-center shrink-0">
-          <Meta.icon size={14} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium m-0 truncate">{item.title || "Quiz"}</p>
-          <p className="text-xs text-muted-foreground m-0">
-            {item.questions.length} question{item.questions.length === 1 ? "" : "s"}
-          </p>
-        </div>
+      <div className="rounded-lg border border-[#7e55f6]/25 bg-card overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setQuizOpen((v) => !v)}
+          className="w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-muted/40 transition-colors"
+        >
+          <div className="size-7 rounded-md bg-[#7e55f6] text-white flex items-center justify-center shrink-0">
+            <Meta.icon size={14} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium m-0 truncate">{item.title || "Quiz"}</p>
+            <p className="text-xs text-muted-foreground m-0">
+              {item.questions.length} question{item.questions.length === 1 ? "" : "s"}
+            </p>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`shrink-0 text-muted-foreground transition-transform ${quizOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {quizOpen && (
+          <div className="px-2.5 pb-2.5 pt-1 flex flex-col gap-3 border-t border-border">
+            {item.questions.length === 0 ? (
+              <p className="text-xs text-muted-foreground m-0 px-1 py-1">No questions added.</p>
+            ) : (
+              item.questions.map((q, qIndex) => (
+                <div key={q.id} className="flex flex-col gap-1.5">
+                  <p className="text-sm font-medium m-0">
+                    <span className="text-muted-foreground mr-1.5">{qIndex + 1}.</span>
+                    {q.question || "Untitled question"}
+                  </p>
+                  <div className="flex flex-col gap-1 pl-5">
+                    {q.options.map((opt, oIndex) => {
+                      const correct = q.answer === oIndex;
+                      return (
+                        <div
+                          key={oIndex}
+                          className={`flex items-center gap-2 text-xs ${
+                            correct ? "text-[#7e55f6] font-medium" : "text-muted-foreground"
+                          }`}
+                        >
+                          {correct ? (
+                            <Check size={13} className="shrink-0 text-[#7e55f6]" />
+                          ) : (
+                            <span className="size-3 rounded-full border border-muted-foreground/30 shrink-0" />
+                          )}
+                          <span>{opt || `Option ${oIndex + 1}`}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     );
   }
 
   // Quiz item: collapsible question builder (edit mode)
   return (
-    <div className="rounded-lg border border-[#7e55f6]/25 bg-[#7e55f6]/4">
+    <div className="rounded-lg border border-[#7e55f6]/25 bg-card">
       <div className="flex items-center gap-2 px-2.5 py-2">
+        {dragHandle}
         <div className="size-7 rounded-md bg-[#7e55f6] text-white flex items-center justify-center shrink-0">
           <Meta.icon size={14} />
         </div>
@@ -955,7 +1020,7 @@ function McqEditor({
   dragHandleProps?: any;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-background p-2 flex flex-col gap-1.5">
+    <div className="rounded-lg border border-border bg-muted/30 p-2 flex flex-col gap-1.5">
       <div className="flex items-center gap-1">
         <div {...dragHandleProps} className="flex items-center justify-center p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md cursor-grab active:cursor-grabbing">
           <GripVertical size={14} />
@@ -967,16 +1032,15 @@ function McqEditor({
           placeholder="Question"
         />
         <Button
-          variant="ghost"
+          variant="destructive"
           size="icon-sm"
-          className="text-muted-foreground hover:text-destructive"
           title="Remove question"
           onClick={onRemove}
         >
           <Trash2 size={14} />
         </Button>
       </div>
-      <div className="flex flex-col gap-1 pl-2">
+      <div className="flex flex-col gap-1 pl-8">
         {question.options.map((opt, oIndex) => (
           <div key={oIndex} className="flex items-center gap-2">
             <input
@@ -993,20 +1057,19 @@ function McqEditor({
                 options[oIndex] = e.target.value;
                 onUpdate({ options });
               }}
-              className={`flex-1 h-8 text-xs ${question.answer === oIndex ? "text-[#7e55f6] font-medium" : ""}`}
+              className={`w-full max-w-xs h-8 text-xs pl-3 ${question.answer === oIndex ? "text-[#7e55f6] font-medium" : ""}`}
               placeholder={`Option ${oIndex + 1}`}
             />
             <Button
-              variant="ghost"
+              variant="destructive"
               size="icon-xs"
-              className="text-muted-foreground hover:text-destructive"
               title="Remove option"
               onClick={() => {
                 const options = question.options.filter((_, i) => i !== oIndex);
                 onUpdate({ options, answer: question.answer >= options.length ? 0 : question.answer });
               }}
             >
-              <Trash2 size={12} />
+              <X size={12} />
             </Button>
           </div>
         ))}

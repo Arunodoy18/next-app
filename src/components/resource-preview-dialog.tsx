@@ -12,7 +12,7 @@ import {
 import { ExternalLink } from "lucide-react";
 
 export interface PreviewTarget {
-  type: "video" | "pdf";
+  type: "video" | "pdf" | "link";
   title: string;
   url: string;
 }
