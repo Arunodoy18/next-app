@@ -179,6 +179,9 @@ export default function AdminUsersPage() {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
                 }).format(signupDateObj);
 
                 return (

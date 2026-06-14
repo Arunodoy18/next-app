@@ -68,6 +68,7 @@ export default function StudentDetailDialog({
 
   const submitted = (view?.student.writtenAnswers.length ?? 0) > 0;
   const pendingCount = view?.student.writtenAnswers.filter((a) => a.score === null).length ?? 0;
+  const hasInput = Object.values(drafts).some((d) => d.score.trim() !== "" || d.feedback.trim() !== "");
 
   const save = () => {
     if (!view || !onSaveEvaluation) return;
@@ -242,7 +243,11 @@ export default function StudentDetailDialog({
                       </span>
                     )}
                   </div>
-                  <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white px-8 h-10 rounded-full font-medium" onClick={save}>
+                  <Button
+                    className="bg-[#7e55f6] hover:bg-[#6742d4] text-white px-8 h-10 rounded-full font-medium"
+                    onClick={save}
+                    disabled={!hasInput}
+                  >
                     Save Evaluation
                   </Button>
                 </DialogFooter>

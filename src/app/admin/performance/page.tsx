@@ -26,6 +26,15 @@ import { usePortalStore } from "@/lib/portal-store";
 import { programmeName, type WrittenAnswer } from "@/lib/mock-data";
 import { Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
+const SORT_OPTIONS: Record<string, string> = {
+  "name-asc": "Name (A–Z)",
+  "name-desc": "Name (Z–A)",
+  "signup-desc": "Newest first",
+  "signup-asc": "Oldest first",
+  "progress-desc": "Progress (high to low)",
+  "quiz-desc": "Avg quiz (high to low)",
+};
+
 export default function AdminPerformancePage() {
   const { programmes, students, setStudents } = usePortalStore();
   const [search, setSearch] = useState("");
@@ -35,6 +44,11 @@ export default function AdminPerformancePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 10;
+
+  const programmeFilterItems: Record<string, string> = {
+    all: "All programmes",
+    ...Object.fromEntries(programmes.map((p) => [p.id, p.name])),
+  };
 
   const filteredAndSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -121,38 +135,37 @@ export default function AdminPerformancePage() {
               />
             </div>
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="flex items-center gap-2">
-                <Filter size={14} className="text-muted-foreground" />
-                <Select value={programmeFilter} onValueChange={(v) => setProgrammeFilter(v ?? "all")}>
-                  <SelectTrigger className="h-9 w-[180px] bg-background">
-                    <SelectValue placeholder="All Programmes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Programmes</SelectItem>
-                    {programmes.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-2">
-                <ArrowUpDown size={14} className="text-muted-foreground" />
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
-                  <SelectTrigger className="h-9 w-[180px] bg-background">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name-asc">Name (A-Z)</SelectItem>
-                    <SelectItem value="name-desc">Name (Z-A)</SelectItem>
-                    <SelectItem value="signup-desc">Newest First</SelectItem>
-                    <SelectItem value="signup-asc">Oldest First</SelectItem>
-                    <SelectItem value="progress-desc">Progress (High to Low)</SelectItem>
-                    <SelectItem value="quiz-desc">Avg Quiz (High to Low)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select
+                items={programmeFilterItems}
+                value={programmeFilter}
+                onValueChange={(v) => setProgrammeFilter(v ?? "all")}
+              >
+                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                  <Filter size={14} className="text-muted-foreground shrink-0" />
+                  <SelectValue placeholder="All programmes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All programmes</SelectItem>
+                  {programmes.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select items={SORT_OPTIONS} value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
+                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                  <ArrowUpDown size={14} className="text-muted-foreground shrink-0" />
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(SORT_OPTIONS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardHeader>
@@ -183,6 +196,9 @@ export default function AdminPerformancePage() {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
                 }).format(signupDateObj);
 
                 return (

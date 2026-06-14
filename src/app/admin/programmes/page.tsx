@@ -81,7 +81,7 @@ export default function ProgrammesPage() {
   const addProgramme = () => {
     const created: Programme = {
       id: nextId("p"),
-      name: "Untitled Programme",
+      name: "",
       description: "",
       instructorIds: [],
       modules: [],
@@ -127,7 +127,7 @@ export default function ProgrammesPage() {
                 <button
                   key={p.id}
                   onClick={() => setSelectedId(active ? null : p.id)}
-                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border ${
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border cursor-pointer ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
                       : "border-transparent hover:bg-muted"
@@ -184,9 +184,6 @@ export default function ProgrammesPage() {
                   Select one from the list, or create a new programme to start building its curriculum.
                 </p>
               </div>
-              <Button size="sm" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={addProgramme}>
-                <Plus size={14} /> New Programme
-              </Button>
             </CardContent>
           </Card>
         )}
@@ -292,16 +289,14 @@ function ProgrammeEditor({
             <CardDescription>Name the programme and assign its instructors.</CardDescription>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {editingDetails && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive shrink-0"
-                onClick={() => setConfirmDelete(true)}
-              >
-                <Trash2 size={14} /> Delete
-              </Button>
-            )}
+            <Button
+              variant="destructive"
+              size="sm"
+              className="shrink-0"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <Trash2 size={14} /> Delete
+            </Button>
             <Button
               size="sm"
               className={editingDetails ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
@@ -329,7 +324,7 @@ function ProgrammeEditor({
                   id="programme-name"
                   value={programme.name}
                   onChange={(e) => onChange({ name: e.target.value })}
-                  placeholder="e.g. Investment Banking Foundations"
+                  placeholder="Enter the programme name"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -338,7 +333,7 @@ function ProgrammeEditor({
                   id="programme-description"
                   value={programme.description}
                   onChange={(e) => onChange({ description: e.target.value })}
-                  placeholder="A short summary of what students will learn"
+                  placeholder="Enter the programme description"
                   className="min-h-16 resize-none"
                 />
               </div>
@@ -377,14 +372,14 @@ function ProgrammeEditor({
               <div>
                 <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Description</Label>
                 <p className="text-sm text-foreground mt-1 leading-relaxed whitespace-pre-wrap">
-                  {programme.description || "No description provided."}
+                  {programme.description || "-"}
                 </p>
               </div>
               <div>
                 <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-2 block">Instructors</Label>
                 <div className="flex items-center gap-1.5 flex-wrap mt-1">
                   {programme.instructorIds.length === 0 ? (
-                    <span className="text-sm text-muted-foreground">No instructors assigned.</span>
+                    <span className="text-sm text-muted-foreground">-</span>
                   ) : (
                     programme.instructorIds.map((id) => {
                       const ins = INSTRUCTORS.find((i) => i.id === id);
