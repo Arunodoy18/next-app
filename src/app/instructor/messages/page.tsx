@@ -133,7 +133,7 @@ export default function InstructorMessagesPage() {
                 {active.messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm ${
+                    className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm break-words ${
                       m.from === "instructor"
                         ? "self-end bg-[#7e55f6] text-white rounded-br-sm"
                         : "self-start bg-muted rounded-bl-sm"

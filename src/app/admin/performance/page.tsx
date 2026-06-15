@@ -170,7 +170,7 @@ export default function AdminPerformancePage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="min-w-[640px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>

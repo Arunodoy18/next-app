@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,19 +40,18 @@ export default function InstructorStudentsPage() {
   const { programmes, students, threads } = usePortalStore();
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [programmeFilter, setProgrammeFilter] = useState<string>("all");
+  // Pre-filter by programme when arriving from the overview
+  // (/instructor/students?programme=<id>).
+  const [programmeFilter, setProgrammeFilter] = useState<string>(() =>
+    typeof window === "undefined"
+      ? "all"
+      : new URLSearchParams(window.location.search).get("programme") ?? "all"
+  );
   const [sortBy, setSortBy] = useState<string>("name-asc");
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 10;
-
-  // Pre-filter by programme when arriving from the overview
-  // (/instructor/students?programme=<id>).
-  useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("programme");
-    if (id) setProgrammeFilter(id);
-  }, []);
 
   const assignedProgrammes = programmes.filter((p) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(p.id));
   const programmeFilterItems: Record<string, string> = {
@@ -103,13 +102,20 @@ export default function InstructorStudentsPage() {
     return result;
   }, [myStudents, search, programmeFilter, sortBy, programmes, threads]);
 
+  // Reset to the first page when filters change — adjust state during render
+  // (the React-recommended alternative to a setState-in-effect).
+  const [prevFilters, setPrevFilters] = useState({ search, programmeFilter, sortBy });
+  if (
+    prevFilters.search !== search ||
+    prevFilters.programmeFilter !== programmeFilter ||
+    prevFilters.sortBy !== sortBy
+  ) {
+    setPrevFilters({ search, programmeFilter, sortBy });
+    setPage(1);
+  }
+
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-
-  // Reset page when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [search, programmeFilter, sortBy]);
 
   const selected = students.find((s) => s.id === selectedId) ?? null;
   const selectedProgramme = selected ? programmes.find((p) => p.id === selected.programmeId) ?? null : null;
@@ -184,7 +190,7 @@ export default function InstructorStudentsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="min-w-[640px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>

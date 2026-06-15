@@ -161,7 +161,7 @@ export default function PortalShell({
         {accountMenu}
       </DropdownMenu>
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-w-0">
         {/* Mobile sidebar backdrop */}
         {sidebarOpen && (
           <div

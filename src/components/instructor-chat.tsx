@@ -131,7 +131,7 @@ export default function InstructorChat({
               </div>
             </DialogHeader>
 
-            <div ref={scrollRef} className="flex-1 min-h-[240px] flex flex-col gap-3 px-5 py-4 overflow-y-auto">
+            <div ref={scrollRef} className="flex-1 min-h-[240px] flex flex-col gap-3 px-4 sm:px-5 py-4 overflow-y-auto">
               {messages.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
                   <MessageSquare size={26} />
@@ -141,7 +141,7 @@ export default function InstructorChat({
                 messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm ${
+                    className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm break-words ${
                       m.from === "student"
                         ? "self-end bg-[#7e55f6] text-white rounded-br-sm"
                         : "self-start bg-muted rounded-bl-sm"
@@ -160,7 +160,7 @@ export default function InstructorChat({
               )}
             </div>
 
-            <div className="flex items-end gap-2 px-5 py-3 border-t border-border">
+            <div className="flex items-end gap-2 px-4 sm:px-5 py-3 border-t border-border">
               <Textarea
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
@@ -186,7 +186,7 @@ export default function InstructorChat({
         ) : (
           /* ---- Instructor list view ---- */
           <>
-            <DialogHeader className="px-5 py-4 border-b border-border">
+            <DialogHeader className="px-4 sm:px-5 py-4 border-b border-border">
               <DialogTitle>Message your instructor</DialogTitle>
               <DialogDescription>
                 {instructors.length > 0

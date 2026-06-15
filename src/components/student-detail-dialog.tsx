@@ -93,7 +93,7 @@ export default function StudentDetailDialog({
       <DialogContent className="sm:max-w-3xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
         {view && (
           <>
-            <div className="px-6 py-5 border-b border-border shrink-0 bg-card/50">
+            <div className="px-4 sm:px-6 py-5 border-b border-border shrink-0 bg-card/50">
               <DialogHeader>
               <DialogTitle>{view.student.name}</DialogTitle>
               <DialogDescription>
@@ -102,7 +102,7 @@ export default function StudentDetailDialog({
               </DialogHeader>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-8">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 flex flex-col gap-8">
               <div>
                 <h3 className="text-sm font-medium mb-3">Module Progress</h3>
                 <div className="flex flex-col gap-2">
@@ -149,9 +149,9 @@ export default function StudentDetailDialog({
                       if (!ans) return null;
                       const draft = drafts[q.id] ?? { score: "", feedback: "" };
                       return (
-                        <div key={q.id} className="flex flex-col gap-4 p-5 rounded-xl border border-border/60 bg-card shadow-sm">
+                        <div key={q.id} className="flex flex-col gap-4 p-4 sm:p-5 rounded-xl border border-border/60 bg-card shadow-sm">
                           <div className="flex items-start justify-between gap-4">
-                            <h4 className="text-base font-medium m-0 leading-snug text-foreground">{q.question}</h4>
+                            <h4 className="text-base font-medium m-0 leading-snug text-foreground break-words min-w-0">{q.question}</h4>
                             {ans.score !== null && (
                               <Badge className="bg-green-500/10 text-green-600 border-transparent shrink-0 text-sm py-1 px-2.5 font-medium">
                                 Scored {ans.score}%
@@ -161,7 +161,7 @@ export default function StudentDetailDialog({
                           
                           <div className="relative mt-1">
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-muted-foreground/20 rounded-full" />
-                            <p className="text-[15px] text-muted-foreground pl-5 py-1 m-0 whitespace-pre-wrap leading-relaxed">
+                            <p className="text-[15px] text-muted-foreground pl-5 py-1 m-0 whitespace-pre-wrap break-words leading-relaxed">
                               {ans.answer}
                             </p>
                           </div>
@@ -206,7 +206,7 @@ export default function StudentDetailDialog({
                           {ans.score !== null && ans.feedback && (
                             <div className="flex flex-col gap-2 mt-3 pt-5 border-t border-border/50">
                               <label className="text-sm font-medium text-foreground">Instructor Feedback</label>
-                              <p className="text-[15px] text-muted-foreground m-0 whitespace-pre-wrap leading-relaxed">
+                              <p className="text-[15px] text-muted-foreground m-0 whitespace-pre-wrap break-words leading-relaxed">
                                 {ans.feedback}
                               </p>
                             </div>
@@ -220,7 +220,7 @@ export default function StudentDetailDialog({
             </div>
 
             {mode === "view" && submitted && onEvaluate && (
-              <div className="px-6 py-4 border-t border-border bg-card/50 shrink-0">
+              <div className="px-4 sm:px-6 py-4 border-t border-border bg-card/50 shrink-0">
                 <DialogFooter>
                   <Button
                     className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
@@ -234,7 +234,7 @@ export default function StudentDetailDialog({
             )}
 
             {mode === "evaluate" && submitted && onSaveEvaluation && pendingCount > 0 && (
-              <div className="px-6 py-4 border-t border-border bg-card/50 shrink-0">
+              <div className="px-4 sm:px-6 py-4 border-t border-border bg-card/50 shrink-0">
                 <DialogFooter className="items-center sm:justify-between w-full">
                   <div className="flex items-center">
                     {savedFlash && (
