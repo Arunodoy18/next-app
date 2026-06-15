@@ -38,9 +38,9 @@ export default function Login() {
         <CardHeader className="text-center pb-8">
           <CardTitle className="text-4xl leading-[1] font-normal m-0">Academy Access</CardTitle>
           <p className="text-sm text-muted-foreground mt-3 m-0">
-            Demo logins: <span className="font-medium text-foreground">student</span>,{' '}
-            <span className="font-medium text-foreground">instructor</span>, or{' '}
-            <span className="font-medium text-foreground">admin</span> — password{' '}
+            Usernames: <span className="font-medium text-foreground">student</span>,{' '}
+            <span className="font-medium text-foreground">instructor</span>{' '}
+            <span className="font-medium text-foreground">admin</span>  -  password{' '}
             <span className="font-medium text-foreground">123</span>
           </p>
         </CardHeader>

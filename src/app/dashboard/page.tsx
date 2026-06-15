@@ -191,7 +191,7 @@ export default function Dashboard() {
     () => true,
     () => false
   );
-  const user = mounted ? localStorage.getItem('user') : null;
+  const user = mounted ? (localStorage.getItem('user') ?? 'student') : null;
   const [completedState, setCompleted] = useState<Record<string, boolean> | null>(null);
   const [activeProgramme, setActiveProgramme] = useState<string>(PROGRAMMES[0]?.id ?? '');
   const [activeModule, setActiveModule] = useState<string>(PROGRAMMES[0]?.modules[0]?.id ?? '');
@@ -217,12 +217,6 @@ export default function Dashboard() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  useEffect(() => {
-    if (mounted && !user) {
-      router.push('/login');
-    }
-  }, [mounted, user, router]);
 
   const storedCompleted = useMemo<Record<string, boolean>>(() => {
     if (!user) return {};
