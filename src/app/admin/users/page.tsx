@@ -123,16 +123,16 @@ export default function AdminUsersPage() {
               <CardDescription>Click a row to edit details, role, or enrolment.</CardDescription>
             </div>
           </div>
-          <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 sm:items-center sm:justify-between min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto min-w-0">
-              <Tabs value={roleFilter} onValueChange={(v) => setRoleFilter(v as UserRole | "all")} className="w-full sm:w-auto min-w-0">
-                <TabsList className="bg-background w-full sm:w-auto max-w-full overflow-x-auto justify-start sm:justify-center">
-                  <TabsTrigger value="all">All Users</TabsTrigger>
-                  <TabsTrigger value="Student">Students</TabsTrigger>
-                  <TabsTrigger value="Instructor">Instructors</TabsTrigger>
-                  <TabsTrigger value="Admin">Admins</TabsTrigger>
-                </TabsList>
-              </Tabs>
+          <div className="w-full flex flex-col lg:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 lg:items-center lg:justify-between min-w-0">
+            <Tabs value={roleFilter} onValueChange={(v) => setRoleFilter(v as UserRole | "all")} className="w-full lg:w-auto min-w-0 shrink-0">
+              <TabsList className="bg-background w-full sm:w-fit max-w-full overflow-x-auto flex sm:inline-flex justify-start">
+                <TabsTrigger value="all" className="flex-1 sm:flex-none shrink-0">All Users</TabsTrigger>
+                <TabsTrigger value="Student" className="flex-1 sm:flex-none shrink-0">Students</TabsTrigger>
+                <TabsTrigger value="Instructor" className="flex-1 sm:flex-none shrink-0">Instructors</TabsTrigger>
+                <TabsTrigger value="Admin" className="flex-1 sm:flex-none shrink-0">Admins</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full lg:w-auto min-w-0">
               <div className="relative w-full sm:w-64">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -142,18 +142,18 @@ export default function AdminUsersPage() {
                   className="pl-9 h-9 w-full bg-background"
                 />
               </div>
-            </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-              <Button variant="outline" size="sm" className="h-9 flex-1 sm:flex-none" onClick={exportUsers}>
-                <Download size={14} className="mr-1.5" /> Export CSV
-              </Button>
-              <Button
-                size="sm"
-                className="h-9 flex-1 sm:flex-none bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student", signupDate: new Date().toISOString() })}
-              >
-                <Plus size={14} className="mr-1.5" /> New User
-              </Button>
+              <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                <Button variant="outline" size="sm" className="h-9 flex-1 sm:flex-none" onClick={exportUsers}>
+                  <Download size={14} className="mr-1.5" /> Export CSV
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-9 flex-1 sm:flex-none bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                  onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student", signupDate: new Date().toISOString() })}
+                >
+                  <Plus size={14} className="mr-1.5" /> New User
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
