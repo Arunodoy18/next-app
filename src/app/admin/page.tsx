@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { usePortalStore } from "@/lib/portal-store";
 import { instructorName } from "@/lib/mock-data";
-import { GraduationCap, Users, ClipboardCheck, UserCog, ArrowRight, Plus } from "lucide-react";
+import { GraduationCap, Users, ClipboardCheck, UserCog, ArrowRight } from "lucide-react";
 
 export default function AdminOverview() {
   const { programmes, users, students } = usePortalStore();
@@ -39,13 +39,6 @@ export default function AdminOverview() {
           <h1 className="text-3xl font-normal m-0">Overview</h1>
           <p className="text-muted-foreground mt-1">Everything across the academy at a glance.</p>
         </div>
-        <Button
-          size="sm"
-          className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-          render={<Link href="/admin/programmes" />}
-        >
-          <Plus size={14} /> New Programme
-        </Button>
       </div>
 
       {/* Stats */}

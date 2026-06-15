@@ -27,6 +27,7 @@ import {
   INSTRUCTORS,
   type Programme,
   type ProgrammeModule,
+  type WrittenQuestion,
   type ModuleItem,
   type McqQuestion,
 } from "@/lib/mock-data";
@@ -216,6 +217,11 @@ function ProgrammeEditor({
   const [isNew, setIsNew] = useState(() => !programme.name.trim());
   const [editingDetails, setEditingDetails] = useState(() => !programme.name.trim());
 
+  const [detailsSnapshot, setDetailsSnapshot] = useState<Partial<Programme> | null>(null);
+  const startEditDetails = () => {
+    setDetailsSnapshot({ name: programme.name, instructorIds: programme.instructorIds });
+    setEditingDetails(true);
+  };
   const saveDetails = () => {
     // Allow saving even with no name — it becomes "Untitled Programme".
     const name = programme.name.trim() || "Untitled Programme";
@@ -223,8 +229,41 @@ function ProgrammeEditor({
     setEditingDetails(false);
     setIsNew(false);
   };
+  const cancelDetails = () => {
+    if (detailsSnapshot) onChange(detailsSnapshot);
+    setEditingDetails(false);
+  };
+
   const [editingTest, setEditingTest] = useState(false);
   const [editing, setEditing] = useState(false);
+
+  // Curriculum edit: snapshot modules so Cancel can discard changes. Opening
+  // edit on an empty curriculum seeds the first module automatically.
+  const [modulesSnapshot, setModulesSnapshot] = useState<ProgrammeModule[] | null>(null);
+  const startEditCurriculum = () => {
+    setModulesSnapshot(programme.modules);
+    setEditing(true);
+    if (programme.modules.length === 0) addModule();
+  };
+  const cancelCurriculum = () => {
+    if (modulesSnapshot) onChange({ modules: modulesSnapshot });
+    setEditing(false);
+  };
+
+  // Written test edit: same pattern — snapshot for Cancel, seed first question
+  // when opening edit on an empty test.
+  const [testSnapshot, setTestSnapshot] = useState<WrittenQuestion[] | null>(null);
+  const startEditTest = () => {
+    setTestSnapshot(programme.writtenTest);
+    setEditingTest(true);
+    if (programme.writtenTest.length === 0) {
+      onChange({ writtenTest: [{ id: nextId("w"), question: "" }] });
+    }
+  };
+  const cancelTest = () => {
+    if (testSnapshot) onChange({ writtenTest: testSnapshot });
+    setEditingTest(false);
+  };
 
   const toggleModule = (id: string) => {
     setExpandedModules((prev) => {
@@ -312,19 +351,26 @@ function ProgrammeEditor({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setEditingDetails(true)}
+                onClick={startEditDetails}
               >
                 <Pencil size={14} /> Edit
               </Button>
             )}
             {editingDetails && (
-              <Button
-                size="sm"
-                className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                onClick={saveDetails}
-              >
-                <Check size={14} /> Save
-              </Button>
+              <>
+                {!isNew && (
+                  <Button size="sm" variant="outline" onClick={cancelDetails}>
+                    <X size={14} /> Cancel
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                  onClick={saveDetails}
+                >
+                  <Check size={14} /> Save
+                </Button>
+              </>
             )}
           </div>
         </CardHeader>
@@ -428,11 +474,16 @@ function ProgrammeEditor({
                 <Plus size={14} /> Module
               </Button>
             )}
+            {editing && (
+              <Button size="sm" variant="outline" onClick={cancelCurriculum}>
+                <X size={14} /> Cancel
+              </Button>
+            )}
             <Button
               size="sm"
               className={editing ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
               variant={editing ? "default" : "outline"}
-              onClick={() => setEditing((v) => !v)}
+              onClick={() => (editing ? setEditing(false) : startEditCurriculum())}
             >
               {editing ? (
                 <>
@@ -501,11 +552,16 @@ function ProgrammeEditor({
                 <Plus size={14} /> Add Question
               </Button>
             )}
+            {editingTest && (
+              <Button size="sm" variant="outline" onClick={cancelTest}>
+                <X size={14} /> Cancel
+              </Button>
+            )}
             <Button
               size="sm"
               className={editingTest ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
               variant={editingTest ? "default" : "outline"}
-              onClick={() => setEditingTest((v) => !v)}
+              onClick={() => (editingTest ? setEditingTest(false) : startEditTest())}
             >
               {editingTest ? (
                 <>
