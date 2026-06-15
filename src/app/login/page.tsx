@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { User, Lock, ChevronLeft } from 'lucide-react';
+import { authenticate, login } from '@/lib/auth';
 
 export default function Login() {
   const router = useRouter();
@@ -17,9 +18,10 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userId === 'test' && password === '123') {
-      localStorage.setItem('user', userId);
-      router.push('/dashboard');
+    const account = authenticate(userId, password);
+    if (account) {
+      login(account.userId, account.role);
+      router.push(account.home);
     } else {
       setError('Invalid User ID or Password');
     }
@@ -35,6 +37,12 @@ export default function Login() {
       <Card className="w-full max-w-[450px] shadow-lg pt-12 pb-12 px-4 sm:px-8 rounded-xl">
         <CardHeader className="text-center pb-8">
           <CardTitle className="text-4xl leading-[1] font-normal m-0">Academy Access</CardTitle>
+          <p className="text-sm text-muted-foreground mt-3 m-0">
+            Demo logins: <span className="font-medium text-foreground">student</span>,{' '}
+            <span className="font-medium text-foreground">instructor</span>, or{' '}
+            <span className="font-medium text-foreground">admin</span> — password{' '}
+            <span className="font-medium text-foreground">123</span>
+          </p>
         </CardHeader>
 
         <CardContent className="p-0">

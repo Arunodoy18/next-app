@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo/logo";
+import { logout } from "@/lib/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -93,7 +94,10 @@ export default function PortalShell({
       <DropdownMenuItem
         variant="destructive"
         className="text-base py-2 [&_svg]:size-[18px]"
-        onClick={() => router.push("/login")}
+        onClick={() => {
+          logout();
+          router.push("/login");
+        }}
       >
         <LogOut size={18} />
         Log Out

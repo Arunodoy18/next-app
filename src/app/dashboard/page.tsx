@@ -17,6 +17,7 @@ import {
 import { useTheme } from 'next-themes';
 import Logo from '@/components/logo/logo';
 import InstructorChat from '@/components/instructor-chat';
+import { logout } from '@/lib/auth';
 import {
   PlayCircle,
   FileText,
@@ -140,7 +141,6 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
   pdf: 'PDF',
 };
 
-const SAMPLE_VIDEO_URL = 'https://www.w3schools.com/html/mov_bbb.mp4';
 const SAMPLE_PDF_URL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
 const SAMPLE_QUIZ_QUESTIONS: { id: string; question: string; options: string[]; answer: number }[] = [
@@ -251,7 +251,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    logout();
     router.push('/login');
   };
 
@@ -769,7 +769,10 @@ export default function Dashboard() {
                           fullscreenItem === resource.id ? (
                             <div className="fixed inset-0 z-[80] bg-background">
                               {resource.type === 'video' ? (
-                                <video controls autoPlay className="w-full h-full bg-black" src={SAMPLE_VIDEO_URL} />
+                                <div className="w-full h-full bg-black flex flex-col items-center justify-center gap-3 text-white/60">
+                                  <PlayCircle size={56} strokeWidth={1.5} />
+                                  <p className="text-sm m-0">Video preview placeholder</p>
+                                </div>
                               ) : (
                                 <iframe src={SAMPLE_PDF_URL} className="w-full h-full" title={resource.title} />
                               )}
@@ -796,7 +799,10 @@ export default function Dashboard() {
                           ) : (
                             <div className="rounded-lg border border-border overflow-hidden">
                               {resource.type === 'video' ? (
-                                <video controls className="w-full max-h-[360px] bg-black" src={SAMPLE_VIDEO_URL} />
+                                <div className="w-full aspect-video bg-black flex flex-col items-center justify-center gap-2 text-white/60">
+                                  <PlayCircle size={48} strokeWidth={1.5} />
+                                  <p className="text-sm m-0">Video preview placeholder</p>
+                                </div>
                               ) : (
                                 <iframe src={SAMPLE_PDF_URL} className="w-full h-[400px]" title={resource.title} />
                               )}
