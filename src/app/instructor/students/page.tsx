@@ -191,6 +191,7 @@ export default function InstructorStudentsPage() {
                 <TableHead>Programme</TableHead>
                 <TableHead>Signup Date</TableHead>
                 <TableHead>Module Progress</TableHead>
+                <TableHead>Avg. Grade</TableHead>
                 <TableHead>Written Test</TableHead>
                 <TableHead>Messages</TableHead>
               </TableRow>
@@ -200,6 +201,12 @@ export default function InstructorStudentsPage() {
                 const prog = programmes.find((p) => p.id === s.programmeId);
                 const totalModules = prog?.modules.length ?? 0;
                 const doneModules = s.moduleProgress.filter((m) => m.completed).length;
+                const grades = s.moduleProgress
+                  .map((m) => m.mcqScore)
+                  .filter((x): x is number => x !== null);
+                const avgGrade = grades.length
+                  ? Math.round(grades.reduce((a, b) => a + b, 0) / grades.length)
+                  : null;
                 const submitted = s.writtenAnswers.length > 0;
                 const pending = s.writtenAnswers.filter((a) => a.score === null).length;
                 const thread = threads.find((t) => t.studentId === s.id);
@@ -230,6 +237,16 @@ export default function InstructorStudentsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {avgGrade === null ? (
+                        <span className="text-xs text-muted-foreground">N/A</span>
+                      ) : (
+                        <div className="flex items-center gap-2 min-w-[140px]">
+                          <Progress value={avgGrade} className="w-24 h-2" />
+                          <span className="text-xs text-muted-foreground font-medium">{avgGrade}%</span>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       {!submitted ? (
                         <Badge variant="outline" className="font-normal text-muted-foreground">Not submitted</Badge>
                       ) : pending === 0 ? (
@@ -254,7 +271,7 @@ export default function InstructorStudentsPage() {
               })}
               {paginated.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
                     No students match your filters.
                   </TableCell>
                 </TableRow>
