@@ -1,8 +1,8 @@
 {
   "C:\\Users\\exodu\\Desktop\\next-app\\.claude\\settings.local.json": {
-    "mtime": 1781183266.5461202,
-    "ast_hash": "41adeb79ae6be22de47c171ab7f7dcf2",
-    "semantic_hash": "41adeb79ae6be22de47c171ab7f7dcf2"
+    "mtime": 1781710258.3540235,
+    "ast_hash": "113f3dd787984566815d8d8b37c39da1",
+    "semantic_hash": "113f3dd787984566815d8d8b37c39da1"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\components.json": {
     "mtime": 1781107907.7345767,
@@ -20,9 +20,9 @@
     "semantic_hash": "9b77af189a21a7a64e4bd7a426f64176"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\package.json": {
-    "mtime": 1781179086.225538,
-    "ast_hash": "b42beafe7380083920a5d2bac6476154",
-    "semantic_hash": "b42beafe7380083920a5d2bac6476154"
+    "mtime": 1781408755.8016593,
+    "ast_hash": "8b2560c3e95e1a0f6b5644c891cd1fa8",
+    "semantic_hash": "8b2560c3e95e1a0f6b5644c891cd1fa8"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\postcss.config.mjs": {
     "mtime": 1781107907.7375762,
@@ -35,29 +35,19 @@
     "semantic_hash": "32cbb153c9ee90d305c0c90d849f23b6"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\dashboard\\page.tsx": {
-    "mtime": 1781183103.5711162,
-    "ast_hash": "1714644cc58197714ffcec4845b41da8",
-    "semantic_hash": "1714644cc58197714ffcec4845b41da8"
-  },
-  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\forgot-password\\page.tsx": {
-    "mtime": 1781176207.646235,
-    "ast_hash": "51d0782004745ce0ac24af786f321af1",
-    "semantic_hash": "51d0782004745ce0ac24af786f321af1"
+    "mtime": 1781709610.7704759,
+    "ast_hash": "e3ecdb7721cd20d09348649b3763fb8a",
+    "semantic_hash": "e3ecdb7721cd20d09348649b3763fb8a"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\layout.tsx": {
-    "mtime": 1781175233.0650742,
-    "ast_hash": "e7f772614420c24b55fd461d4c2b8dfb",
-    "semantic_hash": "e7f772614420c24b55fd461d4c2b8dfb"
+    "mtime": 1781185310.7901611,
+    "ast_hash": "fd414962349cfb99c267e9c64e2849cd",
+    "semantic_hash": "fd414962349cfb99c267e9c64e2849cd"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\login\\page.tsx": {
-    "mtime": 1781177169.1571803,
-    "ast_hash": "fa464b1dac2b694fc7f6cbedbe675b29",
-    "semantic_hash": "fa464b1dac2b694fc7f6cbedbe675b29"
-  },
-  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\reset-password\\page.tsx": {
-    "mtime": 1781176830.8232465,
-    "ast_hash": "3dcf284d03e8d18cf81a225d07cd46b4",
-    "semantic_hash": "3dcf284d03e8d18cf81a225d07cd46b4"
+    "mtime": 1781701641.0868497,
+    "ast_hash": "d326759e6e586e2c6a67d3c3922fc0a8",
+    "semantic_hash": "d326759e6e586e2c6a67d3c3922fc0a8"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\logo\\logo.tsx": {
     "mtime": 1781178282.843061,
@@ -70,9 +60,9 @@
     "semantic_hash": "c00fa9d4a460ac4f9c808ad29d573581"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\theme-toggle.tsx": {
-    "mtime": 1781177719.2492237,
-    "ast_hash": "dd3a3bd46a2e641985e1be3dd3967a13",
-    "semantic_hash": "dd3a3bd46a2e641985e1be3dd3967a13"
+    "mtime": 1781701911.9066973,
+    "ast_hash": "3d55a894ee961b8b44c171d196a898da",
+    "semantic_hash": "3d55a894ee961b8b44c171d196a898da"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\avatar.tsx": {
     "mtime": 1781177672.7457333,
@@ -80,9 +70,9 @@
     "semantic_hash": "8b41492907a73176027427a3f0fd2302"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\button.tsx": {
-    "mtime": 1781107907.743576,
-    "ast_hash": "e04ce5251d6b0dd04020988126c905e9",
-    "semantic_hash": "e04ce5251d6b0dd04020988126c905e9"
+    "mtime": 1781323463.9418018,
+    "ast_hash": "96fd0ebadd1ba22df88466b903ea199e",
+    "semantic_hash": "96fd0ebadd1ba22df88466b903ea199e"
   },
   "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\card.tsx": {
     "mtime": 1781107907.743576,
@@ -133,5 +123,165 @@
     "mtime": 1781107907.7335768,
     "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
     "semantic_hash": "f15aaa42d5d299d091b1171097ea56ad"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\admin\\layout.tsx": {
+    "mtime": 1781290853.227924,
+    "ast_hash": "36aba7a2f6fa762cbd613306c56f5926",
+    "semantic_hash": "36aba7a2f6fa762cbd613306c56f5926"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\admin\\page.tsx": {
+    "mtime": 1781703974.729645,
+    "ast_hash": "692dae80684852e750d8ed91db770e21",
+    "semantic_hash": "692dae80684852e750d8ed91db770e21"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\admin\\performance\\page.tsx": {
+    "mtime": 1781709844.4857295,
+    "ast_hash": "245fd66b7d913adb246926a152971401",
+    "semantic_hash": "245fd66b7d913adb246926a152971401"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\admin\\programmes\\page.tsx": {
+    "mtime": 1781701535.3358243,
+    "ast_hash": "0be864c5762239c22876858291259eee",
+    "semantic_hash": "0be864c5762239c22876858291259eee"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\admin\\users\\page.tsx": {
+    "mtime": 1781705553.4916208,
+    "ast_hash": "2b081ecf22a29d7469dcc7d731fe3883",
+    "semantic_hash": "2b081ecf22a29d7469dcc7d731fe3883"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\forgot\\page.tsx": {
+    "mtime": 1781701654.800694,
+    "ast_hash": "e3dbe8ffa71bea496f7160905ceddb85",
+    "semantic_hash": "e3dbe8ffa71bea496f7160905ceddb85"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\instructor\\evaluations\\page.tsx": {
+    "mtime": 1781704727.0303497,
+    "ast_hash": "6f8cdf39c447862f1231da88859be17d",
+    "semantic_hash": "6f8cdf39c447862f1231da88859be17d"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\instructor\\layout.tsx": {
+    "mtime": 1781701949.7243989,
+    "ast_hash": "5fe9fc4223da9cb5f7c3fe7d4355d4e0",
+    "semantic_hash": "5fe9fc4223da9cb5f7c3fe7d4355d4e0"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\instructor\\messages\\page.tsx": {
+    "mtime": 1781705055.1938214,
+    "ast_hash": "0bbec63185400d56eda3c3bbf2465046",
+    "semantic_hash": "0bbec63185400d56eda3c3bbf2465046"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\instructor\\page.tsx": {
+    "mtime": 1781705038.1610599,
+    "ast_hash": "5c2d7daf1c14734f4d26b13ba7b72105",
+    "semantic_hash": "5c2d7daf1c14734f4d26b13ba7b72105"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\instructor\\students\\page.tsx": {
+    "mtime": 1781705245.6789613,
+    "ast_hash": "370e937857eff39756dd3424da1e7aad",
+    "semantic_hash": "370e937857eff39756dd3424da1e7aad"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\internal\\page.tsx": {
+    "mtime": 1781703171.4555705,
+    "ast_hash": "83ffd08c31786d66103a25595175fba4",
+    "semantic_hash": "83ffd08c31786d66103a25595175fba4"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\page.tsx": {
+    "mtime": 1781532416.001912,
+    "ast_hash": "8c232acb499056824679028779003f1c",
+    "semantic_hash": "8c232acb499056824679028779003f1c"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\instructor-chat.tsx": {
+    "mtime": 1781528942.8713677,
+    "ast_hash": "0976c49919661ac72cf1e6feed2e9968",
+    "semantic_hash": "0976c49919661ac72cf1e6feed2e9968"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\instructor-tag.tsx": {
+    "mtime": 1781704593.9003992,
+    "ast_hash": "ed1a614960cc4df9c810fa7f6637d075",
+    "semantic_hash": "ed1a614960cc4df9c810fa7f6637d075"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\page-title.tsx": {
+    "mtime": 1781701482.0953932,
+    "ast_hash": "9d37e7c7450822b02149d5e556152bce",
+    "semantic_hash": "9d37e7c7450822b02149d5e556152bce"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\portal-shell.tsx": {
+    "mtime": 1781531555.299621,
+    "ast_hash": "48e3f609dc902e0bea1b438b90adb6f9",
+    "semantic_hash": "48e3f609dc902e0bea1b438b90adb6f9"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\resource-preview-dialog.tsx": {
+    "mtime": 1781439732.2240422,
+    "ast_hash": "80e789cb58ee13662a67e01a1459d4d7",
+    "semantic_hash": "80e789cb58ee13662a67e01a1459d4d7"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\student-detail-dialog.tsx": {
+    "mtime": 1781705225.9241252,
+    "ast_hash": "f502bc8e7a7f53cdbc34d3d9b934f61f",
+    "semantic_hash": "f502bc8e7a7f53cdbc34d3d9b934f61f"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\badge.tsx": {
+    "mtime": 1781274331.0728796,
+    "ast_hash": "e4ec840217040d5630ee6ed7213a1d72",
+    "semantic_hash": "e4ec840217040d5630ee6ed7213a1d72"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\dialog.tsx": {
+    "mtime": 1781274331.2542877,
+    "ast_hash": "d9618a63d34473ec512321cc12d43692",
+    "semantic_hash": "d9618a63d34473ec512321cc12d43692"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\select.tsx": {
+    "mtime": 1781274330.9964838,
+    "ast_hash": "ab95f478cb74d1906b07425c15b124cc",
+    "semantic_hash": "ab95f478cb74d1906b07425c15b124cc"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\table.tsx": {
+    "mtime": 1781274330.6743474,
+    "ast_hash": "44f87727e60080863edb00fdd2fcd8da",
+    "semantic_hash": "44f87727e60080863edb00fdd2fcd8da"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\tabs.tsx": {
+    "mtime": 1781274330.77121,
+    "ast_hash": "429035bc858475cd3bcedbb08a5ba8da",
+    "semantic_hash": "429035bc858475cd3bcedbb08a5ba8da"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\components\\ui\\textarea.tsx": {
+    "mtime": 1781274330.850558,
+    "ast_hash": "d448d2a90e48542e51b93a1189127bf2",
+    "semantic_hash": "d448d2a90e48542e51b93a1189127bf2"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\lib\\auth.ts": {
+    "mtime": 1781531524.615613,
+    "ast_hash": "98cc94cc4bd750dfb8e21d2bc8a447ca",
+    "semantic_hash": "98cc94cc4bd750dfb8e21d2bc8a447ca"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\lib\\instructor-context.ts": {
+    "mtime": 1781276222.7634058,
+    "ast_hash": "cc9e2d7f41dd3d7cd32f3475916210b4",
+    "semantic_hash": "cc9e2d7f41dd3d7cd32f3475916210b4"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\lib\\mock-data.ts": {
+    "mtime": 1781699309.4607375,
+    "ast_hash": "e2b99722d0280a5ee93ebce66c9be034",
+    "semantic_hash": "e2b99722d0280a5ee93ebce66c9be034"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\lib\\portal-store.tsx": {
+    "mtime": 1781699330.8864076,
+    "ast_hash": "3a7cb55da1ef7f1e9e544a5033e201ac",
+    "semantic_hash": "3a7cb55da1ef7f1e9e544a5033e201ac"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\IMPLEMENTATION.md": {
+    "mtime": 1781709638.6470053,
+    "ast_hash": "7303ef40f56088601c9574d4883f6296",
+    "semantic_hash": "7303ef40f56088601c9574d4883f6296"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\IMPLEMENTATION_GUIDE.md": {
+    "mtime": 1781274096.1851017,
+    "ast_hash": "8516c2d537eddae99d5a9f9141ff6904",
+    "semantic_hash": "8516c2d537eddae99d5a9f9141ff6904"
+  },
+  "C:\\Users\\exodu\\Desktop\\next-app\\src\\app\\icon.svg": {
+    "mtime": 1781249740.4377728,
+    "ast_hash": "9a8e79855b591d9f1d682d8876f97a8a",
+    "semantic_hash": "9a8e79855b591d9f1d682d8876f97a8a"
   }
 }
