@@ -39,6 +39,7 @@ export default function StudentDetailDialog({
   student,
   programme,
   mode = "evaluate",
+  isInstructor = false,
   onClose,
   onSaveEvaluation,
   onEvaluate,
@@ -46,6 +47,7 @@ export default function StudentDetailDialog({
   student: StudentRecord | null;
   programme: Programme | null;
   mode?: "view" | "evaluate";
+  isInstructor?: boolean;
   onClose: () => void;
   onSaveEvaluation?: (studentId: string, answers: WrittenAnswer[]) => void;
   onEvaluate?: (studentId: string) => void;
@@ -95,7 +97,12 @@ export default function StudentDetailDialog({
           <>
             <div className="px-4 sm:px-6 py-5 border-b border-border shrink-0 bg-card/50">
               <DialogHeader>
-              <DialogTitle>{view.student.name}</DialogTitle>
+              <DialogTitle>
+                {view.student.name}
+                {isInstructor && (
+                  <span className="ml-2 text-sm font-normal text-muted-foreground">(Instructor)</span>
+                )}
+              </DialogTitle>
               <DialogDescription>
                 {view.student.email} · {view.programme.name}
               </DialogDescription>
@@ -135,7 +142,7 @@ export default function StudentDetailDialog({
                       <Badge className="bg-green-500/10 text-green-600 border-transparent shrink-0">Evaluated</Badge>
                     ) : (
                       <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent shrink-0">
-                        Pending review
+                        Pending
                       </Badge>
                     ))}
                 </div>

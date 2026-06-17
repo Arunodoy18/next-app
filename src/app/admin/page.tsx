@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { usePortalStore } from "@/lib/portal-store";
 import { instructorName } from "@/lib/mock-data";
+import PageTitle from "@/components/page-title";
 import { GraduationCap, Users, ClipboardCheck, UserCog, ArrowRight } from "lucide-react";
 
 export default function AdminOverview() {
-  const { programmes, users, students } = usePortalStore();
+  const { programmes, users, students, internalProgrammes, internalStudents } = usePortalStore();
 
   const studentCount = users.filter((u) => u.role === "Student").length;
   const instructorCount = users.filter((u) => u.role === "Instructor").length;
@@ -24,6 +25,12 @@ export default function AdminOverview() {
     { icon: Users, label: "Students", value: studentCount, href: "/admin/users" },
     { icon: UserCog, label: "Instructors", value: instructorCount, href: "/admin/users" },
     {
+      icon: GraduationCap,
+      label: "Instructor programmes",
+      value: internalProgrammes.length,
+      href: "/admin/programmes",
+    },
+    {
       icon: ClipboardCheck,
       label: "Answers awaiting review",
       value: pendingAnswers,
@@ -34,6 +41,7 @@ export default function AdminOverview() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Admin" />
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-normal m-0">Overview</h1>
@@ -42,7 +50,7 @@ export default function AdminOverview() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="shadow-sm py-4 hover:border-[#7e55f6]/40 transition-colors h-full">
@@ -116,7 +124,7 @@ export default function AdminOverview() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Progress value={avgProgress} className="flex-1" />
-                  <span className="text-xs text-muted-foreground w-24">{avgProgress}% avg progress</span>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">{avgProgress}% avg progress</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>
@@ -130,6 +138,76 @@ export default function AdminOverview() {
           })}
           {programmes.length === 0 && (
             <p className="text-sm text-muted-foreground col-span-full text-center py-6">No programmes yet.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Instructor (internal) programme performance summary */}
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base font-medium m-0">Instructor Programmes</CardTitle>
+            <CardDescription>Internal training delivered to instructors, who are themselves learners here.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" render={<Link href="/admin/performance" />}>
+            All learners <ArrowRight size={13} />
+          </Button>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {internalProgrammes.map((p) => {
+            const enrolled = internalStudents.filter((s) => s.programmeId === p.id);
+            const totalModules = p.modules.length;
+            const avgProgress =
+              enrolled.length && totalModules
+                ? Math.round(
+                    (enrolled.reduce(
+                      (acc, s) => acc + s.moduleProgress.filter((m) => m.completed).length / totalModules,
+                      0
+                    ) /
+                      enrolled.length) *
+                      100
+                  )
+                : 0;
+            const scores = enrolled.flatMap((s) =>
+              s.moduleProgress.map((m) => m.mcqScore).filter((x): x is number => x !== null)
+            );
+            const avgQuiz = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+            const pending = enrolled.reduce(
+              (acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length,
+              0
+            );
+
+            return (
+              <div key={p.id} className="rounded-lg border border-border p-4 flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium m-0 truncate">{p.name}</p>
+                    <p className="text-xs text-muted-foreground m-0 mt-0.5 truncate">
+                      {p.instructorIds.map(instructorName).join(", ") || "No instructors assigned"}
+                    </p>
+                  </div>
+                  {pending > 0 && (
+                    <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent shrink-0">
+                      {pending} pending
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Progress value={avgProgress} className="flex-1" />
+                  <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">{avgProgress}% avg progress</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    {enrolled.length} learner{enrolled.length === 1 ? "" : "s"} · {totalModules} module
+                    {totalModules === 1 ? "" : "s"}
+                  </span>
+                  <span>Avg quiz score: {avgQuiz !== null ? `${avgQuiz}%` : "N/A"}</span>
+                </div>
+              </div>
+            );
+          })}
+          {internalProgrammes.length === 0 && (
+            <p className="text-sm text-muted-foreground col-span-full text-center py-6">No instructor programmes yet.</p>
           )}
         </CardContent>
       </Card>

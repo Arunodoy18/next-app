@@ -23,9 +23,11 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
+import InstructorTag from "@/components/instructor-tag";
+import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { programmeName } from "@/lib/mock-data";
+import { isInstructorLearner } from "@/lib/mock-data";
 import { Search, MessageSquare, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const SORT_OPTIONS: Record<string, string> = {
@@ -37,7 +39,7 @@ const SORT_OPTIONS: Record<string, string> = {
 };
 
 export default function InstructorStudentsPage() {
-  const { programmes, students, threads } = usePortalStore();
+  const { programmes, students, threads, internalProgrammes, internalStudents } = usePortalStore();
   const router = useRouter();
   const [search, setSearch] = useState("");
   // Pre-filter by programme when arriving from the overview
@@ -54,14 +56,32 @@ export default function InstructorStudentsPage() {
   const ITEMS_PER_PAGE = 10;
 
   const assignedProgrammes = programmes.filter((p) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(p.id));
+  // Internal programmes this instructor delivers, plus their own internal
+  // enrolment — surfaced alongside their standard roster.
+  const myInternalProgrammes = useMemo(
+    () => internalProgrammes.filter((p) => p.instructorIds.includes(CURRENT_INSTRUCTOR.id)),
+    [internalProgrammes]
+  );
+  const allProgrammes = useMemo(
+    () => [...programmes, ...internalProgrammes],
+    [programmes, internalProgrammes]
+  );
+  const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
   const programmeFilterItems: Record<string, string> = {
     all: "All programmes",
-    ...Object.fromEntries(assignedProgrammes.map((p) => [p.id, p.name])),
+    ...Object.fromEntries([...assignedProgrammes, ...myInternalProgrammes].map((p) => [p.id, p.name])),
   };
-  const myStudents = useMemo(
-    () => students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId)),
-    [students]
-  );
+  const myStudents = useMemo(() => {
+    const myInternalProgrammeIds = myInternalProgrammes.map((p) => p.id);
+    const myInternalStudents = internalStudents.filter(
+      (s) => myInternalProgrammeIds.includes(s.programmeId) || s.name === CURRENT_INSTRUCTOR.name
+    );
+    const standard = students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
+    // Dedupe by id in case an internal learner matches more than one rule.
+    return [...standard, ...myInternalStudents].filter(
+      (s, i, arr) => arr.findIndex((x) => x.id === s.id) === i
+    );
+  }, [students, internalStudents, myInternalProgrammes]);
 
   const filteredAndSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -75,12 +95,12 @@ export default function InstructorStudentsPage() {
       if (sortBy === "name-asc") return a.name.localeCompare(b.name);
       if (sortBy === "name-desc") return b.name.localeCompare(a.name);
       
-      const aProg = programmes.find((p) => p.id === a.programmeId);
+      const aProg = allProgrammes.find((p) => p.id === a.programmeId);
       const aTotal = aProg?.modules.length || 1;
       const aDone = a.moduleProgress.filter((m) => m.completed).length;
       const aProgress = aDone / aTotal;
 
-      const bProg = programmes.find((p) => p.id === b.programmeId);
+      const bProg = allProgrammes.find((p) => p.id === b.programmeId);
       const bTotal = bProg?.modules.length || 1;
       const bDone = b.moduleProgress.filter((m) => m.completed).length;
       const bProgress = bDone / bTotal;
@@ -100,7 +120,7 @@ export default function InstructorStudentsPage() {
     });
 
     return result;
-  }, [myStudents, search, programmeFilter, sortBy, programmes, threads]);
+  }, [myStudents, search, programmeFilter, sortBy, allProgrammes, threads]);
 
   // Reset to the first page when filters change — adjust state during render
   // (the React-recommended alternative to a setState-in-effect).
@@ -117,8 +137,8 @@ export default function InstructorStudentsPage() {
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  const selected = students.find((s) => s.id === selectedId) ?? null;
-  const selectedProgramme = selected ? programmes.find((p) => p.id === selected.programmeId) ?? null : null;
+  const selected = myStudents.find((s) => s.id === selectedId) ?? null;
+  const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
   const goEvaluate = (studentId: string) => {
     setSelectedId(null);
@@ -131,6 +151,7 @@ export default function InstructorStudentsPage() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Students" />
       <div>
         <h1 className="text-3xl font-normal m-0">Students</h1>
         <p className="text-muted-foreground mt-1">Everyone enrolled in your assigned programmes.</p>
@@ -166,7 +187,7 @@ export default function InstructorStudentsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All programmes</SelectItem>
-                  {assignedProgrammes.map((p) => (
+                  {[...assignedProgrammes, ...myInternalProgrammes].map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.name}
                     </SelectItem>
@@ -204,7 +225,7 @@ export default function InstructorStudentsPage() {
             </TableHeader>
             <TableBody>
               {paginated.map((s) => {
-                const prog = programmes.find((p) => p.id === s.programmeId);
+                const prog = allProgrammes.find((p) => p.id === s.programmeId);
                 const totalModules = prog?.modules.length ?? 0;
                 const doneModules = s.moduleProgress.filter((m) => m.completed).length;
                 const grades = s.moduleProgress
@@ -229,7 +250,10 @@ export default function InstructorStudentsPage() {
                 return (
                   <TableRow key={s.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setSelectedId(s.id)}>
                     <TableCell>
-                      <p className="font-medium m-0">{s.name}</p>
+                      <p className="font-medium m-0">
+                        {s.name}
+                        {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+                      </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{programmeName(s.programmeId)}</TableCell>
@@ -254,11 +278,11 @@ export default function InstructorStudentsPage() {
                     </TableCell>
                     <TableCell>
                       {!submitted ? (
-                        <Badge variant="outline" className="font-normal text-muted-foreground">Not submitted</Badge>
+                        <Badge variant="outline" className="font-normal text-muted-foreground">Unsubmitted</Badge>
                       ) : pending === 0 ? (
                         <Badge className="bg-green-500/10 text-green-600 border-transparent hover:bg-green-500/20 font-medium">Evaluated</Badge>
                       ) : (
-                        <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent hover:bg-[#7e55f6]/20 font-medium">Pending review</Badge>
+                        <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent hover:bg-[#7e55f6]/20 font-medium">Pending</Badge>
                       )}
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -335,6 +359,7 @@ export default function InstructorStudentsPage() {
         student={selected}
         programme={selectedProgramme}
         mode="view"
+        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onEvaluate={goEvaluate}
       />

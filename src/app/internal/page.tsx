@@ -19,12 +19,12 @@ import Logo from '@/components/logo/logo';
 import InstructorChat from '@/components/instructor-chat';
 import PageTitle from '@/components/page-title';
 import { logout } from '@/lib/auth';
+import { INTERNAL_PROGRAMMES } from '@/lib/mock-data';
 import {
   PlayCircle,
   FileText,
   HelpCircle,
   CheckCircle2,
-  Award,
   LogOut,
   Settings,
   ChevronsUpDown,
@@ -67,70 +67,32 @@ interface Programme {
   id: string;
   title: string;
   description: string;
+  instructorIds: string[];
   modules: Module[];
 }
 
-const PROGRAMMES: Programme[] = [
-  {
-    id: 'p1',
-    title: 'Mergers & Acquisitions Consulting',
-    description: 'Advisory frameworks, valuation techniques, and deal execution for M&A consultants.',
-    modules: [
-      {
-        id: 'p1-m1',
-        title: 'Deal Sourcing & Due Diligence',
-        resources: [
-          { id: 'p1-m1-v1', type: 'video', title: 'Sourcing Strategies for Acquirers' },
-          { id: 'p1-m1-p1', type: 'pdf', title: 'Due Diligence Checklist' },
-        ],
-        quiz: { id: 'p1-m1-q', title: 'Due Diligence Quiz', score: null },
-      },
-      {
-        id: 'p1-m2',
-        title: 'Valuation Methods',
-        resources: [
-          { id: 'p1-m2-v1', type: 'video', title: 'DCF & Comparable Company Analysis' },
-          { id: 'p1-m2-p1', type: 'pdf', title: 'Valuation Models Reference' },
-        ],
-        quiz: { id: 'p1-m2-q', title: 'Valuation Quiz', score: null },
-      },
-      {
-        id: 'p1-m3',
-        title: 'Deal Structuring & Negotiation',
-        resources: [
-          { id: 'p1-m3-v1', type: 'video', title: 'Structuring the Term Sheet' },
-          { id: 'p1-m3-p1', type: 'pdf', title: 'Negotiation Playbook' },
-        ],
-        quiz: { id: 'p1-m3-q', title: 'Deal Structuring Quiz', score: null },
-      },
-    ],
-  },
-  {
-    id: 'p2',
-    title: 'Private Equity Fundamentals',
-    description: 'Fund structures, portfolio strategy, and value creation for private equity professionals.',
-    modules: [
-      {
-        id: 'p2-m1',
-        title: 'Fund Structures & LP Relations',
-        resources: [
-          { id: 'p2-m1-v1', type: 'video', title: 'Understanding Fund Structures' },
-          { id: 'p2-m1-p1', type: 'pdf', title: 'LP Agreement Essentials' },
-        ],
-        quiz: { id: 'p2-m1-q', title: 'Fund Structures Quiz', score: null },
-      },
-      {
-        id: 'p2-m2',
-        title: 'Portfolio Value Creation',
-        resources: [
-          { id: 'p2-m2-v1', type: 'video', title: 'Operational Improvement Levers' },
-          { id: 'p2-m2-p1', type: 'pdf', title: 'Value Creation Playbook' },
-        ],
-        quiz: { id: 'p2-m2-q', title: 'Value Creation Quiz', score: null },
-      },
-    ],
-  },
-];
+// Internal track view-model: convert the shared INTERNAL_PROGRAMMES shape
+// (modules of mixed items) into the dashboard's resources + single-quiz model.
+const PROGRAMMES: Programme[] = INTERNAL_PROGRAMMES.map((p) => ({
+  id: p.id,
+  title: p.name,
+  description: p.description,
+  instructorIds: p.instructorIds,
+  modules: p.modules.map((m) => {
+    const quizItem = m.items.find((it) => it.type === 'quiz');
+    return {
+      id: m.id,
+      title: m.title,
+      resources: m.items
+        .flatMap((it) =>
+          it.type === 'video' || it.type === 'pdf'
+            ? [{ id: it.id, type: it.type as ResourceType, title: it.title }]
+            : []
+        ),
+      quiz: { id: quizItem?.id ?? `${m.id}-q`, title: quizItem?.title ?? 'Module Quiz', score: null },
+    };
+  }),
+}));
 
 const RESOURCE_ICONS: Record<ResourceType, typeof PlayCircle> = {
   video: PlayCircle,
@@ -171,8 +133,7 @@ const SAMPLE_WRITTEN_QUESTIONS: { id: string; question: string }[] = [
   { id: 'w3', question: 'Explain how deal structure (cash vs. stock, earn-outs, etc.) affects both buyer and seller incentives.' },
 ];
 
-const PROGRESS_KEY_PREFIX = 'programme-progress-';
-const CERTIFICATE_VIEW = 'certificate';
+const PROGRESS_KEY_PREFIX = 'internal-programme-progress-';
 const GRADE_VIEW = 'grade';
 const WRITTEN_EXAM_VIEW = 'written-exam';
 
@@ -184,7 +145,7 @@ function gradeLetter(percent: number): string {
   return 'F';
 }
 
-export default function Dashboard() {
+export default function Internal() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -281,7 +242,6 @@ export default function Dashboard() {
   const totalItems = programme.modules.reduce((sum, m) => sum + moduleItemCount(m), 0);
   const totalCompleted = programme.modules.reduce((sum, m) => sum + moduleCompletedCount(m), 0);
   const programmeCompletionPercent = totalItems === 0 ? 0 : Math.round((totalCompleted / totalItems) * 100);
-  const isComplete = totalCompleted === totalItems;
 
   // Grades are based on quiz scores only
   const moduleGrade = (m: Module): number | null => {
@@ -298,7 +258,6 @@ export default function Dashboard() {
 
   const currentModule = programme.modules.find((m) => m.id === activeModule);
   const currentModuleIndex = programme.modules.findIndex((m) => m.id === activeModule);
-  const showCertificate = activeModule === CERTIFICATE_VIEW;
   const showGrade = activeModule === GRADE_VIEW;
   const showWrittenExam = activeModule === WRITTEN_EXAM_VIEW;
 
@@ -314,7 +273,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <PageTitle title="Dashboard" />
+      <PageTitle title="Internal" />
       {/* Mobile/tablet top bar */}
       <div
         className={`fixed top-0 inset-x-0 z-50 h-14 flex items-center justify-between px-4 bg-card border-b border-border transition-transform duration-200 lg:hidden ${
@@ -437,7 +396,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal whitespace-nowrap">
             <Logo width="22" height="42" color="var(--foreground)" className="shrink-0" style={{ marginRight: '0.7rem' }} />
             <div>
-              <span className="text-foreground">Blackmont</span> <span className="text-foreground">Academy</span>
+              <span className="text-foreground">Blackmont</span> <span className="text-muted-foreground">Internal</span>
             </div>
           </div>
           <button
@@ -617,19 +576,6 @@ export default function Dashboard() {
             <GraduationCap size={18} />
             <span className="font-medium">Grade</span>
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setActiveModule(CERTIFICATE_VIEW);
-              setSidebarOpen(false);
-            }}
-            className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm w-full ${
-              showCertificate ? 'bg-[#7e55f6] text-white' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            <Award size={18} />
-            <span className="font-medium">Certificate</span>
-          </button>
         </div>
       </div>
       </aside>
@@ -681,27 +627,6 @@ export default function Dashboard() {
                     {writtenSubmitted ? 'Pending instructor review' : 'Not submitted'}
                   </span>
                 </div>
-              </CardContent>
-            </Card>
-          ) : showCertificate ? (
-            <Card className="shadow-sm">
-              <CardContent className="flex flex-col items-center text-center gap-4 p-10">
-                <Award size={48} className={isComplete ? 'text-[#7e55f6]' : 'text-muted-foreground/40'} />
-                <div>
-                  <CardTitle className="text-2xl font-medium m-0 mb-2">Certificate of Completion</CardTitle>
-                  <CardDescription>
-                    {isComplete
-                      ? `Congratulations! You have completed ${programme.title}.`
-                      : 'Complete all modules and quizzes to unlock your certificate.'}
-                  </CardDescription>
-                </div>
-                <Button
-                  type="button"
-                  disabled={!isComplete}
-                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md disabled:opacity-50 disabled:pointer-events-none"
-                >
-                  Download Certificate
-                </Button>
               </CardContent>
             </Card>
           ) : currentModule ? (
@@ -897,10 +822,10 @@ export default function Dashboard() {
                                   {q.options.map((option, oIndex) => {
                                     const isSelected = selected === oIndex;
                                     const isCorrect = oIndex === q.answer;
-                                    
+
                                     let style = 'border-border bg-muted/20 hover:border-[#7e55f6]/50 hover:bg-muted/40';
                                     let radioStyle = 'border-muted-foreground/30';
-                                    
+
                                     if (submitted) {
                                       if (isCorrect) {
                                         style = 'border-green-500 bg-green-500/10 shadow-[0_0_0_1px_rgba(34,197,94,1)]';
@@ -913,7 +838,7 @@ export default function Dashboard() {
                                       style = 'border-[#7e55f6] bg-[#7e55f6]/5 shadow-[0_0_0_1px_rgba(126,85,246,1)]';
                                       radioStyle = 'border-[#7e55f6]';
                                     }
-                                    
+
                                     return (
                                       <button
                                         key={oIndex}

@@ -31,6 +31,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { usePortalStore } from "@/lib/portal-store";
+import PageTitle from "@/components/page-title";
 import { programmeName, type AppUser, type UserRole } from "@/lib/mock-data";
 import { Plus, Trash2, Download, Search } from "lucide-react";
 
@@ -39,8 +40,8 @@ const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
 
 // Each role gets its own colour so the table scans at a glance.
 const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-blue-500/10 text-blue-600 border-blue-600",
-  Instructor: "bg-[#7e55f6]/10 text-[#7e55f6] border-[#7e55f6]",
+  Student: "bg-muted text-muted-foreground border-border",
+  Instructor: "bg-blue-500/10 text-blue-600 border-blue-600",
   Admin: "bg-amber-500/10 text-amber-600 border-amber-600",
 };
 
@@ -110,6 +111,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Users" />
       <div>
         <h1 className="text-3xl font-normal m-0">Users</h1>
         <p className="text-muted-foreground mt-1">Students, instructors, and admins across the platform.</p>

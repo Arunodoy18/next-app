@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StudentDetailDialog from "@/components/student-detail-dialog";
+import InstructorTag from "@/components/instructor-tag";
+import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { programmeName, type WrittenAnswer } from "@/lib/mock-data";
+import { isInstructorLearner, type WrittenAnswer } from "@/lib/mock-data";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export default function InstructorEvaluationsPage() {
-  const { programmes, students, setStudents } = usePortalStore();
+  const { programmes, students, setStudents, internalProgrammes, internalStudents, setInternalStudents } =
+    usePortalStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // Open a student directly when arriving from the Students roster
@@ -20,17 +23,53 @@ export default function InstructorEvaluationsPage() {
     if (id) setSelectedId(id);
   }, []);
 
-  const myStudents = students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
-  const queue = myStudents.filter((s) => s.writtenAnswers.some((a) => a.score === null));
-  const evaluated = myStudents.filter(
-    (s) => s.writtenAnswers.length > 0 && s.writtenAnswers.every((a) => a.score !== null)
+  const allProgrammes = [...programmes, ...internalProgrammes];
+  const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
+
+  // Internal (instructor) learners in the programmes this instructor delivers,
+  // plus their own internal enrolment.
+  const myInternalProgrammeIds = internalProgrammes
+    .filter((p) => p.instructorIds.includes(CURRENT_INSTRUCTOR.id))
+    .map((p) => p.id);
+  const myInternalStudents = internalStudents.filter(
+    (s) => myInternalProgrammeIds.includes(s.programmeId) || s.name === CURRENT_INSTRUCTOR.name
+  );
+  const standardStudents = students.filter((s) =>
+    CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId)
+  );
+  const myStudents = [...standardStudents, ...myInternalStudents].filter(
+    (s, i, arr) => arr.findIndex((x) => x.id === s.id) === i
   );
 
-  const selected = students.find((s) => s.id === selectedId) ?? null;
-  const selectedProgramme = selected ? programmes.find((p) => p.id === selected.programmeId) ?? null : null;
+  const isPending = (s: (typeof students)[number]) => s.writtenAnswers.some((a) => a.score === null);
+  const isEvaluated = (s: (typeof students)[number]) =>
+    s.writtenAnswers.length > 0 && s.writtenAnswers.every((a) => a.score !== null);
+
+  const standardQueue = standardStudents.filter(isPending);
+  const internalQueueList = myInternalStudents.filter(isPending);
+  const standardEvaluated = standardStudents.filter(isEvaluated);
+  const internalEvaluated = myInternalStudents.filter(isEvaluated);
+  const queue = [...standardQueue, ...internalQueueList];
+  const evaluated = [...standardEvaluated, ...internalEvaluated];
+
+  // Labelled divider that spans the 2-column grid, setting internal
+  // (instructor) submissions apart.
+  const InternalDivider = () => (
+    <div className="flex items-center gap-2 py-1 sm:col-span-2">
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-[10px] font-medium uppercase tracking-wide text-blue-600">Internal</span>
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  );
+
+  const selected = myStudents.find((s) => s.id === selectedId) ?? null;
+  const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
   const saveEvaluation = (studentId: string, answers: WrittenAnswer[]) => {
-    setStudents((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
+    // Route to the internal set when the learner is an internal (instructor) one.
+    const isInternal = internalStudents.some((s) => s.id === studentId);
+    const setter = isInternal ? setInternalStudents : setStudents;
+    setter((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
   };
 
   const studentRow = (s: (typeof students)[number], pending: number) => (
@@ -43,7 +82,10 @@ export default function InstructorEvaluationsPage() {
         {s.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium m-0 truncate">{s.name}</p>
+        <p className="text-sm font-medium m-0 truncate">
+          {s.name}
+          {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+        </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(s.programmeId)}</p>
       </div>
       {pending > 0 ? (
@@ -59,6 +101,7 @@ export default function InstructorEvaluationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Evaluations" />
       <div>
         <h1 className="text-3xl font-normal m-0">Evaluations</h1>
         <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your students.</p>
@@ -69,14 +112,18 @@ export default function InstructorEvaluationsPage() {
           <CardTitle className="text-base font-medium m-0">Awaiting review</CardTitle>
           <CardDescription>Submissions stay here until every answer has a score.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent>
           {queue.length === 0 ? (
             <div className="text-center py-10">
               <CheckCircle2 size={28} className="text-green-500 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground m-0">All caught up. Nothing is waiting for review.</p>
             </div>
           ) : (
-            queue.map((s) => studentRow(s, s.writtenAnswers.filter((a) => a.score === null).length))
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {standardQueue.map((s) => studentRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
+              {internalQueueList.length > 0 && <InternalDivider />}
+              {internalQueueList.map((s) => studentRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
+            </div>
           )}
         </CardContent>
       </Card>
@@ -87,13 +134,20 @@ export default function InstructorEvaluationsPage() {
             <CardTitle className="text-base font-medium m-0">Completed</CardTitle>
             <CardDescription>Already evaluated. Open a student to revisit scores or feedback.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">{evaluated.map((s) => studentRow(s, 0))}</CardContent>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {standardEvaluated.map((s) => studentRow(s, 0))}
+              {internalEvaluated.length > 0 && <InternalDivider />}
+              {internalEvaluated.map((s) => studentRow(s, 0))}
+            </div>
+          </CardContent>
         </Card>
       )}
 
       <StudentDetailDialog
         student={selected}
         programme={selectedProgramme}
+        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
       />

@@ -6,32 +6,68 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { programmeName } from "@/lib/mock-data";
+import { isInstructorLearner, type MessageThread } from "@/lib/mock-data";
+import InstructorTag from "@/components/instructor-tag";
+import PageTitle from "@/components/page-title";
 import { Send, MessageSquare } from "lucide-react";
 
 let idCounter = 9000;
 const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
 
 export default function InstructorMessagesPage() {
-  const { threads, setThreads, students } = usePortalStore();
-  const myThreads = threads.filter((t) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(t.programmeId));
+  const {
+    threads,
+    setThreads,
+    students,
+    programmes,
+    internalProgrammes,
+    internalThreads,
+    setInternalThreads,
+    internalStudents,
+  } = usePortalStore();
+
+  // Internal threads belonging to programmes this instructor delivers (or their
+  // own internal enrolment) are merged into the standard inbox.
+  const myInternalProgrammeIds = internalProgrammes
+    .filter((p) => p.instructorIds.includes(CURRENT_INSTRUCTOR.id))
+    .map((p) => p.id);
+  const myInternalThreads = internalThreads.filter(
+    (t) =>
+      myInternalProgrammeIds.includes(t.programmeId) ||
+      internalStudents.some((s) => s.id === t.studentId && s.name === CURRENT_INSTRUCTOR.name)
+  );
+  const myThreads = [
+    ...threads.filter((t) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(t.programmeId)),
+    ...myInternalThreads,
+  ];
   const [activeId, setActiveId] = useState<string | null>(myThreads[0]?.id ?? null);
   const [reply, setReply] = useState("");
 
   const active = myThreads.find((t) => t.id === activeId) ?? null;
+
+  // Mutations route to whichever store the thread came from.
+  const isInternalThread = (id: string) => internalThreads.some((t) => t.id === id);
+  const updateThread = (id: string, updater: (t: MessageThread) => MessageThread) => {
+    const setter = isInternalThread(id) ? setInternalThreads : setThreads;
+    setter((prev) => prev.map((t) => (t.id === id ? updater(t) : t)));
+  };
+
+  const allProgrammes = [...programmes, ...internalProgrammes];
+  const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
+  const allStudents = [...students, ...internalStudents];
 
   // Open (or start) a conversation when arriving from the Students roster
   // via /instructor/messages?student=<id>.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("student");
     if (!id) return;
-    const existing = threads.find((t) => t.studentId === id);
+    const existing = [...threads, ...internalThreads].find((t) => t.studentId === id);
     if (existing) {
       setActiveId(existing.id);
-      setThreads((prev) => prev.map((t) => (t.id === existing.id ? { ...t, unread: false } : t)));
+      updateThread(existing.id, (t) => ({ ...t, unread: false }));
       return;
     }
-    const student = students.find((s) => s.id === id);
+    const student = allStudents.find((s) => s.id === id);
     if (!student) return;
     const newThread = {
       id: nextId("t"),
@@ -40,37 +76,33 @@ export default function InstructorMessagesPage() {
       unread: false,
       messages: [],
     };
-    setThreads((prev) => [newThread, ...prev]);
+    const setter = internalStudents.some((s) => s.id === id) ? setInternalThreads : setThreads;
+    setter((prev) => [newThread, ...prev]);
     setActiveId(newThread.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const studentName = (id: string) => students.find((s) => s.id === id)?.name ?? "Student";
+  const studentName = (id: string) => allStudents.find((s) => s.id === id)?.name ?? "Student";
   const initials = (name: string) => name.split(" ").map((w) => w[0]).slice(0, 2).join("");
 
   const openThread = (id: string) => {
     setActiveId(id);
     setReply("");
-    setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, unread: false } : t)));
+    updateThread(id, (t) => ({ ...t, unread: false }));
   };
 
   const sendReply = () => {
     const text = reply.trim();
     if (!text || !active) return;
-    setThreads((prev) =>
-      prev.map((t) =>
-        t.id === active.id
-          ? {
-              ...t,
-              messages: [...t.messages, { id: nextId("m"), from: "instructor" as const, text, sentAt: "Just now" }],
-            }
-          : t
-      )
-    );
+    updateThread(active.id, (t) => ({
+      ...t,
+      messages: [...t.messages, { id: nextId("m"), from: "instructor" as const, text, sentAt: "Just now" }],
+    }));
     setReply("");
   };
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Messages" />
       <div>
         <h1 className="text-3xl font-normal m-0">Messages</h1>
         <p className="text-muted-foreground mt-1">Questions and queries from your students.</p>
@@ -99,7 +131,11 @@ export default function InstructorMessagesPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className={`text-sm m-0 truncate ${t.unread ? "font-semibold" : "font-medium"}`}>
+                      <p
+                        className={`text-sm m-0 truncate ${t.unread ? "font-semibold" : "font-medium"} ${
+                          isInstructorLearner(t.studentId) ? "text-blue-600" : ""
+                        }`}
+                      >
                         {studentName(t.studentId)}
                       </p>
                       {t.unread && <span className="size-2 rounded-full bg-[#7e55f6] shrink-0" />}
@@ -124,7 +160,10 @@ export default function InstructorMessagesPage() {
                   {initials(studentName(active.studentId))}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium m-0 truncate">{studentName(active.studentId)}</p>
+                  <p className="text-sm font-medium m-0 truncate">
+                    {studentName(active.studentId)}
+                    {isInstructorLearner(active.studentId) && <InstructorTag className="ml-2" />}
+                  </p>
                   <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(active.programmeId)}</p>
                 </div>
               </div>

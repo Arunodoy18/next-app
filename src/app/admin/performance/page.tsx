@@ -22,8 +22,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
+import InstructorTag from "@/components/instructor-tag";
+import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
-import { programmeName, type WrittenAnswer } from "@/lib/mock-data";
+import { isInstructorLearner, type WrittenAnswer } from "@/lib/mock-data";
 import { Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const SORT_OPTIONS: Record<string, string> = {
@@ -36,7 +38,14 @@ const SORT_OPTIONS: Record<string, string> = {
 };
 
 export default function AdminPerformancePage() {
-  const { programmes, students, setStudents } = usePortalStore();
+  const {
+    programmes,
+    students,
+    setStudents,
+    internalProgrammes,
+    internalStudents,
+    setInternalStudents,
+  } = usePortalStore();
   const [search, setSearch] = useState("");
   const [programmeFilter, setProgrammeFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name-asc");
@@ -45,14 +54,20 @@ export default function AdminPerformancePage() {
 
   const ITEMS_PER_PAGE = 10;
 
+  // Internal (instructor) learners and their programmes are merged into the
+  // standard performance views.
+  const allProgrammes = useMemo(() => [...programmes, ...internalProgrammes], [programmes, internalProgrammes]);
+  const allStudents = useMemo(() => [...students, ...internalStudents], [students, internalStudents]);
+  const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
+
   const programmeFilterItems: Record<string, string> = {
     all: "All programmes",
-    ...Object.fromEntries(programmes.map((p) => [p.id, p.name])),
+    ...Object.fromEntries(allProgrammes.map((p) => [p.id, p.name])),
   };
 
   const filteredAndSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let result = students.filter((s) => {
+    let result = allStudents.filter((s) => {
       if (programmeFilter !== "all" && s.programmeId !== programmeFilter) return false;
       if (q && !s.name.toLowerCase().includes(q) && !s.email.toLowerCase().includes(q)) return false;
       return true;
@@ -65,12 +80,12 @@ export default function AdminPerformancePage() {
       if (sortBy === "signup-desc") return new Date(b.signupDate).getTime() - new Date(a.signupDate).getTime();
       if (sortBy === "signup-asc") return new Date(a.signupDate).getTime() - new Date(b.signupDate).getTime();
 
-      const aProg = programmes.find((p) => p.id === a.programmeId);
+      const aProg = allProgrammes.find((p) => p.id === a.programmeId);
       const aTotal = aProg?.modules.length || 1;
       const aDone = a.moduleProgress.filter((m) => m.completed).length;
       const aProgress = aDone / aTotal;
 
-      const bProg = programmes.find((p) => p.id === b.programmeId);
+      const bProg = allProgrammes.find((p) => p.id === b.programmeId);
       const bTotal = bProg?.modules.length || 1;
       const bDone = b.moduleProgress.filter((m) => m.completed).length;
       const bProgress = bDone / bTotal;
@@ -90,25 +105,36 @@ export default function AdminPerformancePage() {
     });
 
     return result;
-  }, [students, search, programmeFilter, sortBy, programmes]);
+  }, [allStudents, search, programmeFilter, sortBy, allProgrammes]);
 
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  // Reset page when filters change
-  useMemo(() => {
+  // Reset to the first page when filters change — adjust state during render
+  // (the React-recommended alternative to a setState-in-effect/memo).
+  const [prevFilters, setPrevFilters] = useState({ search, programmeFilter, sortBy });
+  if (
+    prevFilters.search !== search ||
+    prevFilters.programmeFilter !== programmeFilter ||
+    prevFilters.sortBy !== sortBy
+  ) {
+    setPrevFilters({ search, programmeFilter, sortBy });
     setPage(1);
-  }, [search, programmeFilter, sortBy]);
+  }
 
-  const selected = students.find((s) => s.id === selectedId) ?? null;
-  const selectedProgramme = selected ? programmes.find((p) => p.id === selected.programmeId) ?? null : null;
+  const selected = allStudents.find((s) => s.id === selectedId) ?? null;
+  const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
   const saveEvaluation = (studentId: string, answers: WrittenAnswer[]) => {
-    setStudents((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
+    // Route the evaluation to whichever set the learner came from.
+    const isInternal = internalStudents.some((s) => s.id === studentId);
+    const setter = isInternal ? setInternalStudents : setStudents;
+    setter((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
   };
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Performance" />
       <div>
         <h1 className="text-3xl font-normal m-0">Performance</h1>
         <p className="text-muted-foreground mt-1">
@@ -140,13 +166,13 @@ export default function AdminPerformancePage() {
                 value={programmeFilter}
                 onValueChange={(v) => setProgrammeFilter(v ?? "all")}
               >
-                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                <SelectTrigger className="h-9 w-45 bg-background text-base md:text-sm">
                   <Filter size={14} className="text-muted-foreground shrink-0" />
                   <SelectValue placeholder="All programmes" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All programmes</SelectItem>
-                  {programmes.map((p) => (
+                  {allProgrammes.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.name}
                     </SelectItem>
@@ -154,7 +180,7 @@ export default function AdminPerformancePage() {
                 </SelectContent>
               </Select>
               <Select items={SORT_OPTIONS} value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
-                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                <SelectTrigger className="h-9 w-45 bg-background text-base md:text-sm">
                   <ArrowUpDown size={14} className="text-muted-foreground shrink-0" />
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -170,7 +196,7 @@ export default function AdminPerformancePage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[640px]">
+          <Table className="min-w-160">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -183,7 +209,7 @@ export default function AdminPerformancePage() {
             </TableHeader>
             <TableBody>
               {paginated.map((s) => {
-                const prog = programmes.find((p) => p.id === s.programmeId);
+                const prog = allProgrammes.find((p) => p.id === s.programmeId);
                 const totalModules = prog?.modules.length ?? 0;
                 const doneModules = s.moduleProgress.filter((m) => m.completed).length;
                 const scores = s.moduleProgress.map((m) => m.mcqScore).filter((x): x is number => x !== null);
@@ -204,13 +230,16 @@ export default function AdminPerformancePage() {
                 return (
                   <TableRow key={s.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setSelectedId(s.id)}>
                     <TableCell>
-                      <p className="font-medium m-0">{s.name}</p>
+                      <p className="font-medium m-0">
+                        {s.name}
+                        {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+                      </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{programmeName(s.programmeId)}</TableCell>
                     <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2 min-w-[140px]">
+                      <div className="flex items-center gap-2 min-w-35">
                         <Progress value={totalModules ? (doneModules / totalModules) * 100 : 0} className="w-24 h-2" />
                         <span className="text-xs text-muted-foreground font-medium">
                           {doneModules}/{totalModules}
@@ -220,11 +249,11 @@ export default function AdminPerformancePage() {
                     <TableCell className="text-muted-foreground font-medium">{avgQuiz !== null ? `${avgQuiz}%` : "N/A"}</TableCell>
                     <TableCell>
                       {!submitted ? (
-                        <Badge variant="outline" className="font-normal text-muted-foreground">Not submitted</Badge>
+                        <Badge variant="outline" className="font-normal text-muted-foreground">Unsubmitted</Badge>
                       ) : pending === 0 ? (
                         <Badge className="bg-green-500/10 text-green-600 border-transparent hover:bg-green-500/20 font-medium">Evaluated</Badge>
                       ) : (
-                        <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent hover:bg-[#7e55f6]/20 font-medium">Pending review</Badge>
+                        <Badge className="bg-[#7e55f6]/10 text-[#7e55f6] border-transparent hover:bg-[#7e55f6]/20 font-medium">Pending</Badge>
                       )}
                     </TableCell>
                   </TableRow>
@@ -289,6 +318,7 @@ export default function AdminPerformancePage() {
       <StudentDetailDialog
         student={selected}
         programme={selectedProgramme}
+        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
       />

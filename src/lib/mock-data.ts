@@ -467,3 +467,227 @@ export function programmeName(id: string): string {
 export function instructorName(id: string): string {
   return INSTRUCTORS.find((i) => i.id === id)?.name ?? "N/A";
 }
+
+/* ============================================================
+ * Blackmont Internal — instructor-only training track.
+ *
+ * Instructors are the *learners* here. Internal programmes reuse the
+ * Programme/StudentRecord/MessageThread shapes but live in a separate
+ * dataset so the student-facing track stays untouched. There is a written
+ * programme (written test) but no certificate.
+ * ============================================================ */
+
+export const INTERNAL_PROGRAMMES: Programme[] = [
+  {
+    id: "ip1",
+    name: "Instructor Onboarding & Compliance",
+    description:
+      "Platform standards, safeguarding, and academic-integrity policy every Blackmont instructor must complete.",
+    // Lead instructor(s) assigned to deliver this internal module.
+    instructorIds: ["ins3"],
+    modules: [
+      {
+        id: "ip1-m1",
+        title: "Teaching Standards & Code of Conduct",
+        items: [
+          {
+            id: "ip1-m1-v1",
+            type: "video",
+            title: "The Blackmont Instructor Charter",
+            url: "https://videos.blackmont.edu/internal/instructor-charter",
+          },
+          {
+            id: "ip1-m1-p1",
+            type: "pdf",
+            title: "Code of Conduct Handbook",
+            url: "https://files.blackmont.edu/internal/code-of-conduct.pdf",
+          },
+          {
+            id: "ip1-m1-q1",
+            type: "quiz",
+            title: "Conduct Check-in",
+            questions: [
+              {
+                id: "q1",
+                question: "Who is responsible for upholding academic integrity in a cohort?",
+                options: ["Only the admin team", "The assigned instructor", "The students alone", "No one"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip1-m2",
+        title: "Safeguarding & Data Handling",
+        items: [
+          {
+            id: "ip1-m2-v1",
+            type: "video",
+            title: "Handling Student Data Responsibly",
+            url: "https://videos.blackmont.edu/internal/data-handling",
+          },
+          {
+            id: "ip1-m2-q1",
+            type: "quiz",
+            title: "Safeguarding Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Where should sensitive student records be stored?",
+                options: ["Personal email", "Approved Blackmont systems only", "Public shared drives", "Local desktop"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    writtenTest: [
+      { id: "w1", question: "Describe how you would handle a suspected case of academic misconduct in your cohort." },
+    ],
+  },
+  {
+    id: "ip2",
+    name: "Advanced Teaching Methods",
+    description: "Facilitation techniques, feedback frameworks, and assessment design for experienced instructors.",
+    instructorIds: ["ins1"],
+    modules: [
+      {
+        id: "ip2-m1",
+        title: "Designing Effective Assessments",
+        items: [
+          {
+            id: "ip2-m1-v1",
+            type: "video",
+            title: "From Learning Outcomes to Rubrics",
+            url: "https://videos.blackmont.edu/internal/rubrics",
+          },
+          {
+            id: "ip2-m1-p1",
+            type: "pdf",
+            title: "Assessment Design Toolkit",
+            url: "https://files.blackmont.edu/internal/assessment-toolkit.pdf",
+          },
+          {
+            id: "ip2-m1-q1",
+            type: "quiz",
+            title: "Assessment Design Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "A good rubric primarily improves:",
+                options: ["Grading speed only", "Consistency and fairness of marking", "Class size", "Video quality"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    writtenTest: [
+      { id: "w1", question: "Outline how you give actionable feedback on a written submission. Give a concrete example." },
+    ],
+  },
+];
+
+// Internal learner records — ids match Instructor users (u5/u6/u7) so an
+// internal learner is trivially an instructor.
+export const INTERNAL_STUDENTS: StudentRecord[] = [
+  {
+    id: "u5",
+    name: "Alastair Montgomery",
+    email: "a.montgomery@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2024-01-15T09:00:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 100 },
+      { moduleId: "ip1-m2", completed: false, mcqScore: null },
+    ],
+    writtenAnswers: [],
+  },
+  {
+    id: "u6",
+    name: "Eleanor Vance",
+    email: "e.vance@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2024-02-02T10:30:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 90 },
+      { moduleId: "ip1-m2", completed: true, mcqScore: 100 },
+    ],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would document the incident, follow the academic-integrity policy, give the student a chance to respond, and escalate to the admin team with evidence.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  {
+    id: "u7",
+    name: "Arthur Pendelton",
+    email: "a.pendelton@blackmont.ac.uk",
+    programmeId: "ip2",
+    signupDate: "2023-12-10T14:15:00Z",
+    moduleProgress: [{ moduleId: "ip2-m1", completed: true, mcqScore: 100 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I open with what worked, then identify one or two priority improvements with specific examples, and close with a concrete next step the learner can take.",
+        score: 95,
+        feedback: "Excellent, well-structured feedback approach.",
+      },
+    ],
+  },
+];
+
+export const INTERNAL_THREADS: MessageThread[] = [
+  {
+    id: "it1",
+    studentId: "u5",
+    programmeId: "ip1",
+    unread: true,
+    messages: [
+      {
+        id: "it1-1",
+        from: "student",
+        text: "For the safeguarding module, is the data-handling policy the latest 2024 revision?",
+        sentAt: "Tue 11:05",
+      },
+    ],
+  },
+  {
+    id: "it2",
+    studentId: "u7",
+    programmeId: "ip2",
+    unread: false,
+    messages: [
+      {
+        id: "it2-1",
+        from: "student",
+        text: "Could you share an example rubric for the assessment design exercise?",
+        sentAt: "Wed 09:20",
+      },
+      {
+        id: "it2-2",
+        from: "instructor",
+        text: "Of course — I've added a sample rubric to the Assessment Design Toolkit PDF.",
+        sentAt: "Wed 10:02",
+      },
+    ],
+  },
+];
+
+export function internalProgrammeName(id: string): string {
+  return INTERNAL_PROGRAMMES.find((p) => p.id === id)?.name ?? "N/A";
+}
+
+// True when a learner record corresponds to an Instructor user — used to tag
+// internal learners with an "(Instructor)" bracket across the portals.
+export function isInstructorLearner(id: string): boolean {
+  return USERS.some((u) => u.id === id && u.role === "Instructor");
+}

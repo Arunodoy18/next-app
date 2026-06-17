@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import ResourcePreviewDialog, { type PreviewTarget } from "@/components/resource-preview-dialog";
+import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import {
   INSTRUCTORS,
@@ -68,18 +69,33 @@ function moveInArray<T>(arr: T[], from: number, to: number): T[] {
   return next;
 }
 
+type ProgrammeKind = "standard" | "internal";
+
 export default function ProgrammesPage() {
-  const { programmes, setProgrammes } = usePortalStore();
+  const { programmes, setProgrammes, internalProgrammes, setInternalProgrammes } = usePortalStore();
+  // Track which list the selected id belongs to so the editor saves back to the
+  // right array.
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedKind, setSelectedKind] = useState<ProgrammeKind>("standard");
   const [preview, setPreview] = useState<PreviewTarget | null>(null);
 
-  const selected = programmes.find((p) => p.id === selectedId) ?? null;
+  const selected =
+    selectedKind === "standard"
+      ? programmes.find((p) => p.id === selectedId) ?? null
+      : internalProgrammes.find((p) => p.id === selectedId) ?? null;
+
+  const setForKind = selectedKind === "standard" ? setProgrammes : setInternalProgrammes;
 
   const updateProgramme = (id: string, updates: Partial<Programme>) => {
-    setProgrammes((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+    setForKind((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
   };
 
-  const addProgramme = () => {
+  const selectProgramme = (kind: ProgrammeKind, id: string | null) => {
+    setSelectedKind(kind);
+    setSelectedId(id);
+  };
+
+  const addProgramme = (kind: ProgrammeKind) => {
     const created: Programme = {
       id: nextId("p"),
       name: "",
@@ -88,12 +104,13 @@ export default function ProgrammesPage() {
       modules: [],
       writtenTest: [],
     };
-    setProgrammes((prev) => [...prev, created]);
-    setSelectedId(created.id);
+    const setter = kind === "standard" ? setProgrammes : setInternalProgrammes;
+    setter((prev) => [...prev, created]);
+    selectProgramme(kind, created.id);
   };
 
   const deleteProgramme = (id: string) => {
-    setProgrammes((prev) => {
+    setForKind((prev) => {
       const next = prev.filter((p) => p.id !== id);
       if (selectedId === id) setSelectedId(next[0]?.id ?? null);
       return next;
@@ -102,6 +119,7 @@ export default function ProgrammesPage() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <PageTitle title="Programmes" />
       <div>
         <h1 className="text-3xl font-normal m-0">Programmes</h1>
         <p className="text-muted-foreground mt-1">
@@ -110,12 +128,13 @@ export default function ProgrammesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 items-start">
-        {/* Programme list */}
-        <Card className="shadow-sm py-3 gap-3 lg:sticky lg:top-8">
+        {/* Programme lists */}
+        <div className="flex flex-col gap-4 lg:sticky lg:top-8">
+        <Card className="shadow-sm py-3 gap-3">
           <CardHeader className="px-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium m-0">All programmes</CardTitle>
-              <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={addProgramme}>
+              <CardTitle className="text-sm font-medium m-0">Student programmes</CardTitle>
+              <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={() => addProgramme("standard")}>
                 <Plus size={12} /> New
               </Button>
             </div>
@@ -123,11 +142,11 @@ export default function ProgrammesPage() {
           <CardContent className="px-3 flex flex-col gap-1">
             {programmes.length === 0 && <p className="text-sm text-muted-foreground px-1 py-2">No programmes yet.</p>}
             {programmes.map((p) => {
-              const active = p.id === selectedId;
+              const active = selectedKind === "standard" && p.id === selectedId;
               return (
                 <button
                   key={p.id}
-                  onClick={() => setSelectedId(active ? null : p.id)}
+                  onClick={() => selectProgramme("standard", active ? null : p.id)}
                   className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border cursor-pointer ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
@@ -163,6 +182,63 @@ export default function ProgrammesPage() {
             })}
           </CardContent>
         </Card>
+
+        {/* Instructor (internal) programmes */}
+        <Card className="shadow-sm py-3 gap-3">
+          <CardHeader className="px-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium m-0">Instructor Programmes</CardTitle>
+              <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={() => addProgramme("internal")}>
+                <Plus size={12} /> New
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="px-3 flex flex-col gap-1">
+            {internalProgrammes.length === 0 && (
+              <p className="text-sm text-muted-foreground px-1 py-2">No instructor programmes yet.</p>
+            )}
+            {internalProgrammes.map((p) => {
+              const active = selectedKind === "internal" && p.id === selectedId;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => selectProgramme("internal", active ? null : p.id)}
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border cursor-pointer ${
+                    active
+                      ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
+                      : "border-transparent hover:bg-muted"
+                  }`}
+                >
+                  <span
+                    className={`size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      active ? "bg-[#7e55f6] text-white" : "bg-[#7e55f6]/10 text-[#7e55f6]"
+                    }`}
+                  >
+                    <GraduationCap size={16} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={`block text-sm font-medium line-clamp-1 ${active ? "text-[#7e55f6]" : "text-foreground"}`}
+                    >
+                      {p.name || "Untitled Programme"}
+                    </span>
+                    <span className="block text-xs text-muted-foreground mt-0.5">
+                      {p.modules.length} module{p.modules.length === 1 ? "" : "s"} · {p.instructorIds.length} instructor
+                      {p.instructorIds.length === 1 ? "" : "s"}
+                    </span>
+                  </span>
+                  <ChevronRight
+                    size={15}
+                    className={`shrink-0 transition-colors ${
+                      active ? "text-[#7e55f6]" : "text-muted-foreground/40 group-hover:text-muted-foreground"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </CardContent>
+        </Card>
+        </div>
 
         {/* Editor */}
         {selected ? (
