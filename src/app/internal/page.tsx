@@ -18,8 +18,9 @@ import { useTheme } from 'next-themes';
 import Logo from '@/components/logo/logo';
 import InstructorChat from '@/components/instructor-chat';
 import PageTitle from '@/components/page-title';
+import RoleBadge from '@/components/role-badge';
 import { logout } from '@/lib/auth';
-import { INTERNAL_PROGRAMMES } from '@/lib/mock-data';
+import { INTERNAL_PROGRAMMES, type AssignableRole } from '@/lib/mock-data';
 import {
   PlayCircle,
   FileText,
@@ -68,6 +69,7 @@ interface Programme {
   title: string;
   description: string;
   instructorIds: string[];
+  roles: AssignableRole[];
   modules: Module[];
 }
 
@@ -78,6 +80,7 @@ const PROGRAMMES: Programme[] = INTERNAL_PROGRAMMES.map((p) => ({
   title: p.name,
   description: p.description,
   instructorIds: p.instructorIds,
+  roles: p.roles ?? [],
   modules: p.modules.map((m) => {
     const quizItem = m.items.find((it) => it.type === 'quiz');
     return {
@@ -394,7 +397,7 @@ export default function Internal() {
       <div className="w-80 lg:w-72 xl:w-80 h-full flex flex-col p-4 gap-6 overflow-hidden">
         <div className="flex items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal whitespace-nowrap">
-            <Logo width="22" height="42" color="var(--foreground)" className="shrink-0" style={{ marginRight: '0.7rem' }} />
+            <Logo width="22" height="42" color="currentColor" className="shrink-0 text-foreground transition-colors hover:text-[#7e55f6]" style={{ marginRight: '0.7rem' }} />
             <div>
               <span className="text-foreground">Blackmont</span> <span className="text-muted-foreground">Internal</span>
             </div>
@@ -421,12 +424,27 @@ export default function Internal() {
                 <p className="px-1.5 py-1 text-xs font-medium text-muted-foreground">Your Programmes</p>
                 <DropdownMenuSeparator />
                 {PROGRAMMES.map((p) => (
-                  <DropdownMenuItem key={p.id} onClick={() => handleProgrammeChange(p.id)}>
-                    {p.title}
+                  <DropdownMenuItem key={p.id} onClick={() => handleProgrammeChange(p.id)} className="flex flex-col items-start gap-1">
+                    <span>{p.title}</span>
+                    {p.roles.length > 0 && (
+                      <span className="flex items-center gap-1 flex-wrap">
+                        {p.roles.map((r) => (
+                          <RoleBadge key={r} role={r} />
+                        ))}
+                      </span>
+                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {programme.roles.length > 0 && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {programme.roles.map((r) => (
+                  <RoleBadge key={r} role={r} />
+                ))}
+              </div>
+            )}
 
             <Progress value={programmeCompletionPercent} className="mt-1" />
             <p className="text-xs text-muted-foreground">

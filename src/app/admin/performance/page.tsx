@@ -22,10 +22,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
-import InstructorTag from "@/components/instructor-tag";
+import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
-import { isInstructorLearner, type WrittenAnswer } from "@/lib/mock-data";
+import { type WrittenAnswer } from "@/lib/mock-data";
 import { Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const SORT_OPTIONS: Record<string, string> = {
@@ -61,7 +61,7 @@ export default function AdminPerformancePage() {
   const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
 
   const programmeFilterItems: Record<string, string> = {
-    all: "All programmes",
+    all: "All Programmes",
     ...Object.fromEntries(allProgrammes.map((p) => [p.id, p.name])),
   };
 
@@ -168,10 +168,10 @@ export default function AdminPerformancePage() {
               >
                 <SelectTrigger className="h-9 w-45 bg-background text-base md:text-sm">
                   <Filter size={14} className="text-muted-foreground shrink-0" />
-                  <SelectValue placeholder="All programmes" />
+                  <SelectValue placeholder="All Programmes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All programmes</SelectItem>
+                  <SelectItem value="all">All Programmes</SelectItem>
                   {allProgrammes.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.name}
@@ -232,7 +232,7 @@ export default function AdminPerformancePage() {
                     <TableCell>
                       <p className="font-medium m-0">
                         {s.name}
-                        {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+                        <LearnerRoleBadge id={s.id} className="ml-2" />
                       </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
@@ -318,7 +318,6 @@ export default function AdminPerformancePage() {
       <StudentDetailDialog
         student={selected}
         programme={selectedProgramme}
-        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
       />

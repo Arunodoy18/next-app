@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { isInstructorLearner, type MessageThread } from "@/lib/mock-data";
-import InstructorTag from "@/components/instructor-tag";
+import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
+import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { Send, MessageSquare } from "lucide-react";
 
@@ -118,6 +118,7 @@ export default function InstructorMessagesPage() {
             {myThreads.map((t) => {
               const last = t.messages[t.messages.length - 1];
               const isActive = t.id === activeId;
+              const role = learnerRole(t.studentId);
               return (
                 <button
                   key={t.id}
@@ -132,8 +133,8 @@ export default function InstructorMessagesPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p
-                        className={`text-sm m-0 truncate ${t.unread ? "font-semibold" : "font-medium"} ${
-                          isInstructorLearner(t.studentId) ? "text-blue-600" : ""
+                        className={`text-sm m-0 truncate font-normal ${
+                          role ? ROLE_TEXT[role] : ""
                         }`}
                       >
                         {studentName(t.studentId)}
@@ -162,7 +163,7 @@ export default function InstructorMessagesPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium m-0 truncate">
                     {studentName(active.studentId)}
-                    {isInstructorLearner(active.studentId) && <InstructorTag className="ml-2" />}
+                    <LearnerRoleBadge id={active.studentId} className="ml-2" />
                   </p>
                   <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(active.programmeId)}</p>
                 </div>

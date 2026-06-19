@@ -40,9 +40,51 @@ export interface Programme {
   instructorIds: string[];
   modules: ProgrammeModule[];
   writtenTest: WrittenQuestion[];
+  // One or more roles this programme serves, toggled in the programme editor.
+  // Internal programmes are seeded with a single role.
+  roles?: AssignableRole[];
 }
 
-export type UserRole = "Student" | "Instructor" | "Admin";
+export type UserRole =
+  | "Student"
+  | "Instructor"
+  | "Admin"
+  | "Business Development"
+  | "HR"
+  | "Project Management";
+
+// The five roles a programme can be toggled for and a learner can hold. Admin
+// is excluded — it is a platform role, not a programme track.
+export const ASSIGNABLE_ROLES = [
+  "Student",
+  "Instructor",
+  "HR",
+  "Project Management",
+  "Business Development",
+] as const;
+export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
+
+// One Tailwind class string per role so badges scan at a glance. Shared by the
+// admin users table and the reusable <RoleBadge> component.
+export const ROLE_BADGE: Record<UserRole, string> = {
+  Student: "bg-muted text-muted-foreground border-border",
+  Instructor: "bg-blue-500/10 text-blue-600 border-blue-600",
+  Admin: "bg-amber-500/10 text-amber-600 border-amber-600",
+  "Business Development": "bg-emerald-500/10 text-emerald-600 border-emerald-600",
+  HR: "bg-rose-500/10 text-rose-600 border-rose-600",
+  "Project Management": "bg-cyan-500/10 text-cyan-600 border-cyan-600",
+};
+
+// Just the text colour per role — used to tint a learner's name to match their
+// role (Students stay default). Mirrors the text colour in ROLE_BADGE.
+export const ROLE_TEXT: Record<UserRole, string> = {
+  Student: "",
+  Instructor: "text-blue-600",
+  Admin: "text-amber-600",
+  "Business Development": "text-emerald-600",
+  HR: "text-rose-600",
+  "Project Management": "text-cyan-600",
+};
 
 export interface AppUser {
   id: string;
@@ -91,6 +133,7 @@ export const PROGRAMMES: Programme[] = [
     name: "Mergers & Acquisitions Consulting",
     description: "Advisory frameworks, valuation techniques, and deal execution for M&A consultants.",
     instructorIds: ["ins1", "ins3"],
+    roles: ["Student"],
     modules: [
       {
         id: "p1-m1",
@@ -171,6 +214,7 @@ export const PROGRAMMES: Programme[] = [
     name: "Private Equity Fundamentals",
     description: "Fund structures, portfolio strategy, and value creation for private equity professionals.",
     instructorIds: ["ins2"],
+    roles: ["Student"],
     modules: [
       {
         id: "p2-m1",
@@ -254,6 +298,16 @@ export const USERS: AppUser[] = [
   { id: "u6", name: "Eleanor Vance", email: "e.vance@blackmont.ac.uk", role: "Instructor", signupDate: "2022-08-20T10:30:00Z" },
   { id: "u7", name: "Arthur Pendelton", email: "a.pendelton@blackmont.ac.uk", role: "Instructor", signupDate: "2021-11-05T14:15:00Z" },
   { id: "u8", name: "Admin User", email: "admin@blackmont.ac.uk", role: "Admin", signupDate: "2020-01-10T08:00:00Z" },
+  { id: "u13", name: "Sophie Walker", email: "s.walker@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2023-06-14T09:30:00Z" },
+  { id: "u14", name: "James Carter", email: "j.carter@blackmont.ac.uk", role: "HR", programmeIds: ["ip2"], signupDate: "2023-07-21T10:15:00Z" },
+  { id: "u15", name: "Grace Hughes", email: "g.hughes@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2023-08-30T11:00:00Z" },
+  { id: "u16", name: "Daniel Cooper", email: "d.cooper@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-01-09T09:45:00Z" },
+  { id: "u17", name: "Lena Hoffmann", email: "l.hoffmann@blackmont.ac.uk", role: "HR", programmeIds: ["ip2"], signupDate: "2024-02-12T10:20:00Z" },
+  { id: "u18", name: "Marcus Lee", email: "m.lee@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2024-03-04T11:30:00Z" },
+  { id: "u19", name: "Isabella Rossi", email: "i.rossi@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-02-19T09:50:00Z" },
+  { id: "u20", name: "Nathan Brooks", email: "n.brooks@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-04-01T10:05:00Z" },
+  { id: "u21", name: "Chloe Bennett", email: "c.bennett@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2024-03-18T11:15:00Z" },
+  { id: "u22", name: "Owen Mitchell", email: "o.mitchell@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2024-04-22T13:40:00Z" },
 ];
 
 export const STUDENTS: StudentRecord[] = [
@@ -480,37 +534,38 @@ export function instructorName(id: string): string {
 export const INTERNAL_PROGRAMMES: Programme[] = [
   {
     id: "ip1",
-    name: "Instructor Onboarding & Compliance",
+    name: "Client Growth Essentials",
     description:
-      "Platform standards, safeguarding, and academic-integrity policy every Blackmont instructor must complete.",
+      "Pipeline building, prospecting, and deal negotiation for the Business Development track.",
     // Lead instructor(s) assigned to deliver this internal module.
-    instructorIds: ["ins3"],
+    instructorIds: ["ins1", "ins3"],
+    roles: ["Business Development"],
     modules: [
       {
         id: "ip1-m1",
-        title: "Teaching Standards & Code of Conduct",
+        title: "Pipeline & Prospecting",
         items: [
           {
             id: "ip1-m1-v1",
             type: "video",
-            title: "The Blackmont Instructor Charter",
-            url: "https://videos.blackmont.edu/internal/instructor-charter",
+            title: "Building a Qualified Pipeline",
+            url: "https://videos.blackmont.edu/internal/pipeline",
           },
           {
             id: "ip1-m1-p1",
             type: "pdf",
-            title: "Code of Conduct Handbook",
-            url: "https://files.blackmont.edu/internal/code-of-conduct.pdf",
+            title: "Prospecting Playbook",
+            url: "https://files.blackmont.edu/internal/prospecting-playbook.pdf",
           },
           {
             id: "ip1-m1-q1",
             type: "quiz",
-            title: "Conduct Check-in",
+            title: "Prospecting Check-in",
             questions: [
               {
                 id: "q1",
-                question: "Who is responsible for upholding academic integrity in a cohort?",
-                options: ["Only the admin team", "The assigned instructor", "The students alone", "No one"],
+                question: "What is the primary goal of qualifying a lead early?",
+                options: ["To close faster", "To focus effort on winnable deals", "To inflate the pipeline", "To skip discovery"],
                 answer: 1,
               },
             ],
@@ -519,23 +574,79 @@ export const INTERNAL_PROGRAMMES: Programme[] = [
       },
       {
         id: "ip1-m2",
-        title: "Safeguarding & Data Handling",
+        title: "Negotiation & Closing",
         items: [
           {
             id: "ip1-m2-v1",
             type: "video",
-            title: "Handling Student Data Responsibly",
-            url: "https://videos.blackmont.edu/internal/data-handling",
+            title: "Negotiating to a Win-Win",
+            url: "https://videos.blackmont.edu/internal/negotiation",
           },
           {
             id: "ip1-m2-q1",
             type: "quiz",
-            title: "Safeguarding Quiz",
+            title: "Closing Quiz",
             questions: [
               {
                 id: "q1",
-                question: "Where should sensitive student records be stored?",
-                options: ["Personal email", "Approved Blackmont systems only", "Public shared drives", "Local desktop"],
+                question: "A concession should ideally be:",
+                options: ["Given freely", "Traded for something of value", "Avoided entirely", "Decided by the client"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip1-m3",
+        title: "Account Mapping & Stakeholders",
+        items: [
+          {
+            id: "ip1-m3-v1",
+            type: "video",
+            title: "Mapping the Decision Unit",
+            url: "https://videos.blackmont.edu/internal/account-mapping",
+          },
+          {
+            id: "ip1-m3-p1",
+            type: "pdf",
+            title: "Stakeholder Map Template",
+            url: "https://files.blackmont.edu/internal/stakeholder-map.pdf",
+          },
+          {
+            id: "ip1-m3-q1",
+            type: "quiz",
+            title: "Stakeholders Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "The economic buyer is best described as the person who:",
+                options: ["Uses the product daily", "Controls the budget and final yes", "Writes the contract", "Books the demo"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip1-m4",
+        title: "Value Proposition & Storytelling",
+        items: [
+          {
+            id: "ip1-m4-v1",
+            type: "video",
+            title: "Framing Value for the Buyer",
+            url: "https://videos.blackmont.edu/internal/value-prop",
+          },
+          {
+            id: "ip1-m4-q1",
+            type: "quiz",
+            title: "Value Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "A strong value proposition leads with:",
+                options: ["Product features", "The buyer's outcome", "Pricing", "Company history"],
                 answer: 1,
               },
             ],
@@ -544,35 +655,265 @@ export const INTERNAL_PROGRAMMES: Programme[] = [
       },
     ],
     writtenTest: [
-      { id: "w1", question: "Describe how you would handle a suspected case of academic misconduct in your cohort." },
+      { id: "w1", question: "Describe how you would recover a stalled deal late in the sales cycle." },
     ],
   },
   {
     id: "ip2",
-    name: "Advanced Teaching Methods",
-    description: "Facilitation techniques, feedback frameworks, and assessment design for experienced instructors.",
-    instructorIds: ["ins1"],
+    name: "People & Culture Foundations",
+    description: "People policies, compliance, and employee relations for the HR track.",
+    instructorIds: ["ins3"],
+    roles: ["HR"],
     modules: [
       {
         id: "ip2-m1",
-        title: "Designing Effective Assessments",
+        title: "People Policies & Compliance",
         items: [
           {
             id: "ip2-m1-v1",
             type: "video",
-            title: "From Learning Outcomes to Rubrics",
-            url: "https://videos.blackmont.edu/internal/rubrics",
+            title: "Core Employment Policies",
+            url: "https://videos.blackmont.edu/internal/hr-policies",
           },
           {
             id: "ip2-m1-p1",
             type: "pdf",
-            title: "Assessment Design Toolkit",
-            url: "https://files.blackmont.edu/internal/assessment-toolkit.pdf",
+            title: "Employee Handbook",
+            url: "https://files.blackmont.edu/internal/employee-handbook.pdf",
           },
           {
             id: "ip2-m1-q1",
             type: "quiz",
-            title: "Assessment Design Quiz",
+            title: "Policy Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Where should a confidential grievance first be recorded?",
+                options: ["A public channel", "The approved HR case system", "Personal notes", "Nowhere"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip2-m2",
+        title: "Recruitment & Onboarding",
+        items: [
+          {
+            id: "ip2-m2-v1",
+            type: "video",
+            title: "Fair and Effective Hiring",
+            url: "https://videos.blackmont.edu/internal/hiring",
+          },
+          {
+            id: "ip2-m2-p1",
+            type: "pdf",
+            title: "Onboarding Checklist",
+            url: "https://files.blackmont.edu/internal/onboarding-checklist.pdf",
+          },
+          {
+            id: "ip2-m2-q1",
+            type: "quiz",
+            title: "Hiring Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Structured interviews mainly improve:",
+                options: ["Speed only", "Fairness and comparability", "Office morale", "Salary budgets"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip2-m3",
+        title: "Performance & Wellbeing",
+        items: [
+          {
+            id: "ip2-m3-v1",
+            type: "video",
+            title: "Supporting Performance Conversations",
+            url: "https://videos.blackmont.edu/internal/performance",
+          },
+          {
+            id: "ip2-m3-q1",
+            type: "quiz",
+            title: "Wellbeing Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "A good performance conversation is:",
+                options: ["One-directional", "Two-way and evidence-based", "Saved for year-end only", "Always informal"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    writtenTest: [
+      { id: "w1", question: "Outline how you would handle a sensitive employee grievance fairly and confidentially." },
+    ],
+  },
+  {
+    id: "ip3",
+    name: "Delivery Excellence",
+    description: "Planning, delivery, and risk management for the Project Management track.",
+    instructorIds: ["ins1", "ins3"],
+    roles: ["Project Management"],
+    modules: [
+      {
+        id: "ip3-m1",
+        title: "Planning & Delivery",
+        items: [
+          {
+            id: "ip3-m1-v1",
+            type: "video",
+            title: "From Scope to Delivery Plan",
+            url: "https://videos.blackmont.edu/internal/delivery-plan",
+          },
+          {
+            id: "ip3-m1-p1",
+            type: "pdf",
+            title: "Project Planning Toolkit",
+            url: "https://files.blackmont.edu/internal/project-toolkit.pdf",
+          },
+          {
+            id: "ip3-m1-q1",
+            type: "quiz",
+            title: "Delivery Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "The main purpose of a risk register is to:",
+                options: ["Assign blame", "Track and mitigate risks proactively", "Pad the timeline", "Replace the plan"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip3-m2",
+        title: "Stakeholders & Communication",
+        items: [
+          {
+            id: "ip3-m2-v1",
+            type: "video",
+            title: "Keeping Stakeholders Aligned",
+            url: "https://videos.blackmont.edu/internal/stakeholder-comms",
+          },
+          {
+            id: "ip3-m2-p1",
+            type: "pdf",
+            title: "Communication Plan Template",
+            url: "https://files.blackmont.edu/internal/comms-plan.pdf",
+          },
+          {
+            id: "ip3-m2-q1",
+            type: "quiz",
+            title: "Communication Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "A RACI chart is used to clarify:",
+                options: ["Budget lines", "Roles and responsibilities", "Risk scores", "Sprint length"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip3-m3",
+        title: "Risk & Quality Management",
+        items: [
+          {
+            id: "ip3-m3-v1",
+            type: "video",
+            title: "Managing Risk and Quality Together",
+            url: "https://videos.blackmont.edu/internal/risk-quality",
+          },
+          {
+            id: "ip3-m3-q1",
+            type: "quiz",
+            title: "Risk Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Risk response 'mitigation' means you:",
+                options: ["Ignore the risk", "Reduce its likelihood or impact", "Transfer it to the client", "Accept it fully"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    writtenTest: [
+      { id: "w1", question: "Describe how you would bring a project that is slipping behind schedule back on track." },
+    ],
+  },
+  {
+    id: "ip4",
+    name: "Instructor Excellence",
+    description: "Facilitation, feedback, and assessment design for the Instructor track.",
+    instructorIds: ["ins1", "ins3"],
+    roles: ["Instructor"],
+    modules: [
+      {
+        id: "ip4-m1",
+        title: "Facilitation & Feedback",
+        items: [
+          {
+            id: "ip4-m1-v1",
+            type: "video",
+            title: "Running an Engaging Session",
+            url: "https://videos.blackmont.edu/internal/facilitation",
+          },
+          {
+            id: "ip4-m1-p1",
+            type: "pdf",
+            title: "Feedback Frameworks Guide",
+            url: "https://files.blackmont.edu/internal/feedback-frameworks.pdf",
+          },
+          {
+            id: "ip4-m1-q1",
+            type: "quiz",
+            title: "Facilitation Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Effective feedback is best when it is:",
+                options: ["Vague and general", "Specific and actionable", "Delayed for weeks", "Only positive"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "ip4-m2",
+        title: "Assessment Design",
+        items: [
+          {
+            id: "ip4-m2-v1",
+            type: "video",
+            title: "From Outcomes to Rubrics",
+            url: "https://videos.blackmont.edu/internal/assessment-design",
+          },
+          {
+            id: "ip4-m2-p1",
+            type: "pdf",
+            title: "Rubric Design Toolkit",
+            url: "https://files.blackmont.edu/internal/rubric-toolkit.pdf",
+          },
+          {
+            id: "ip4-m2-q1",
+            type: "quiz",
+            title: "Assessment Quiz",
             questions: [
               {
                 id: "q1",
@@ -584,15 +925,41 @@ export const INTERNAL_PROGRAMMES: Programme[] = [
           },
         ],
       },
+      {
+        id: "ip4-m3",
+        title: "Inclusive Teaching",
+        items: [
+          {
+            id: "ip4-m3-v1",
+            type: "video",
+            title: "Designing for Every Learner",
+            url: "https://videos.blackmont.edu/internal/inclusive-teaching",
+          },
+          {
+            id: "ip4-m3-q1",
+            type: "quiz",
+            title: "Inclusion Quiz",
+            questions: [
+              {
+                id: "q1",
+                question: "Inclusive teaching mainly aims to:",
+                options: ["Lower standards", "Remove barriers so all can learn", "Reduce content", "Speed up grading"],
+                answer: 1,
+              },
+            ],
+          },
+        ],
+      },
     ],
     writtenTest: [
-      { id: "w1", question: "Outline how you give actionable feedback on a written submission. Give a concrete example." },
+      { id: "w1", question: "Describe how you give actionable feedback on a written submission. Give a concrete example." },
     ],
   },
 ];
 
-// Internal learner records — ids match Instructor users (u5/u6/u7) so an
-// internal learner is trivially an instructor.
+// Internal learner records across the three role tracks. Some ids match
+// Instructor users (u5/u6/u7); others are role-holders (Business Development,
+// HR, Project Management) so their role badge shows across the portals.
 export const INTERNAL_STUDENTS: StudentRecord[] = [
   {
     id: "u5",
@@ -610,17 +977,16 @@ export const INTERNAL_STUDENTS: StudentRecord[] = [
     id: "u6",
     name: "Eleanor Vance",
     email: "e.vance@blackmont.ac.uk",
-    programmeId: "ip1",
+    programmeId: "ip2",
     signupDate: "2024-02-02T10:30:00Z",
     moduleProgress: [
-      { moduleId: "ip1-m1", completed: true, mcqScore: 90 },
-      { moduleId: "ip1-m2", completed: true, mcqScore: 100 },
+      { moduleId: "ip2-m1", completed: true, mcqScore: 90 },
     ],
     writtenAnswers: [
       {
         questionId: "w1",
         answer:
-          "I would document the incident, follow the academic-integrity policy, give the student a chance to respond, and escalate to the admin team with evidence.",
+          "I would record the grievance in the approved HR case system, hear the employee privately, follow the documented procedure, and keep all parties informed without breaching confidentiality.",
         score: null,
         feedback: "",
       },
@@ -630,16 +996,195 @@ export const INTERNAL_STUDENTS: StudentRecord[] = [
     id: "u7",
     name: "Arthur Pendelton",
     email: "a.pendelton@blackmont.ac.uk",
-    programmeId: "ip2",
+    programmeId: "ip3",
     signupDate: "2023-12-10T14:15:00Z",
+    moduleProgress: [{ moduleId: "ip3-m1", completed: true, mcqScore: 100 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would re-baseline the plan against the critical path, cut or defer non-essential scope, surface risks early to stakeholders, and add focused capacity to the bottleneck.",
+        score: 95,
+        feedback: "Excellent, well-structured recovery approach.",
+      },
+    ],
+  },
+  // Business Development (ip1) learners.
+  {
+    id: "u13",
+    name: "Sophie Walker",
+    email: "s.walker@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2023-06-14T09:30:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 95 },
+      { moduleId: "ip1-m2", completed: true, mcqScore: 88 },
+    ],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would reopen the conversation with a fresh value hypothesis, identify the real blocker with the economic buyer, and propose a small, low-risk next step to rebuild momentum.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  {
+    id: "u16",
+    name: "Daniel Cooper",
+    email: "d.cooper@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2024-01-09T09:45:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 80 },
+      { moduleId: "ip1-m2", completed: true, mcqScore: 86 },
+    ],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would diagnose where the deal stalled, re-engage the economic buyer with a sharper value case, and agree a concrete next step with a date to rebuild momentum.",
+        score: 87,
+        feedback: "Good diagnosis and a clear, time-bound next step.",
+      },
+    ],
+  },
+  // HR (ip2) learners.
+  {
+    id: "u14",
+    name: "James Carter",
+    email: "j.carter@blackmont.ac.uk",
+    programmeId: "ip2",
+    signupDate: "2023-07-21T10:15:00Z",
     moduleProgress: [{ moduleId: "ip2-m1", completed: true, mcqScore: 100 }],
     writtenAnswers: [
       {
         questionId: "w1",
         answer:
-          "I open with what worked, then identify one or two priority improvements with specific examples, and close with a concrete next step the learner can take.",
-        score: 95,
-        feedback: "Excellent, well-structured feedback approach.",
+          "I would acknowledge the concern, log it in the case system, run a fair and confidential process, and document each step and outcome.",
+        score: 92,
+        feedback: "Strong, policy-aligned response.",
+      },
+    ],
+  },
+  {
+    id: "u17",
+    name: "Lena Hoffmann",
+    email: "l.hoffmann@blackmont.ac.uk",
+    programmeId: "ip2",
+    signupDate: "2024-02-12T10:20:00Z",
+    moduleProgress: [{ moduleId: "ip2-m1", completed: true, mcqScore: 85 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would hear both sides separately, keep records, and escalate only if the documented procedure required it.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  // Project Management (ip3) learners.
+  {
+    id: "u15",
+    name: "Grace Hughes",
+    email: "g.hughes@blackmont.ac.uk",
+    programmeId: "ip3",
+    signupDate: "2023-08-30T11:00:00Z",
+    moduleProgress: [{ moduleId: "ip3-m1", completed: true, mcqScore: 90 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would confirm the critical path, renegotiate scope with the sponsor, and add a short daily check-in to unblock the team quickly.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  {
+    id: "u18",
+    name: "Marcus Lee",
+    email: "m.lee@blackmont.ac.uk",
+    programmeId: "ip3",
+    signupDate: "2024-03-04T11:30:00Z",
+    moduleProgress: [{ moduleId: "ip3-m1", completed: true, mcqScore: 100 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would re-baseline, cut non-essential scope, and surface risks early with a clear recovery plan and owners.",
+        score: 88,
+        feedback: "Clear recovery plan.",
+      },
+    ],
+  },
+  // More Business Development (ip1) learners.
+  {
+    id: "u19",
+    name: "Isabella Rossi",
+    email: "i.rossi@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2024-02-19T09:50:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 92 },
+      { moduleId: "ip1-m2", completed: true, mcqScore: 78 },
+    ],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would qualify the urgency, map the decision unit, and propose a tightly scoped pilot to prove value before pushing for a larger commitment.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  {
+    id: "u20",
+    name: "Nathan Brooks",
+    email: "n.brooks@blackmont.ac.uk",
+    programmeId: "ip1",
+    signupDate: "2024-04-01T10:05:00Z",
+    moduleProgress: [
+      { moduleId: "ip1-m1", completed: true, mcqScore: 100 },
+      { moduleId: "ip1-m2", completed: false, mcqScore: null },
+    ],
+    writtenAnswers: [],
+  },
+  // More Project Management (ip3) learners.
+  {
+    id: "u21",
+    name: "Chloe Bennett",
+    email: "c.bennett@blackmont.ac.uk",
+    programmeId: "ip3",
+    signupDate: "2024-03-18T11:15:00Z",
+    moduleProgress: [{ moduleId: "ip3-m1", completed: true, mcqScore: 95 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would identify the bottleneck, replan around the critical path, and agree a realistic, sponsor-approved recovery timeline.",
+        score: null,
+        feedback: "",
+      },
+    ],
+  },
+  {
+    id: "u22",
+    name: "Owen Mitchell",
+    email: "o.mitchell@blackmont.ac.uk",
+    programmeId: "ip3",
+    signupDate: "2024-04-22T13:40:00Z",
+    moduleProgress: [{ moduleId: "ip3-m1", completed: true, mcqScore: 100 }],
+    writtenAnswers: [
+      {
+        questionId: "w1",
+        answer:
+          "I would protect the critical path, defer nice-to-haves, and run short daily stand-ups to clear blockers fast.",
+        score: 90,
+        feedback: "Solid, pragmatic plan.",
       },
     ],
   },
@@ -655,7 +1200,7 @@ export const INTERNAL_THREADS: MessageThread[] = [
       {
         id: "it1-1",
         from: "student",
-        text: "For the safeguarding module, is the data-handling policy the latest 2024 revision?",
+        text: "For the prospecting module, is the playbook the latest 2024 revision?",
         sentAt: "Tue 11:05",
       },
     ],
@@ -663,20 +1208,90 @@ export const INTERNAL_THREADS: MessageThread[] = [
   {
     id: "it2",
     studentId: "u7",
-    programmeId: "ip2",
+    programmeId: "ip3",
     unread: false,
     messages: [
       {
         id: "it2-1",
         from: "student",
-        text: "Could you share an example rubric for the assessment design exercise?",
+        text: "Could you share an example risk register for the delivery planning exercise?",
         sentAt: "Wed 09:20",
       },
       {
         id: "it2-2",
         from: "instructor",
-        text: "Of course — I've added a sample rubric to the Assessment Design Toolkit PDF.",
+        text: "Of course — I've added a sample risk register to the Project Planning Toolkit PDF.",
         sentAt: "Wed 10:02",
+      },
+    ],
+  },
+  {
+    id: "it3",
+    studentId: "u13",
+    programmeId: "ip1",
+    unread: true,
+    messages: [
+      {
+        id: "it3-1",
+        from: "student",
+        text: "On the closing module, how should I handle a buyer who keeps asking for last-minute discounts?",
+        sentAt: "Mon 14:20",
+      },
+    ],
+  },
+  {
+    id: "it4",
+    studentId: "u17",
+    programmeId: "ip2",
+    unread: true,
+    messages: [
+      {
+        id: "it4-1",
+        from: "student",
+        text: "Is the updated grievance procedure covered in the People & Culture handbook?",
+        sentAt: "Thu 09:10",
+      },
+    ],
+  },
+  {
+    id: "it5",
+    studentId: "u18",
+    programmeId: "ip3",
+    unread: false,
+    messages: [
+      {
+        id: "it5-1",
+        from: "student",
+        text: "Thanks for the feedback on my recovery plan — really helpful.",
+        sentAt: "Fri 16:45",
+      },
+    ],
+  },
+  {
+    id: "it6",
+    studentId: "u19",
+    programmeId: "ip1",
+    unread: true,
+    messages: [
+      {
+        id: "it6-1",
+        from: "student",
+        text: "For the pilot approach, what's a good way to scope it so it doesn't drag on?",
+        sentAt: "Tue 10:30",
+      },
+    ],
+  },
+  {
+    id: "it7",
+    studentId: "u21",
+    programmeId: "ip3",
+    unread: true,
+    messages: [
+      {
+        id: "it7-1",
+        from: "student",
+        text: "Could you review my critical-path assumptions before I share them with the sponsor?",
+        sentAt: "Wed 15:05",
       },
     ],
   },
@@ -690,4 +1305,10 @@ export function internalProgrammeName(id: string): string {
 // internal learners with an "(Instructor)" bracket across the portals.
 export function isInstructorLearner(id: string): boolean {
   return USERS.some((u) => u.id === id && u.role === "Instructor");
+}
+
+// The role of the user behind a learner id, if any. Used to render a role
+// badge next to a learner's name across the portals.
+export function learnerRole(id: string): UserRole | null {
+  return USERS.find((u) => u.id === id)?.role ?? null;
 }

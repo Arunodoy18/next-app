@@ -23,11 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
-import InstructorTag from "@/components/instructor-tag";
+import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { isInstructorLearner } from "@/lib/mock-data";
 import { Search, MessageSquare, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const SORT_OPTIONS: Record<string, string> = {
@@ -68,7 +67,7 @@ export default function InstructorStudentsPage() {
   );
   const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
   const programmeFilterItems: Record<string, string> = {
-    all: "All programmes",
+    all: "All Programmes",
     ...Object.fromEntries([...assignedProgrammes, ...myInternalProgrammes].map((p) => [p.id, p.name])),
   };
   const myStudents = useMemo(() => {
@@ -183,10 +182,10 @@ export default function InstructorStudentsPage() {
               >
                 <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
                   <Filter size={14} className="text-muted-foreground shrink-0" />
-                  <SelectValue placeholder="All programmes" />
+                  <SelectValue placeholder="All Programmes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All programmes</SelectItem>
+                  <SelectItem value="all">All Programmes</SelectItem>
                   {[...assignedProgrammes, ...myInternalProgrammes].map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.name}
@@ -252,7 +251,7 @@ export default function InstructorStudentsPage() {
                     <TableCell>
                       <p className="font-medium m-0">
                         {s.name}
-                        {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+                        <LearnerRoleBadge id={s.id} className="ml-2" />
                       </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
@@ -359,7 +358,6 @@ export default function InstructorStudentsPage() {
         student={selected}
         programme={selectedProgramme}
         mode="view"
-        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onEvaluate={goEvaluate}
       />

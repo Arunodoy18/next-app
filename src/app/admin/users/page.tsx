@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import RoleBadge from "@/components/role-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -21,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -32,18 +32,11 @@ import {
 } from "@/components/ui/dialog";
 import { usePortalStore } from "@/lib/portal-store";
 import PageTitle from "@/components/page-title";
-import { programmeName, type AppUser, type UserRole } from "@/lib/mock-data";
+import { ASSIGNABLE_ROLES, type AppUser, type UserRole } from "@/lib/mock-data";
 import { Plus, Trash2, Download, Search } from "lucide-react";
 
 let idCounter = 5000;
 const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
-
-// Each role gets its own colour so the table scans at a glance.
-const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-muted text-muted-foreground border-border",
-  Instructor: "bg-blue-500/10 text-blue-600 border-blue-600",
-  Admin: "bg-amber-500/10 text-amber-600 border-amber-600",
-};
 
 function toCsv(rows: string[][]): string {
   // Quote fields and escape embedded quotes so commas/quotes survive.
@@ -61,11 +54,25 @@ function downloadCsv(filename: string, csv: string) {
 }
 
 export default function AdminUsersPage() {
-  const { users, setUsers, programmes } = usePortalStore();
+  return (
+    <Suspense>
+      <AdminUsersContent />
+    </Suspense>
+  );
+}
+
+function AdminUsersContent() {
+  const { users, setUsers, programmes, internalProgrammes } = usePortalStore();
+  // Instructors/admins can be allotted any programme — standard (student) or
+  // internal (role) tracks.
+  const allProgrammes = useMemo(() => [...programmes, ...internalProgrammes], [programmes, internalProgrammes]);
+  const resolveProgrammeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
   const [editingUser, setEditingUser] = useState<AppUser | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const initialType = searchParams.get("type") as UserRole | null;
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<UserRole | "all">("all");
+  const [roleFilter, setRoleFilter] = useState<UserRole | "all">(initialType ?? "all");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -93,11 +100,11 @@ export default function AdminUsersPage() {
   // A user's programme label: students enrol in one; instructors/admins can
   // be allotted several.
   const programmeLabel = (u: AppUser) => {
-    if (u.role === "Student") return u.programmeId ? programmeName(u.programmeId) : "";
-    return (u.programmeIds ?? []).map(programmeName).join(", ");
+    if (u.role === "Student") return u.programmeId ? resolveProgrammeName(u.programmeId) : "";
+    return (u.programmeIds ?? []).map(resolveProgrammeName).join(", ");
   };
 
-  const header = ["Name", "Email", "Role", "Programme", "Signup Date"];
+  const header = ["Name", "Email", "Type", "Programme", "Signup Date"];
   const userRow = (u: AppUser) => [u.name, u.email, u.role, programmeLabel(u), new Date(u.signupDate).toLocaleDateString("en-GB")];
 
   const exportUsers = () => {
@@ -114,7 +121,7 @@ export default function AdminUsersPage() {
       <PageTitle title="Users" />
       <div>
         <h1 className="text-3xl font-normal m-0">Users</h1>
-        <p className="text-muted-foreground mt-1">Students, instructors, and admins across the platform.</p>
+        <p className="text-muted-foreground mt-1">Students, instructors, and admins across the platform. Filter by type.</p>
       </div>
 
       <Card className="shadow-sm">
@@ -122,18 +129,22 @@ export default function AdminUsersPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base font-medium m-0">All Users</CardTitle>
-              <CardDescription>Click a row to edit details, role, or enrolment.</CardDescription>
+              <CardDescription>Click a row to edit details, type, or enrolment.</CardDescription>
             </div>
           </div>
           <div className="w-full flex flex-col lg:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 lg:items-center lg:justify-between min-w-0">
-            <Tabs value={roleFilter} onValueChange={(v) => setRoleFilter(v as UserRole | "all")} className="w-full lg:w-auto min-w-0 shrink-0">
-              <TabsList className="bg-background w-full sm:w-fit max-w-full overflow-x-auto flex sm:inline-flex justify-start">
-                <TabsTrigger value="all" className="flex-1 sm:flex-none shrink-0">All Users</TabsTrigger>
-                <TabsTrigger value="Student" className="flex-1 sm:flex-none shrink-0">Students</TabsTrigger>
-                <TabsTrigger value="Instructor" className="flex-1 sm:flex-none shrink-0">Instructors</TabsTrigger>
-                <TabsTrigger value="Admin" className="flex-1 sm:flex-none shrink-0">Admins</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <Select value={roleFilter} onValueChange={(v) => setRoleFilter((v ?? "all") as UserRole | "all")}>
+              <SelectTrigger className="w-full lg:w-48 bg-background shrink-0">
+                <span className="flex flex-1 text-left truncate">{roleFilter === "all" ? "All Users" : roleFilter}</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                {ASSIGNABLE_ROLES.map((r) => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+                <SelectItem value="Admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full lg:w-auto min-w-0">
               <div className="relative w-full sm:w-64">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -165,7 +176,7 @@ export default function AdminUsersPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Programme</TableHead>
                 <TableHead>Signup Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -188,7 +199,7 @@ export default function AdminUsersPage() {
                   <TableCell className="font-medium">{u.name}</TableCell>
                   <TableCell className="text-muted-foreground">{u.email}</TableCell>
                   <TableCell>
-                    <Badge className={ROLE_BADGE[u.role]}>{u.role}</Badge>
+                    <RoleBadge role={u.role} />
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {programmeLabel(u) || "N/A"}
@@ -240,7 +251,7 @@ export default function AdminUsersPage() {
             <>
               <DialogHeader>
                 <DialogTitle>{editingUser.name || "New User"}</DialogTitle>
-                <DialogDescription>Edit user details, role, and programme enrolment.</DialogDescription>
+                <DialogDescription>Edit user details, type, and programme enrolment.</DialogDescription>
               </DialogHeader>
 
               <div className="flex flex-col gap-4">
@@ -259,7 +270,7 @@ export default function AdminUsersPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label>Role</Label>
+                  <Label>Type</Label>
                   <Select
                     value={editingUser.role}
                     onValueChange={(value) => setEditingUser({ ...editingUser, role: (value ?? "Student") as UserRole })}
@@ -268,8 +279,9 @@ export default function AdminUsersPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Student">Student</SelectItem>
-                      <SelectItem value="Instructor">Instructor</SelectItem>
+                      {ASSIGNABLE_ROLES.map((r) => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
                       <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
@@ -298,7 +310,7 @@ export default function AdminUsersPage() {
                   <div className="flex flex-col gap-1.5">
                     <Label>Allotted Programmes</Label>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      {programmes.map((p) => {
+                      {allProgrammes.map((p) => {
                         const assigned = (editingUser.programmeIds ?? []).includes(p.id);
                         return (
                           <button

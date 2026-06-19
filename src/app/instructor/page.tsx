@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import InstructorTag from "@/components/instructor-tag";
+import { ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
+import LearnerRoleBadge from "@/components/learner-role-badge";
+import RoleBadge from "@/components/role-badge";
 import PageTitle from "@/components/page-title";
 import {
   Users,
@@ -50,8 +52,8 @@ export default function InstructorOverview() {
   // Programme filter chips shown under the welcome line. All selected by
   // default; deselecting one removes its data from the stats and lists below.
   const badgeProgrammes = [
-    ...assignedProgrammes.map((p) => ({ id: p.id, name: p.name, kind: "standard" as const })),
-    ...myInternalProgrammes.map((p) => ({ id: p.id, name: p.name, kind: "internal" as const })),
+    ...assignedProgrammes.map((p) => ({ id: p.id, name: p.name, role: p.roles?.[0] ?? null })),
+    ...myInternalProgrammes.map((p) => ({ id: p.id, name: p.name, role: p.roles?.[0] ?? null })),
   ];
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     () => new Set([...assignedProgrammes, ...myInternalProgrammes].map((p) => p.id))
@@ -173,7 +175,7 @@ export default function InstructorOverview() {
   const InternalDivider = () => (
     <div className="flex items-center gap-2 py-1">
       <span className="h-px flex-1 bg-border" />
-      <span className="text-[10px] font-medium uppercase tracking-wide text-blue-600">Internal</span>
+      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
       <span className="h-px flex-1 bg-border" />
     </div>
   );
@@ -187,7 +189,6 @@ export default function InstructorOverview() {
           <GraduationCap size={14} className="text-muted-foreground" />
           {badgeProgrammes.map((p) => {
             const active = selectedIds.has(p.id);
-            const internal = p.kind === "internal";
             return (
               <button
                 key={p.id}
@@ -196,8 +197,8 @@ export default function InstructorOverview() {
                 aria-pressed={active}
                 className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
                   active
-                    ? internal
-                      ? "border-transparent bg-blue-500/10 text-blue-600 hover:bg-blue-500/20"
+                    ? p.role
+                      ? ROLE_BADGE[p.role]
                       : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
                     : "border-border text-muted-foreground hover:bg-muted line-through decoration-1"
                 }`}
@@ -249,6 +250,7 @@ export default function InstructorOverview() {
             <ProgrammeRow
               key={programme.id}
               name={programme.name}
+              roles={programme.roles ?? []}
               modules={programme.modules.length}
               count={count}
               countNoun="student"
@@ -263,6 +265,7 @@ export default function InstructorOverview() {
             <ProgrammeRow
               key={programme.id}
               name={programme.name}
+              roles={programme.roles ?? []}
               modules={programme.modules.length}
               count={count}
               countNoun="learner"
@@ -296,11 +299,11 @@ export default function InstructorOverview() {
             ) : (
               <>
                 {queue.slice(0, 3).map((s) => (
-                  <QueueRow key={s.id} name={s.name} programme={programmeName(s.programmeId)} pending={s.writtenAnswers.filter((a) => a.score === null).length} />
+                  <QueueRow key={s.id} learnerId={s.id} name={s.name} programme={programmeName(s.programmeId)} pending={s.writtenAnswers.filter((a) => a.score === null).length} />
                 ))}
                 {internalQueue.length > 0 && <InternalDivider />}
                 {internalQueue.slice(0, 3).map((s) => (
-                  <QueueRow key={s.id} name={s.name} programme={programmeName(s.programmeId)} pending={s.writtenAnswers.filter((a) => a.score === null).length} isInstructor />
+                  <QueueRow key={s.id} learnerId={s.id} name={s.name} programme={programmeName(s.programmeId)} pending={s.writtenAnswers.filter((a) => a.score === null).length} />
                 ))}
               </>
             )}
@@ -324,11 +327,11 @@ export default function InstructorOverview() {
             ) : (
               <>
                 {unreadThreads.slice(0, 3).map((t) => (
-                  <MessageRow key={t.id} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} />
+                  <MessageRow key={t.id} learnerId={t.studentId} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} />
                 ))}
                 {internalUnreadThreads.length > 0 && <InternalDivider />}
                 {internalUnreadThreads.slice(0, 3).map((t) => (
-                  <MessageRow key={t.id} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} isInstructor />
+                  <MessageRow key={t.id} learnerId={t.studentId} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} />
                 ))}
               </>
             )}
@@ -348,6 +351,7 @@ function ProgrammeRow({
   avgGrade,
   pending,
   href,
+  roles = [],
 }: {
   name: string;
   modules: number;
@@ -357,6 +361,7 @@ function ProgrammeRow({
   avgGrade: number | null;
   pending: number;
   href: string;
+  roles?: AssignableRole[];
 }) {
   return (
     <Link
@@ -367,7 +372,12 @@ function ProgrammeRow({
         <GraduationCap size={17} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium m-0 truncate">{name}</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-medium m-0 truncate">{name}</p>
+          {roles.map((r) => (
+            <RoleBadge key={r} role={r} />
+          ))}
+        </div>
         <p className="text-xs text-muted-foreground m-0 mt-0.5">
           {count} {countNoun}
           {count === 1 ? "" : "s"} · {modules} module{modules === 1 ? "" : "s"}
@@ -397,12 +407,12 @@ function QueueRow({
   name,
   programme,
   pending,
-  isInstructor = false,
+  learnerId,
 }: {
   name: string;
   programme: string;
   pending: number;
-  isInstructor?: boolean;
+  learnerId?: string;
 }) {
   return (
     <Link
@@ -415,7 +425,7 @@ function QueueRow({
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {name}
-          {isInstructor && <InstructorTag className="ml-2" />}
+          {learnerId && <LearnerRoleBadge id={learnerId} className="ml-2" />}
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programme}</p>
       </div>
@@ -428,11 +438,11 @@ function QueueRow({
 function MessageRow({
   name,
   last,
-  isInstructor = false,
+  learnerId,
 }: {
   name: string;
   last: { text: string; sentAt: string } | undefined;
-  isInstructor?: boolean;
+  learnerId?: string;
 }) {
   return (
     <Link
@@ -446,7 +456,7 @@ function MessageRow({
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium m-0 truncate">
             {name}
-            {isInstructor && <InstructorTag className="ml-2" />}
+            {learnerId && <LearnerRoleBadge id={learnerId} className="ml-2" />}
           </p>
           <span className="text-xs text-muted-foreground ml-auto shrink-0">{last?.sentAt}</span>
         </div>

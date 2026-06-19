@@ -435,7 +435,7 @@ export default function Dashboard() {
       <div className="w-80 lg:w-72 xl:w-80 h-full flex flex-col p-4 gap-6 overflow-hidden">
         <div className="flex items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal whitespace-nowrap">
-            <Logo width="22" height="42" color="var(--foreground)" className="shrink-0" style={{ marginRight: '0.7rem' }} />
+            <Logo width="22" height="42" color="currentColor" className="shrink-0 text-foreground transition-colors hover:text-[#7e55f6]" style={{ marginRight: '0.7rem' }} />
             <div>
               <span className="text-foreground">Blackmont</span> <span className="text-foreground">Academy</span>
             </div>

@@ -198,8 +198,8 @@ export default function PortalShell({
                 <Logo
                   width="22"
                   height="42"
-                  color="var(--foreground)"
-                  className="shrink-0"
+                  color="currentColor"
+                  className="shrink-0 text-foreground transition-colors hover:text-[#7e55f6]"
                   style={{ marginRight: "0.7rem" }}
                 />
                 <div>

@@ -20,18 +20,22 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable, type DropResult, type DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import ResourcePreviewDialog, { type PreviewTarget } from "@/components/resource-preview-dialog";
 import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import {
   INSTRUCTORS,
+  ASSIGNABLE_ROLES,
+  ROLE_BADGE,
   type Programme,
   type ProgrammeModule,
   type WrittenQuestion,
   type ModuleItem,
   type McqQuestion,
+  type AssignableRole,
 } from "@/lib/mock-data";
+import RoleBadge from "@/components/role-badge";
 import {
   Plus,
   Trash2,
@@ -166,6 +170,13 @@ export default function ProgrammesPage() {
                     >
                       {p.name || "Untitled Programme"}
                     </span>
+                    {(p.roles ?? []).length > 0 && (
+                      <span className="flex items-center gap-1 flex-wrap mt-1">
+                        {(p.roles ?? []).map((r) => (
+                          <RoleBadge key={r} role={r} />
+                        ))}
+                      </span>
+                    )}
                     <span className="block text-xs text-muted-foreground mt-0.5">
                       {p.modules.length} module{p.modules.length === 1 ? "" : "s"} · {p.instructorIds.length} instructor
                       {p.instructorIds.length === 1 ? "" : "s"}
@@ -187,7 +198,7 @@ export default function ProgrammesPage() {
         <Card className="shadow-sm py-3 gap-3">
           <CardHeader className="px-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium m-0">Instructor Programmes</CardTitle>
+              <CardTitle className="text-sm font-medium m-0">Internal Programmes</CardTitle>
               <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={() => addProgramme("internal")}>
                 <Plus size={12} /> New
               </Button>
@@ -222,6 +233,13 @@ export default function ProgrammesPage() {
                     >
                       {p.name || "Untitled Programme"}
                     </span>
+                    {(p.roles ?? []).length > 0 && (
+                      <span className="flex items-center gap-1 flex-wrap mt-1">
+                        {(p.roles ?? []).map((r) => (
+                          <RoleBadge key={r} role={r} />
+                        ))}
+                      </span>
+                    )}
                     <span className="block text-xs text-muted-foreground mt-0.5">
                       {p.modules.length} module{p.modules.length === 1 ? "" : "s"} · {p.instructorIds.length} instructor
                       {p.instructorIds.length === 1 ? "" : "s"}
@@ -295,7 +313,12 @@ function ProgrammeEditor({
 
   const [detailsSnapshot, setDetailsSnapshot] = useState<Partial<Programme> | null>(null);
   const startEditDetails = () => {
-    setDetailsSnapshot({ name: programme.name, instructorIds: programme.instructorIds });
+    setDetailsSnapshot({
+      name: programme.name,
+      description: programme.description,
+      instructorIds: programme.instructorIds,
+      roles: programme.roles,
+    });
     setEditingDetails(true);
   };
   const saveDetails = () => {
@@ -372,9 +395,9 @@ function ProgrammeEditor({
 
     if (type === "item") {
       const moduleId = source.droppableId.replace("items-", "");
-      const module = programme.modules.find((m) => m.id === moduleId);
-      if (!module) return;
-      const reorderedItems = moveInArray(module.items, source.index, destination.index);
+      const mod = programme.modules.find((m) => m.id === moduleId);
+      if (!mod) return;
+      const reorderedItems = moveInArray(mod.items, source.index, destination.index);
       onChange({
         modules: programme.modules.map((m) => (m.id === moduleId ? { ...m, items: reorderedItems } : m)),
       });
@@ -402,6 +425,15 @@ function ProgrammeEditor({
       instructorIds: programme.instructorIds.includes(instructorId)
         ? programme.instructorIds.filter((id) => id !== instructorId)
         : [...programme.instructorIds, instructorId],
+    });
+  };
+
+  const toggleRole = (role: AssignableRole) => {
+    const current = programme.roles ?? [];
+    onChange({
+      roles: current.includes(role)
+        ? current.filter((r) => r !== role)
+        : [...current, role],
     });
   };
 
@@ -497,6 +529,27 @@ function ProgrammeEditor({
                 </div>
                 <p className="text-xs text-muted-foreground m-0">Tap an instructor to assign or remove them.</p>
               </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>Type</Label>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {ASSIGNABLE_ROLES.map((r) => {
+                    const on = (programme.roles ?? []).includes(r);
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => toggleRole(r)}
+                        className={`inline-flex items-center h-7 rounded-full border px-2.5 text-xs font-medium transition-all ${ROLE_BADGE[r]} ${
+                          on ? "ring-2 ring-current ring-offset-1 ring-offset-background" : "opacity-40 hover:opacity-75"
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground m-0">Select one or more types this programme serves.</p>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
@@ -525,6 +578,16 @@ function ProgrammeEditor({
                         </div>
                       );
                     })
+                  )}
+                </div>
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-2 block">Type</Label>
+                <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                  {(programme.roles ?? []).length === 0 ? (
+                    <span className="text-sm text-muted-foreground">-</span>
+                  ) : (
+                    (programme.roles ?? []).map((r) => <RoleBadge key={r} role={r} />)
                   )}
                 </div>
               </div>
@@ -590,7 +653,6 @@ function ProgrammeEditor({
                           <ModuleCard
                             module={module}
                             index={mIndex}
-                            total={programme.modules.length}
                             editing={editing}
                             expanded={expandedModules.has(module.id)}
                             onToggle={() => toggleModule(module.id)}
@@ -724,7 +786,6 @@ function ProgrammeEditor({
 function ModuleCard({
   module,
   index,
-  total,
   editing,
   expanded,
   onToggle,
@@ -735,14 +796,13 @@ function ModuleCard({
 }: {
   module: ProgrammeModule;
   index: number;
-  total: number;
   editing: boolean;
   expanded: boolean;
   onToggle: () => void;
   onUpdate: (updates: Partial<ProgrammeModule>) => void;
   onRemove: () => void;
   onPreview: (target: PreviewTarget) => void;
-  dragHandleProps?: any;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }) {
   const lessonCount = module.items.filter((i) => i.type !== "quiz").length;
   const quizCount = module.items.filter((i) => i.type === "quiz").length;
@@ -826,8 +886,6 @@ function ModuleCard({
                     <div ref={provided.innerRef} {...provided.draggableProps}>
                       <ContentItemRow
                         item={item}
-                        index={iIndex}
-                        total={module.items.length}
                         editing={editing}
                         onUpdate={(updates) => updateItem(item.id, updates)}
                         onRemove={() => onUpdate({ items: module.items.filter((it) => it.id !== item.id) })}
@@ -880,8 +938,6 @@ function ModuleCard({
 
 function ContentItemRow({
   item,
-  index,
-  total,
   editing,
   onUpdate,
   onRemove,
@@ -889,13 +945,11 @@ function ContentItemRow({
   dragHandleProps,
 }: {
   item: ModuleItem;
-  index: number;
-  total: number;
   editing: boolean;
   onUpdate: (updates: Partial<ModuleItem>) => void;
   onRemove: () => void;
   onPreview: (target: PreviewTarget) => void;
-  dragHandleProps?: any;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }) {
   const [quizOpen, setQuizOpen] = useState(false);
   const Meta = ITEM_META[item.type];
@@ -1149,7 +1203,7 @@ function McqEditor({
   question: McqQuestion;
   onUpdate: (updates: Partial<McqQuestion>) => void;
   onRemove: () => void;
-  dragHandleProps?: any;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }) {
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-2 flex flex-col gap-1.5">

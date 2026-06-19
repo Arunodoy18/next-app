@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StudentDetailDialog from "@/components/student-detail-dialog";
-import InstructorTag from "@/components/instructor-tag";
+import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { isInstructorLearner, type WrittenAnswer } from "@/lib/mock-data";
+import { type WrittenAnswer } from "@/lib/mock-data";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export default function InstructorEvaluationsPage() {
@@ -57,7 +57,7 @@ export default function InstructorEvaluationsPage() {
   const InternalDivider = () => (
     <div className="flex items-center gap-2 py-1 sm:col-span-2">
       <span className="h-px flex-1 bg-border" />
-      <span className="text-[10px] font-medium uppercase tracking-wide text-blue-600">Internal</span>
+      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
       <span className="h-px flex-1 bg-border" />
     </div>
   );
@@ -84,7 +84,7 @@ export default function InstructorEvaluationsPage() {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {s.name}
-          {isInstructorLearner(s.id) && <InstructorTag className="ml-2" />}
+          <LearnerRoleBadge id={s.id} className="ml-2" />
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(s.programmeId)}</p>
       </div>
@@ -147,7 +147,6 @@ export default function InstructorEvaluationsPage() {
       <StudentDetailDialog
         student={selected}
         programme={selectedProgramme}
-        isInstructor={selected ? isInstructorLearner(selected.id) : false}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
       />

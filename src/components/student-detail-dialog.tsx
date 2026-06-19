@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CheckCircle2, Circle, ClipboardCheck } from "lucide-react";
+import LearnerRoleBadge from "@/components/learner-role-badge";
 import type { Programme, StudentRecord, WrittenAnswer } from "@/lib/mock-data";
 
 type Drafts = Record<string, { score: string; feedback: string }>;
@@ -39,7 +40,6 @@ export default function StudentDetailDialog({
   student,
   programme,
   mode = "evaluate",
-  isInstructor = false,
   onClose,
   onSaveEvaluation,
   onEvaluate,
@@ -47,7 +47,6 @@ export default function StudentDetailDialog({
   student: StudentRecord | null;
   programme: Programme | null;
   mode?: "view" | "evaluate";
-  isInstructor?: boolean;
   onClose: () => void;
   onSaveEvaluation?: (studentId: string, answers: WrittenAnswer[]) => void;
   onEvaluate?: (studentId: string) => void;
@@ -99,9 +98,7 @@ export default function StudentDetailDialog({
               <DialogHeader>
               <DialogTitle>
                 {view.student.name}
-                {isInstructor && (
-                  <span className="ml-2 text-sm font-normal text-muted-foreground">(Instructor)</span>
-                )}
+                <LearnerRoleBadge id={view.student.id} className="ml-2" />
               </DialogTitle>
               <DialogDescription>
                 {view.student.email} · {view.programme.name}
