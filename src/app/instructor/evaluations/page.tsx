@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StudentDetailDialog from "@/components/student-detail-dialog";
@@ -14,14 +14,9 @@ import { CheckCircle2, ChevronRight } from "lucide-react";
 export default function InstructorEvaluationsPage() {
   const { programmes, students, setStudents, internalProgrammes, internalStudents, setInternalStudents } =
     usePortalStore();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  // Open a student directly when arriving from the Students roster
-  // (e.g. /instructor/evaluations?student=stu-1).
-  useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("student");
-    if (id) setSelectedId(id);
-  }, []);
+  const [selectedId, setSelectedId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("student")
+  );
 
   const allProgrammes = [...programmes, ...internalProgrammes];
   const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
@@ -51,16 +46,6 @@ export default function InstructorEvaluationsPage() {
   const internalEvaluated = myInternalStudents.filter(isEvaluated);
   const queue = [...standardQueue, ...internalQueueList];
   const evaluated = [...standardEvaluated, ...internalEvaluated];
-
-  // Labelled divider that spans the 2-column grid, setting internal
-  // (instructor) submissions apart.
-  const InternalDivider = () => (
-    <div className="flex items-center gap-2 py-1 sm:col-span-2">
-      <span className="h-px flex-1 bg-border" />
-      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
-      <span className="h-px flex-1 bg-border" />
-    </div>
-  );
 
   const selected = myStudents.find((s) => s.id === selectedId) ?? null;
   const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
@@ -101,7 +86,7 @@ export default function InstructorEvaluationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Evaluations" />
+      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Evaluations</h1>
         <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your students.</p>
@@ -150,6 +135,16 @@ export default function InstructorEvaluationsPage() {
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
       />
+    </div>
+  );
+}
+
+function InternalDivider() {
+  return (
+    <div className="flex items-center gap-2 py-1 sm:col-span-2">
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
+      <span className="h-px flex-1 bg-border" />
     </div>
   );
 }

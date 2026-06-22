@@ -1,3 +1,4 @@
+// remov1234
 // Lightweight demo auth backed by localStorage. Three fixed accounts, all
 // using the password "123". Real apps would never do this — it's a mock.
 export type AuthRole = "student" | "instructor" | "admin";

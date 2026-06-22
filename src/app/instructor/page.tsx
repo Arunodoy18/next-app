@@ -1,3 +1,4 @@
+// REVW
 "use client";
 
 import { useState } from "react";
@@ -170,19 +171,9 @@ export default function InstructorOverview() {
     },
   ];
 
-  // Labelled divider used to set internal (instructor) items apart from the
-  // standard student lists.
-  const InternalDivider = () => (
-    <div className="flex items-center gap-2 py-1">
-      <span className="h-px flex-1 bg-border" />
-      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
-      <span className="h-px flex-1 bg-border" />
-    </div>
-  );
-
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Instructor" />
+      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Welcome, {CURRENT_INSTRUCTOR.name}</h1>
         <div className="flex items-center gap-1.5 mt-2 flex-wrap">
@@ -338,6 +329,16 @@ export default function InstructorOverview() {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+}
+
+function InternalDivider() {
+  return (
+    <div className="flex items-center gap-2 py-1">
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-[10px] font-medium uppercase tracking-wide text-white">Internal</span>
+      <span className="h-px flex-1 bg-border" />
     </div>
   );
 }

@@ -11,8 +11,10 @@ const questrial = Questrial({
 });
 
 export const metadata: Metadata = {
-  title: "Blackmont Academy",
-  description: "",
+  title: {
+    default: "Blackmont Academy",
+    template: "%s",
+  },
 };
 
 export default function RootLayout({

@@ -69,20 +69,23 @@ export default function InstructorChat({
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Always return to the list when the chat is reopened or the programme changes.
-  useEffect(() => {
+  // Reset to the instructor list when the dialog reopens or the programme changes.
+  const [prevReset, setPrevReset] = useState({ open, instructors });
+  if (prevReset.open !== open || prevReset.instructors !== instructors) {
+    setPrevReset({ open, instructors });
     setSelectedInstructorId(null);
     setDraft("");
-  }, [open, instructors]);
+  }
 
   const activeInstructor = instructors.find((i) => i.id === selectedInstructorId) ?? null;
   const key = activeInstructor ? storageKey(user, programmeId, activeInstructor.id) : "";
 
-  // Load the stored conversation when an instructor is opened.
-  useEffect(() => {
-    if (!key) return;
-    setMessages(loadMessages(key));
-  }, [key]);
+  // Load the stored conversation when an instructor is selected.
+  const [prevKey, setPrevKey] = useState(key);
+  if (prevKey !== key) {
+    setPrevKey(key);
+    if (key) setMessages(loadMessages(key));
+  }
 
   // Keep the view pinned to the newest message.
   useEffect(() => {

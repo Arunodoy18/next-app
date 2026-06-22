@@ -150,7 +150,7 @@ export default function InstructorStudentsPage() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Students" />
+      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Students</h1>
         <p className="text-muted-foreground mt-1">Everyone enrolled in your assigned programmes.</p>

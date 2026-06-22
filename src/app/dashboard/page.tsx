@@ -1,3 +1,4 @@
+// REVW
 "use client";
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
@@ -258,7 +259,7 @@ export default function Dashboard() {
   };
 
   if (!user) {
-    return null;
+    return <><PageTitle title="Student Dashboard" /></>;
   }
 
   const programme = PROGRAMMES.find((p) => p.id === activeProgramme) ?? PROGRAMMES[0];
@@ -314,7 +315,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <PageTitle title="Dashboard" />
+      <PageTitle title="Student Dashboard" />
       {/* Mobile/tablet top bar */}
       <div
         className={`fixed top-0 inset-x-0 z-50 h-14 flex items-center justify-between px-4 bg-card border-b border-border transition-transform duration-200 lg:hidden ${

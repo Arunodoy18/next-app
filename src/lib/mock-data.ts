@@ -1,3 +1,4 @@
+// remov1234
 export type LessonType = "video" | "pdf" | "link";
 
 export interface McqQuestion {

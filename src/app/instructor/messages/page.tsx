@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,29 +58,32 @@ export default function InstructorMessagesPage() {
 
   // Open (or start) a conversation when arriving from the Students roster
   // via /instructor/messages?student=<id>.
-  useEffect(() => {
+  const [didRoute, setDidRoute] = useState(false);
+  if (!didRoute && typeof window !== "undefined") {
     const id = new URLSearchParams(window.location.search).get("student");
-    if (!id) return;
-    const existing = [...threads, ...internalThreads].find((t) => t.studentId === id);
-    if (existing) {
-      setActiveId(existing.id);
-      updateThread(existing.id, (t) => ({ ...t, unread: false }));
-      return;
+    if (id) {
+      const existing = [...threads, ...internalThreads].find((t) => t.studentId === id);
+      if (existing) {
+        if (activeId !== existing.id) setActiveId(existing.id);
+        if (existing.unread) updateThread(existing.id, (t) => ({ ...t, unread: false }));
+      } else {
+        const student = allStudents.find((s) => s.id === id);
+        if (student) {
+          const newThread = {
+            id: nextId("t"),
+            studentId: id,
+            programmeId: student.programmeId,
+            unread: false,
+            messages: [],
+          };
+          const setter = internalStudents.some((s) => s.id === id) ? setInternalThreads : setThreads;
+          setter((prev) => [newThread, ...prev]);
+          setActiveId(newThread.id);
+        }
+      }
     }
-    const student = allStudents.find((s) => s.id === id);
-    if (!student) return;
-    const newThread = {
-      id: nextId("t"),
-      studentId: id,
-      programmeId: student.programmeId,
-      unread: false,
-      messages: [],
-    };
-    const setter = internalStudents.some((s) => s.id === id) ? setInternalThreads : setThreads;
-    setter((prev) => [newThread, ...prev]);
-    setActiveId(newThread.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setDidRoute(true);
+  }
   const studentName = (id: string) => allStudents.find((s) => s.id === id)?.name ?? "Student";
   const initials = (name: string) => name.split(" ").map((w) => w[0]).slice(0, 2).join("");
 
@@ -102,7 +105,7 @@ export default function InstructorMessagesPage() {
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Messages" />
+      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Messages</h1>
         <p className="text-muted-foreground mt-1">Questions and queries from your students.</p>
