@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo/logo";
-import { logout } from "@/lib/auth";
+import { logout } from "@/auth/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -95,8 +95,8 @@ export default function PortalShell({
       <DropdownMenuItem
         variant="destructive"
         className="text-base py-2 [&_svg]:size-[18px]"
-        onClick={() => {
-          logout();
+        onClick={async () => {
+          await logout();
           router.push("/login");
         }}
       >
@@ -168,19 +168,19 @@ export default function PortalShell({
 
       <div className="flex flex-1 min-w-0">
         {/* Mobile sidebar backdrop */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+        <div
+          className={`fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm lg:hidden transition-opacity duration-300 ease-in-out ${
+            sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setSidebarOpen(false)}
+        />
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] shrink-0 border-r border-border bg-background overflow-hidden transition-[width,padding,border,transform] duration-300 ease-in-out ${
+          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen w-80 shrink-0 border-r border-border bg-background overflow-hidden transition-transform duration-300 ease-in-out lg:transition-[width,padding,border] ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 ${
-            sidebarCollapsed ? "lg:w-0 lg:border-0" : sidebarOpen ? "w-80 lg:w-72 xl:w-80" : "w-72 lg:w-72 xl:w-80"
+            sidebarCollapsed ? "lg:w-0 lg:border-0" : "lg:w-72 xl:w-80"
           }`}
         >
           {/* Desktop sidebar collapse toggle */}

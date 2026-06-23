@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -172,6 +173,7 @@ export default function InstructorOverview() {
   ];
 
   return (
+    <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <PageTitle title="Instructor Portal" />
       <div>
@@ -330,6 +332,7 @@ export default function InstructorOverview() {
         </Card>
       </div>
     </div>
+    </PlaceholderGuard>
   );
 }
 

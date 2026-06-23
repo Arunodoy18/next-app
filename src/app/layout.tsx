@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Questrial } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import QueryProvider from "@/components/query-provider";
+import SuperuserBubble from "@/components/misc/superuser-bubble";
+import { PlaceholderProvider } from "@/components/misc/use-placeholder";
 import "./globals.css";
 
 const questrial = Questrial({
@@ -26,6 +29,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${questrial.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -35,8 +39,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeToggle />
-          {children}
+          <QueryProvider>
+            <PlaceholderProvider>
+              <ThemeToggle />
+              {children}
+              <SuperuserBubble />
+            </PlaceholderProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -7,24 +7,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { User, Lock, ChevronLeft } from 'lucide-react';
-import { authenticate, login } from '@/lib/auth';
+import { User, Lock, ChevronLeft, Loader2 } from 'lucide-react';
 import PageTitle from '@/components/page-title';
 
 export default function Login() {
   const router = useRouter();
-  const [userId, setUserId] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const account = authenticate(userId, password);
-    if (account) {
-      login(account.userId, account.role);
-      router.push(account.home);
-    } else {
-      setError('Invalid User ID or Password');
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Invalid credentials');
+        setLoading(false);
+        return;
+      }
+
+      router.push(data.home);
+    } catch {
+      setError('Something went wrong');
+      setLoading(false);
     }
   };
 
@@ -40,26 +56,23 @@ export default function Login() {
         <CardHeader className="text-center pb-8">
           <CardTitle className="text-4xl leading-[1] font-normal m-0">Academy Access</CardTitle>
           <p className="text-sm text-muted-foreground mt-3 m-0">
-            Usernames: <span className="font-medium text-foreground">student</span>,{' '}
-            <span className="font-medium text-foreground">instructor</span>{' '}
-            <span className="font-medium text-foreground">admin</span>  -  password{' '}
-            <span className="font-medium text-foreground">123</span>
+            Sign in with your credentials to continue
           </p>
         </CardHeader>
 
         <CardContent className="p-0">
           <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium" htmlFor="userid">User ID</Label>
+              <Label className="text-sm font-medium" htmlFor="username">Username</Label>
               <div className="relative flex items-center">
                 <User className="absolute left-4 text-muted-foreground" size={20} />
                 <Input
                   className="pl-12 text-base h-12 rounded-lg"
                   type="text"
-                  id="userid"
-                  placeholder="Enter your User ID"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
+                  id="username"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
@@ -89,8 +102,12 @@ export default function Login() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-semibold mt-2 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md">
-              Log In
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 text-base font-semibold mt-2 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md"
+            >
+              {loading ? <Loader2 size={20} className="animate-spin" /> : 'Log In'}
             </Button>
           </form>
         </CardContent>

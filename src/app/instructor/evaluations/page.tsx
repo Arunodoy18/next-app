@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StudentDetailDialog from "@/components/student-detail-dialog";
@@ -85,6 +86,7 @@ export default function InstructorEvaluationsPage() {
   );
 
   return (
+    <PlaceholderGuard>
     <div className="max-w-4xl mx-auto flex flex-col gap-6">
       <PageTitle title="Instructor Portal" />
       <div>
@@ -136,6 +138,7 @@ export default function InstructorEvaluationsPage() {
         onSaveEvaluation={saveEvaluation}
       />
     </div>
+    </PlaceholderGuard>
   );
 }
 

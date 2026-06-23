@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import PlaceholderGuard from '@/components/misc/placeholder-guard';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,8 @@ import Logo from '@/components/logo/logo';
 import InstructorChat from '@/components/instructor-chat';
 import PageTitle from '@/components/page-title';
 import RoleBadge from '@/components/role-badge';
-import { logout } from '@/lib/auth';
+import { logout } from '@/auth/client';
+import { useUser } from '@/hooks/use-current-user';
 import { INTERNAL_PROGRAMMES, type AssignableRole } from '@/lib/mock-data';
 import {
   PlayCircle,
@@ -158,6 +160,7 @@ export default function Internal() {
     () => false
   );
   const user = mounted ? (localStorage.getItem('user') ?? 'student') : null;
+  const { initials } = useUser();
   const [completedState, setCompleted] = useState<Record<string, boolean> | null>(null);
   const [activeProgramme, setActiveProgramme] = useState<string>(PROGRAMMES[0]?.id ?? '');
   const [activeModule, setActiveModule] = useState<string>(PROGRAMMES[0]?.modules[0]?.id ?? '');
@@ -210,8 +213,8 @@ export default function Internal() {
     localStorage.setItem(PROGRESS_KEY_PREFIX + user, JSON.stringify(updated));
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/login');
   };
 
@@ -276,6 +279,7 @@ export default function Internal() {
   const currentModuleGrade = currentModule ? moduleGrade(currentModule) : null;
 
   return (
+    <PlaceholderGuard>
     <div className="min-h-screen bg-background flex">
       <PageTitle title="Internal Dashboard" />
       {/* Mobile/tablet top bar */}
@@ -303,7 +307,7 @@ export default function Internal() {
           >
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium leading-none">
-                {user.slice(0, 2).toUpperCase()}
+                {initials}
               </AvatarFallback>
             </Avatar>
             <ChevronsUpDown size={16} className="text-muted-foreground shrink-0 self-center" />
@@ -346,7 +350,7 @@ export default function Internal() {
         >
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium leading-none">
-              {user.slice(0, 2).toUpperCase()}
+              {initials}
             </AvatarFallback>
           </Avatar>
           <ChevronsUpDown size={16} className="text-muted-foreground shrink-0 self-center" />
@@ -1098,5 +1102,6 @@ export default function Internal() {
         onOpenChange={setChatOpen}
       />
     </div>
+    </PlaceholderGuard>
   );
 }

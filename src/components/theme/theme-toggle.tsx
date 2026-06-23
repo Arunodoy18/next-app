@@ -16,7 +16,7 @@ export function ThemeToggle() {
   );
 
   // Portal routes have their own theme toggle in the avatar dropdown.
-  const portalRoutes = ["/dashboard", "/admin", "/instructor", "/internal"];
+  const portalRoutes = ["/student", "/admin", "/instructor", "/internal"];
   if (!mounted || portalRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }

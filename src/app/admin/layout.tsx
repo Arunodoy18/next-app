@@ -4,10 +4,12 @@
 import type { ReactNode } from "react";
 import PortalShell, { type PortalNavItem } from "@/components/portal-shell";
 import { PortalStoreProvider, usePortalStore } from "@/lib/portal-store";
+import { useUser } from "@/hooks/use-current-user";
 import { LayoutDashboard, GraduationCap, TrendingUp, Users } from "lucide-react";
 
 function AdminShell({ children }: { children: ReactNode }) {
   const { students } = usePortalStore();
+  const { initials, displayName } = useUser();
   const pendingAnswers = students.reduce(
     (acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length,
     0
@@ -26,8 +28,8 @@ function AdminShell({ children }: { children: ReactNode }) {
       portalName="Admin"
       items={items}
       basePath="/admin"
-      userLabel="Admin User"
-      userInitials="AD"
+      userLabel={displayName}
+      userInitials={initials}
     >
       {children}
     </PortalShell>

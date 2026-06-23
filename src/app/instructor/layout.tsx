@@ -5,17 +5,12 @@ import type { ReactNode } from "react";
 import PortalShell, { type PortalNavItem } from "@/components/portal-shell";
 import { PortalStoreProvider, usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
+import { useUser } from "@/hooks/use-current-user";
 import { LayoutDashboard, Users, ClipboardCheck, MessageSquare } from "lucide-react";
-
-const INITIALS = CURRENT_INSTRUCTOR.name
-  .split(" ")
-  .map((w) => w[0])
-  .slice(0, 2)
-  .join("")
-  .toUpperCase();
 
 function InstructorShell({ children }: { children: ReactNode }) {
   const { students, threads } = usePortalStore();
+  const { initials, displayName } = useUser();
   const myStudents = students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
   const pendingStudents = myStudents.filter((s) => s.writtenAnswers.some((a) => a.score === null)).length;
   const unread = threads.filter(
@@ -35,8 +30,8 @@ function InstructorShell({ children }: { children: ReactNode }) {
       portalName="Instructor"
       items={items}
       basePath="/instructor"
-      userLabel={CURRENT_INSTRUCTOR.name}
-      userInitials={INITIALS}
+      userLabel={displayName}
+      userInitials={initials}
     >
       {children}
     </PortalShell>

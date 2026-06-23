@@ -1,0 +1,2695 @@
+{
+  "nodes": [
+    {
+      "id": "package.json",
+      "label": "package.json",
+      "type": "config",
+      "description": "Next.js application dependencies and scripts",
+      "confidence": "EXTRACTED",
+      "source_location": "package.json"
+    },
+    {
+      "id": "components.json",
+      "label": "components.json",
+      "type": "config",
+      "description": "shadcn/ui and Tailwind configuration",
+      "confidence": "EXTRACTED",
+      "source_location": "components.json"
+    },
+    {
+      "id": "next.config.ts",
+      "label": "next.config.ts",
+      "type": "config",
+      "description": "Next.js configuration",
+      "confidence": "EXTRACTED",
+      "source_location": "next.config.ts"
+    },
+    {
+      "id": "eslint.config.mjs",
+      "label": "eslint.config.mjs",
+      "type": "config",
+      "description": "ESLint configuration with Next.js presets",
+      "confidence": "EXTRACTED",
+      "source_location": "eslint.config.mjs"
+    },
+    {
+      "id": "postcss.config.mjs",
+      "label": "postcss.config.mjs",
+      "type": "config",
+      "description": "PostCSS configuration for Tailwind",
+      "confidence": "EXTRACTED",
+      "source_location": "postcss.config.mjs"
+    },
+    {
+      "id": ".claude/settings.local.json",
+      "label": "settings.local.json",
+      "type": "config",
+      "description": "Claude Code local settings with tool permissions",
+      "confidence": "EXTRACTED",
+      "source_location": ".claude/settings.local.json"
+    },
+    {
+      "id": "scripts/seed.ts#seed",
+      "label": "seed",
+      "type": "function",
+      "description": "Database seeding function that creates initial test users with various roles",
+      "confidence": "EXTRACTED",
+      "source_location": "scripts/seed.ts:36"
+    },
+    {
+      "id": "scripts/seed.ts#SEED_USERS",
+      "label": "SEED_USERS",
+      "type": "constant",
+      "description": "Array of seed user objects for database initialization",
+      "confidence": "EXTRACTED",
+      "source_location": "scripts/seed.ts:27"
+    },
+    {
+      "id": "scripts/seed.ts#UserSchema",
+      "label": "UserSchema",
+      "type": "class",
+      "description": "MongoDB schema for User collection with userId, name, email, password, salt, role, verified",
+      "confidence": "EXTRACTED",
+      "source_location": "scripts/seed.ts:8"
+    },
+    {
+      "id": "src/app/admin/layout.tsx#AdminLayout",
+      "label": "AdminLayout",
+      "type": "component",
+      "description": "Root layout component for admin portal with PortalShell and PortalStoreProvider",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/layout.tsx:39"
+    },
+    {
+      "id": "src/app/admin/layout.tsx#AdminShell",
+      "label": "AdminShell",
+      "type": "component",
+      "description": "Admin portal shell with navigation items for Overview, Programmes, Performance, Users",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/layout.tsx:10"
+    },
+    {
+      "id": "src/app/admin/page.tsx#AdminOverview",
+      "label": "AdminOverview",
+      "type": "component",
+      "description": "Admin overview page displaying statistics, programme performance, and internal programmes",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/page.tsx:25"
+    },
+    {
+      "id": "src/app/admin/performance/page.tsx#AdminPerformancePage",
+      "label": "AdminPerformancePage",
+      "type": "component",
+      "description": "Performance page with student table, filtering, sorting, and evaluation capabilities",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/performance/page.tsx:41"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#ProgrammesPage",
+      "label": "ProgrammesPage",
+      "type": "component",
+      "description": "Programmes management page with editor for standard and internal programmes",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:79"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#ProgrammeEditor",
+      "label": "ProgrammeEditor",
+      "type": "component",
+      "description": "Component for editing programme details, curriculum, and written tests",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:297"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#ModuleCard",
+      "label": "ModuleCard",
+      "type": "component",
+      "description": "Draggable module card displaying module items with edit/view modes",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:789"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#ContentItemRow",
+      "label": "ContentItemRow",
+      "type": "component",
+      "description": "Row component for displaying and editing curriculum content items (video, pdf, link, quiz)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:942"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#McqEditor",
+      "label": "McqEditor",
+      "type": "component",
+      "description": "Editor component for multiple choice questions with drag-and-drop support",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:1200"
+    },
+    {
+      "id": "src/app/admin/programmes/page.tsx#moveInArray",
+      "label": "moveInArray",
+      "type": "function",
+      "description": "Utility function to reorder elements in an array",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/programmes/page.tsx:69"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#AdminUsersPage",
+      "label": "AdminUsersPage",
+      "type": "component",
+      "description": "Users management page wrapped in Suspense boundary",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:73"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "label": "AdminUsersContent",
+      "type": "component",
+      "description": "Actual users management content with table, search, filter, CRUD operations",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:81"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#fetchUsers",
+      "label": "fetchUsers",
+      "type": "function",
+      "description": "Async function to fetch users from /api/admin/users endpoint",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:58"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#toCsv",
+      "label": "toCsv",
+      "type": "function",
+      "description": "Utility function to convert array of strings to CSV format",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:44"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#downloadCsv",
+      "label": "downloadCsv",
+      "type": "function",
+      "description": "Utility function to download CSV file with filename",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:48"
+    },
+    {
+      "id": "src/app/admin/users/page.tsx#EditingUser",
+      "label": "EditingUser",
+      "type": "interface",
+      "description": "Interface for user being edited with _id, name, email, role fields",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/admin/users/page.tsx:64"
+    },
+    {
+      "id": "src/app/api/admin/users/route.ts#GET",
+      "label": "GET /api/admin/users",
+      "type": "api_endpoint",
+      "description": "Endpoint to fetch all users sorted by creation date, excluding password/salt",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/admin/users/route.ts:7"
+    },
+    {
+      "id": "src/app/api/admin/users/route.ts#POST",
+      "label": "POST /api/admin/users",
+      "type": "api_endpoint",
+      "description": "Endpoint to create new user with password hashing and schema validation",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/admin/users/route.ts:13"
+    },
+    {
+      "id": "src/app/api/admin/users/[id]/route.ts#PATCH",
+      "label": "PATCH /api/admin/users/[id]",
+      "type": "api_endpoint",
+      "description": "Endpoint to update user by ID with schema validation",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/admin/users/[id]/route.ts:6"
+    },
+    {
+      "id": "src/app/api/admin/users/[id]/route.ts#DELETE",
+      "label": "DELETE /api/admin/users/[id]",
+      "type": "api_endpoint",
+      "description": "Endpoint to delete user by ID",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/admin/users/[id]/route.ts:27"
+    },
+    {
+      "id": "src/app/api/auth/login/route.ts#POST",
+      "label": "POST /api/auth/login",
+      "type": "api_endpoint",
+      "description": "Authentication endpoint for user login with JWT token creation and session cookie",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/auth/login/route.ts:7"
+    },
+    {
+      "id": "src/app/api/auth/logout/route.ts#POST",
+      "label": "POST /api/auth/logout",
+      "type": "api_endpoint",
+      "description": "Endpoint to logout user by clearing session cookie",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/auth/logout/route.ts:4"
+    },
+    {
+      "id": "src/app/api/auth/me/route.ts#GET",
+      "label": "GET /api/auth/me",
+      "type": "api_endpoint",
+      "description": "Endpoint to retrieve current user session from JWT token in cookies",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/auth/me/route.ts:4"
+    },
+    {
+      "id": "src/app/api/webhooks/wix/route.ts#POST",
+      "label": "POST /api/webhooks/wix",
+      "type": "api_endpoint",
+      "description": "Wix eCommerce webhook endpoint for handling order events and payment notifications",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/api/webhooks/wix/route.ts:15"
+    },
+    {
+      "id": "src/app/instructor/evaluations/page.tsx#InstructorEvaluationsPage",
+      "label": "InstructorEvaluationsPage",
+      "type": "component",
+      "description": "Page showing instructor evaluations of student written answers with pending and completed sections",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/evaluations/page.tsx:15"
+    },
+    {
+      "id": "src/app/instructor/evaluations/page.tsx#InternalDivider",
+      "label": "InternalDivider",
+      "type": "component",
+      "description": "Component dividing standard and internal (instructor) learners in lists",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/evaluations/page.tsx:145"
+    },
+    {
+      "id": "src/app/instructor/layout.tsx#InstructorLayout",
+      "label": "InstructorLayout",
+      "type": "component",
+      "description": "Root layout for instructor portal wrapping with PortalStoreProvider",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/layout.tsx:41"
+    },
+    {
+      "id": "src/app/instructor/layout.tsx#InstructorShell",
+      "label": "InstructorShell",
+      "type": "component",
+      "description": "Portal shell component for instructor navigation and layout",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/layout.tsx:11"
+    },
+    {
+      "id": "src/app/instructor/messages/page.tsx#InstructorMessagesPage",
+      "label": "InstructorMessagesPage",
+      "type": "component",
+      "description": "Messaging portal for instructors to communicate with students",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/messages/page.tsx:18"
+    },
+    {
+      "id": "src/app/instructor/page.tsx#InstructorOverview",
+      "label": "InstructorOverview",
+      "type": "component",
+      "description": "Main instructor dashboard with statistics, programme overview, and quick access panels",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/page.tsx:30"
+    },
+    {
+      "id": "src/app/instructor/page.tsx#ProgrammeRow",
+      "label": "ProgrammeRow",
+      "type": "component",
+      "description": "Component displaying programme statistics (progress, grade, pending evaluations)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/page.tsx:349"
+    },
+    {
+      "id": "src/app/instructor/page.tsx#QueueRow",
+      "label": "QueueRow",
+      "type": "component",
+      "description": "Component showing a single evaluation queue item",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/page.tsx:410"
+    },
+    {
+      "id": "src/app/instructor/page.tsx#MessageRow",
+      "label": "MessageRow",
+      "type": "component",
+      "description": "Component showing a single message preview row",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/page.tsx:442"
+    },
+    {
+      "id": "src/app/instructor/page.tsx#InternalDivider",
+      "label": "InternalDivider",
+      "type": "component",
+      "description": "Component dividing standard and internal programmes/learners",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/page.tsx:339"
+    },
+    {
+      "id": "src/app/instructor/students/page.tsx#InstructorStudentsPage",
+      "label": "InstructorStudentsPage",
+      "type": "component",
+      "description": "Instructor roster page with search, filtering, and sorting capabilities",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/instructor/students/page.tsx:41"
+    },
+    {
+      "id": "src/app/internal/page.tsx#Internal",
+      "label": "Internal",
+      "type": "component",
+      "description": "Internal training dashboard for instructor-learners with programme navigation and completion tracking",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/internal/page.tsx:154"
+    },
+    {
+      "id": "src/app/layout.tsx#RootLayout",
+      "label": "RootLayout",
+      "type": "component",
+      "description": "Root layout wrapping all pages with theme, query, and placeholder providers",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/layout.tsx:23"
+    },
+    {
+      "id": "src/app/login/page.tsx#Login",
+      "label": "Login",
+      "type": "component",
+      "description": "Login page for authentication with username/password credentials",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/login/page.tsx:13"
+    },
+    {
+      "id": "src/app/logout/page.tsx#LogoutPage",
+      "label": "LogoutPage",
+      "type": "component",
+      "description": "Logout page handling session cleanup and redirect to login",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/logout/page.tsx:8"
+    },
+    {
+      "id": "src/app/page.tsx#RootPage",
+      "label": "RootPage",
+      "type": "component",
+      "description": "Root page redirecting to /student",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/page.tsx:3"
+    },
+    {
+      "id": "src/app/student/page.tsx#Dashboard",
+      "label": "Dashboard",
+      "type": "component",
+      "description": "Student dashboard with programme modules, resources, quizzes, written exams and grade/certificate views",
+      "confidence": "EXTRACTED",
+      "source_location": "src/app/student/page.tsx:190"
+    },
+    {
+      "id": "src/auth/client.ts#logout",
+      "label": "logout",
+      "type": "function",
+      "description": "Client-side function to call logout API endpoint",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/client.ts:5"
+    },
+    {
+      "id": "src/auth/client.ts#getSession",
+      "label": "getSession",
+      "type": "function",
+      "description": "Client-side function to fetch current session from /api/auth/me",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/client.ts:9"
+    },
+    {
+      "id": "src/auth/server.ts#hashPassword",
+      "label": "hashPassword",
+      "type": "function",
+      "description": "Server-side password hashing using bcryptjs",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:29"
+    },
+    {
+      "id": "src/auth/server.ts#verifyPassword",
+      "label": "verifyPassword",
+      "type": "function",
+      "description": "Server-side password verification using bcryptjs",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:35"
+    },
+    {
+      "id": "src/auth/server.ts#signToken",
+      "label": "signToken",
+      "type": "function",
+      "description": "JWT token signing with 30-day expiration",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:39"
+    },
+    {
+      "id": "src/auth/server.ts#verifyToken",
+      "label": "verifyToken",
+      "type": "function",
+      "description": "JWT token verification returning TokenPayload or null",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:43"
+    },
+    {
+      "id": "src/auth/server.ts#ROLE_HOME",
+      "label": "ROLE_HOME",
+      "type": "constant",
+      "description": "Mapping of AuthRole to home page route",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:12"
+    },
+    {
+      "id": "src/auth/server.ts#TokenPayload",
+      "label": "TokenPayload",
+      "type": "interface",
+      "description": "JWT token payload containing user identification and role information",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:21"
+    },
+    {
+      "id": "src/auth/server.ts#SESSION_COOKIE",
+      "label": "SESSION_COOKIE",
+      "type": "constant",
+      "description": "Cookie name for storing session",
+      "confidence": "EXTRACTED",
+      "source_location": "src/auth/server.ts:10"
+    },
+    {
+      "id": "src/components/instructor-chat.tsx#InstructorChat",
+      "label": "InstructorChat",
+      "type": "component",
+      "description": "Dialog component for messaging between students and instructors",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/instructor-chat.tsx:46"
+    },
+    {
+      "id": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "LearnerRoleBadge",
+      "type": "component",
+      "description": "Badge component displaying non-Student roles (Instructor, HR, PM, BD, Admin) for learners",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/learner-role-badge.tsx:8"
+    },
+    {
+      "id": "src/components/logo/logo.tsx#Logo",
+      "label": "Logo",
+      "type": "component",
+      "description": "SVG logo component with customizable dimensions and colors",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/logo/logo.tsx:12"
+    },
+    {
+      "id": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "PlaceholderGuard",
+      "type": "component",
+      "description": "Guard component showing placeholder content when mock data is disabled",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/placeholder-guard.tsx:8"
+    },
+    {
+      "id": "src/components/misc/superuser-bubble.tsx#SuperuserBubble",
+      "label": "SuperuserBubble",
+      "type": "component",
+      "description": "Development utility bubble for superuser access and credential management",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/superuser-bubble.tsx:19"
+    },
+    {
+      "id": "src/components/misc/use-placeholder.tsx#PlaceholderProvider",
+      "label": "PlaceholderProvider",
+      "type": "component",
+      "description": "Context provider managing placeholder data toggle state",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/use-placeholder.tsx:20"
+    },
+    {
+      "id": "src/components/misc/use-placeholder.tsx#usePlaceholder",
+      "label": "usePlaceholder",
+      "type": "function",
+      "description": "Hook to access placeholder context",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/use-placeholder.tsx:37"
+    },
+    {
+      "id": "src/components/misc/use-placeholder.tsx#PlaceholderContext",
+      "label": "PlaceholderContext",
+      "type": "constant",
+      "description": "React context for placeholder mode state management",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/use-placeholder.tsx:18"
+    },
+    {
+      "id": "src/components/misc/use-placeholder.tsx#PlaceholderProvider",
+      "label": "PlaceholderProvider",
+      "type": "component",
+      "description": "Provider component that manages placeholder mode state with localStorage persistence using useSyncExternalStore",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/use-placeholder.tsx:20"
+    },
+    {
+      "id": "src/components/misc/use-placeholder.tsx#usePlaceholder",
+      "label": "usePlaceholder",
+      "type": "function",
+      "description": "Custom hook to access placeholder context",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/misc/use-placeholder.tsx:37"
+    },
+    {
+      "id": "src/components/page-title.tsx#PageTitle",
+      "label": "PageTitle",
+      "type": "component",
+      "description": "Component that sets the document title on mount",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/page-title.tsx:5"
+    },
+    {
+      "id": "src/components/portal-shell.tsx#PortalNavItem",
+      "label": "PortalNavItem",
+      "type": "interface",
+      "description": "Interface for portal navigation items with href, label, icon, and optional badge",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/portal-shell.tsx:30"
+    },
+    {
+      "id": "src/components/portal-shell.tsx#PortalShell",
+      "label": "PortalShell",
+      "type": "component",
+      "description": "Shared portal chrome component with collapsible sidebar, avatar menu, and responsive navigation",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/portal-shell.tsx:42"
+    },
+    {
+      "id": "src/components/query-provider.tsx#QueryProvider",
+      "label": "QueryProvider",
+      "type": "component",
+      "description": "Provider component that wraps application with TanStack React Query client",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/query-provider.tsx:6"
+    },
+    {
+      "id": "src/components/resource-preview-dialog.tsx#PreviewTarget",
+      "label": "PreviewTarget",
+      "type": "interface",
+      "description": "Interface for preview targets with type, title, and url properties",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/resource-preview-dialog.tsx:14"
+    },
+    {
+      "id": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "label": "ResourcePreviewDialog",
+      "type": "component",
+      "description": "Dialog component for previewing video, PDF, and link resources with embedded iframe",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/resource-preview-dialog.tsx:20"
+    },
+    {
+      "id": "src/components/role-badge.tsx#RoleBadge",
+      "label": "RoleBadge",
+      "type": "component",
+      "description": "Component that displays role badges with dynamic colors based on user role",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/role-badge.tsx:5"
+    },
+    {
+      "id": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "label": "StudentDetailDialog",
+      "type": "component",
+      "description": "Shared student detail dialog with two modes: view (read-only) and evaluate (with grading form)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/student-detail-dialog.tsx:39"
+    },
+    {
+      "id": "src/components/student-detail-dialog.tsx#Drafts",
+      "label": "Drafts",
+      "type": "interface",
+      "description": "Type alias for draft score and feedback per question",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/student-detail-dialog.tsx:20"
+    },
+    {
+      "id": "src/components/student-detail-dialog.tsx#emptyDrafts",
+      "label": "emptyDrafts",
+      "type": "function",
+      "description": "Helper function to initialize empty draft state for all written answers",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/student-detail-dialog.tsx:24"
+    },
+    {
+      "id": "src/components/theme/theme-provider.tsx#ThemeProvider",
+      "label": "ThemeProvider",
+      "type": "component",
+      "description": "Wrapper component that provides next-themes ThemeProvider functionality",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/theme/theme-provider.tsx:6"
+    },
+    {
+      "id": "src/components/theme/theme-toggle.tsx#ThemeToggle",
+      "label": "ThemeToggle",
+      "type": "component",
+      "description": "Component that toggles between light and dark themes with hydration check",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/theme/theme-toggle.tsx:9"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#Avatar",
+      "label": "Avatar",
+      "type": "component",
+      "description": "Avatar component from Base UI with size variants",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:8"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#AvatarImage",
+      "label": "AvatarImage",
+      "type": "component",
+      "description": "Avatar image subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:28"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#AvatarFallback",
+      "label": "AvatarFallback",
+      "type": "component",
+      "description": "Avatar fallback subcomponent displayed when image is not available",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:41"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#AvatarBadge",
+      "label": "AvatarBadge",
+      "type": "component",
+      "description": "Avatar badge subcomponent for status indicators",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:57"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#AvatarGroup",
+      "label": "AvatarGroup",
+      "type": "component",
+      "description": "Component for displaying multiple avatars in a group",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:73"
+    },
+    {
+      "id": "src/components/ui/avatar.tsx#AvatarGroupCount",
+      "label": "AvatarGroupCount",
+      "type": "component",
+      "description": "Component for displaying count of additional avatars in a group",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/avatar.tsx:86"
+    },
+    {
+      "id": "src/components/ui/badge.tsx#badgeVariants",
+      "label": "badgeVariants",
+      "type": "constant",
+      "description": "CVA variants for Badge component with multiple style options",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/badge.tsx:7"
+    },
+    {
+      "id": "src/components/ui/badge.tsx#Badge",
+      "label": "Badge",
+      "type": "component",
+      "description": "Flexible badge component with variant styling",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/badge.tsx:30"
+    },
+    {
+      "id": "src/components/ui/button.tsx#buttonVariants",
+      "label": "buttonVariants",
+      "type": "constant",
+      "description": "CVA variants for Button component with multiple size and style options",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/button.tsx:6"
+    },
+    {
+      "id": "src/components/ui/button.tsx#Button",
+      "label": "Button",
+      "type": "component",
+      "description": "Flexible button component with variant and size props",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/button.tsx:43"
+    },
+    {
+      "id": "src/components/ui/card.tsx#Card",
+      "label": "Card",
+      "type": "component",
+      "description": "Card container component with size variants",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:5"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardHeader",
+      "label": "CardHeader",
+      "type": "component",
+      "description": "Card header subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:23"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardTitle",
+      "label": "CardTitle",
+      "type": "component",
+      "description": "Card title subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:36"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardDescription",
+      "label": "CardDescription",
+      "type": "component",
+      "description": "Card description subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:49"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardAction",
+      "label": "CardAction",
+      "type": "component",
+      "description": "Card action subcomponent for action buttons",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:59"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardContent",
+      "label": "CardContent",
+      "type": "component",
+      "description": "Card content subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:72"
+    },
+    {
+      "id": "src/components/ui/card.tsx#CardFooter",
+      "label": "CardFooter",
+      "type": "component",
+      "description": "Card footer subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/card.tsx:82"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#Dialog",
+      "label": "Dialog",
+      "type": "component",
+      "description": "Dialog root component from Base UI",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:10"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogTrigger",
+      "label": "DialogTrigger",
+      "type": "component",
+      "description": "Dialog trigger subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:14"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogPortal",
+      "label": "DialogPortal",
+      "type": "component",
+      "description": "Dialog portal subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:18"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogClose",
+      "label": "DialogClose",
+      "type": "component",
+      "description": "Dialog close button subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:22"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogOverlay",
+      "label": "DialogOverlay",
+      "type": "component",
+      "description": "Dialog overlay backdrop subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:26"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogContent",
+      "label": "DialogContent",
+      "type": "component",
+      "description": "Dialog content wrapper with optional close button",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:42"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogHeader",
+      "label": "DialogHeader",
+      "type": "component",
+      "description": "Dialog header subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:83"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogFooter",
+      "label": "DialogFooter",
+      "type": "component",
+      "description": "Dialog footer subcomponent with optional close button",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:93"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogTitle",
+      "label": "DialogTitle",
+      "type": "component",
+      "description": "Dialog title subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:120"
+    },
+    {
+      "id": "src/components/ui/dialog.tsx#DialogDescription",
+      "label": "DialogDescription",
+      "type": "component",
+      "description": "Dialog description subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dialog.tsx:133"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenu",
+      "label": "DropdownMenu",
+      "type": "component",
+      "description": "Dropdown menu root component from Base UI",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:9"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuPortal",
+      "label": "DropdownMenuPortal",
+      "type": "component",
+      "description": "Dropdown menu portal subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:13"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuTrigger",
+      "label": "DropdownMenuTrigger",
+      "type": "component",
+      "description": "Dropdown menu trigger subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:17"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuContent",
+      "label": "DropdownMenuContent",
+      "type": "component",
+      "description": "Dropdown menu content wrapper with positioning",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:21"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuGroup",
+      "label": "DropdownMenuGroup",
+      "type": "component",
+      "description": "Dropdown menu group subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:52"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuLabel",
+      "label": "DropdownMenuLabel",
+      "type": "component",
+      "description": "Dropdown menu group label subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:56"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuItem",
+      "label": "DropdownMenuItem",
+      "type": "component",
+      "description": "Dropdown menu item subcomponent with variant support",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:76"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuSub",
+      "label": "DropdownMenuSub",
+      "type": "component",
+      "description": "Dropdown menu submenu root subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:99"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuSubTrigger",
+      "label": "DropdownMenuSubTrigger",
+      "type": "component",
+      "description": "Dropdown menu submenu trigger subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:103"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuSubContent",
+      "label": "DropdownMenuSubContent",
+      "type": "component",
+      "description": "Dropdown menu submenu content subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:127"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuCheckboxItem",
+      "label": "DropdownMenuCheckboxItem",
+      "type": "component",
+      "description": "Dropdown menu checkbox item subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:148"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuRadioGroup",
+      "label": "DropdownMenuRadioGroup",
+      "type": "component",
+      "description": "Dropdown menu radio group subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:182"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuRadioItem",
+      "label": "DropdownMenuRadioItem",
+      "type": "component",
+      "description": "Dropdown menu radio item subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:191"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuSeparator",
+      "label": "DropdownMenuSeparator",
+      "type": "component",
+      "description": "Dropdown menu separator subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:223"
+    },
+    {
+      "id": "src/components/ui/dropdown-menu.tsx#DropdownMenuShortcut",
+      "label": "DropdownMenuShortcut",
+      "type": "component",
+      "description": "Dropdown menu keyboard shortcut display subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/dropdown-menu.tsx:236"
+    },
+    {
+      "id": "src/components/ui/input.tsx#Input",
+      "label": "Input",
+      "type": "component",
+      "description": "Input component from Base UI with styling",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/input.tsx:6"
+    },
+    {
+      "id": "src/components/ui/label.tsx#Label",
+      "label": "Label",
+      "type": "component",
+      "description": "Label component for form inputs",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/label.tsx:7"
+    },
+    {
+      "id": "src/components/ui/progress.tsx#Progress",
+      "label": "Progress",
+      "type": "component",
+      "description": "Progress bar component from Base UI",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/progress.tsx:7"
+    },
+    {
+      "id": "src/components/ui/progress.tsx#ProgressTrack",
+      "label": "ProgressTrack",
+      "type": "component",
+      "description": "Progress track subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/progress.tsx:28"
+    },
+    {
+      "id": "src/components/ui/progress.tsx#ProgressIndicator",
+      "label": "ProgressIndicator",
+      "type": "component",
+      "description": "Progress indicator subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/progress.tsx:41"
+    },
+    {
+      "id": "src/components/ui/progress.tsx#ProgressLabel",
+      "label": "ProgressLabel",
+      "type": "component",
+      "description": "Progress label subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/progress.tsx:54"
+    },
+    {
+      "id": "src/components/ui/progress.tsx#ProgressValue",
+      "label": "ProgressValue",
+      "type": "component",
+      "description": "Progress value display subcomponent",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/progress.tsx:64"
+    },
+    {
+      "id": "src/components/ui/select.tsx#Select",
+      "label": "Select",
+      "type": "component",
+      "description": "Root select component wrapper",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:9"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectGroup",
+      "label": "SelectGroup",
+      "type": "component",
+      "description": "Grouped select items container",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:11"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectValue",
+      "label": "SelectValue",
+      "type": "component",
+      "description": "Selected value display",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:21"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectTrigger",
+      "label": "SelectTrigger",
+      "type": "component",
+      "description": "Trigger button for select dropdown",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:31"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectContent",
+      "label": "SelectContent",
+      "type": "component",
+      "description": "Dropdown content container with positioning",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:59"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectLabel",
+      "label": "SelectLabel",
+      "type": "component",
+      "description": "Label for select group",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:98"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectItem",
+      "label": "SelectItem",
+      "type": "component",
+      "description": "Individual selectable item with check indicator",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:111"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectSeparator",
+      "label": "SelectSeparator",
+      "type": "component",
+      "description": "Separator between select groups",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:139"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectScrollUpButton",
+      "label": "SelectScrollUpButton",
+      "type": "component",
+      "description": "Scroll up button for select dropdown",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:152"
+    },
+    {
+      "id": "src/components/ui/select.tsx#SelectScrollDownButton",
+      "label": "SelectScrollDownButton",
+      "type": "component",
+      "description": "Scroll down button for select dropdown",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/select.tsx:171"
+    },
+    {
+      "id": "src/components/ui/switch.tsx#Switch",
+      "label": "Switch",
+      "type": "component",
+      "description": "Toggle switch component with sizes (sm, default)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/switch.tsx:7"
+    },
+    {
+      "id": "src/components/ui/table.tsx#Table",
+      "label": "Table",
+      "type": "component",
+      "description": "Table wrapper with scroll container",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:7"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableHeader",
+      "label": "TableHeader",
+      "type": "component",
+      "description": "Table header section",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:22"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableBody",
+      "label": "TableBody",
+      "type": "component",
+      "description": "Table body section",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:32"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableFooter",
+      "label": "TableFooter",
+      "type": "component",
+      "description": "Table footer section",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:42"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableRow",
+      "label": "TableRow",
+      "type": "component",
+      "description": "Table row with border and hover state",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:55"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableHead",
+      "label": "TableHead",
+      "type": "component",
+      "description": "Table cell header",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:68"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableCell",
+      "label": "TableCell",
+      "type": "component",
+      "description": "Table data cell",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:81"
+    },
+    {
+      "id": "src/components/ui/table.tsx#TableCaption",
+      "label": "TableCaption",
+      "type": "component",
+      "description": "Table caption",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/table.tsx:94"
+    },
+    {
+      "id": "src/components/ui/tabs.tsx#Tabs",
+      "label": "Tabs",
+      "type": "component",
+      "description": "Tabs container with orientation support",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/tabs.tsx:8"
+    },
+    {
+      "id": "src/components/ui/tabs.tsx#tabsListVariants",
+      "label": "tabsListVariants",
+      "type": "constant",
+      "description": "CVA variant styles for tabs list",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/tabs.tsx:26"
+    },
+    {
+      "id": "src/components/ui/tabs.tsx#TabsList",
+      "label": "TabsList",
+      "type": "component",
+      "description": "Tabs list container with variant support",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/tabs.tsx:41"
+    },
+    {
+      "id": "src/components/ui/tabs.tsx#TabsTrigger",
+      "label": "TabsTrigger",
+      "type": "component",
+      "description": "Tab trigger button",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/tabs.tsx:56"
+    },
+    {
+      "id": "src/components/ui/tabs.tsx#TabsContent",
+      "label": "TabsContent",
+      "type": "component",
+      "description": "Tab content panel",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/tabs.tsx:72"
+    },
+    {
+      "id": "src/components/ui/textarea.tsx#Textarea",
+      "label": "Textarea",
+      "type": "component",
+      "description": "Textarea input component",
+      "confidence": "EXTRACTED",
+      "source_location": "src/components/ui/textarea.tsx:5"
+    },
+    {
+      "id": "src/db/mongodb.ts#connectToDatabase",
+      "label": "connectToDatabase",
+      "type": "function",
+      "description": "MongoDB connection with caching strategy",
+      "confidence": "EXTRACTED",
+      "source_location": "src/db/mongodb.ts:20"
+    },
+    {
+      "id": "src/db/mongodb.ts",
+      "label": "mongodb",
+      "type": "module",
+      "description": "MongoDB connection module using mongoose with global cache",
+      "confidence": "EXTRACTED",
+      "source_location": "src/db/mongodb.ts:1"
+    },
+    {
+      "id": "src/hooks/use-current-user.tsx#UserSession",
+      "label": "UserSession",
+      "type": "interface",
+      "description": "User session object with userId, name, username, email, role",
+      "confidence": "EXTRACTED",
+      "source_location": "src/hooks/use-current-user.tsx:7"
+    },
+    {
+      "id": "src/hooks/use-current-user.tsx#getInitials",
+      "label": "getInitials",
+      "type": "function",
+      "description": "Generate initials from user name",
+      "confidence": "EXTRACTED",
+      "source_location": "src/hooks/use-current-user.tsx:15"
+    },
+    {
+      "id": "src/hooks/use-current-user.tsx#useUser",
+      "label": "useUser",
+      "type": "function",
+      "description": "Hook to fetch and manage current user session",
+      "confidence": "EXTRACTED",
+      "source_location": "src/hooks/use-current-user.tsx:26"
+    },
+    {
+      "id": "src/lib/instructor-context.ts#CURRENT_INSTRUCTOR",
+      "label": "CURRENT_INSTRUCTOR",
+      "type": "constant",
+      "description": "Prototype context for current instructor with multiple programmes",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/instructor-context.ts:6"
+    },
+    {
+      "id": "src/lib/mock-data.ts#LessonType",
+      "label": "LessonType",
+      "type": "interface",
+      "description": "Type union for lesson types: video, pdf, link",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:2"
+    },
+    {
+      "id": "src/lib/mock-data.ts#McqQuestion",
+      "label": "McqQuestion",
+      "type": "interface",
+      "description": "Multiple choice question with id, question, options, answer",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:4"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ModuleItem",
+      "label": "ModuleItem",
+      "type": "interface",
+      "description": "Module item union: lessons (video/pdf/link) or quiz",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:15"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ProgrammeModule",
+      "label": "ProgrammeModule",
+      "type": "interface",
+      "description": "Programme module with ordered items (lessons/quizzes)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:19"
+    },
+    {
+      "id": "src/lib/mock-data.ts#WrittenQuestion",
+      "label": "WrittenQuestion",
+      "type": "interface",
+      "description": "Written test question",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:25"
+    },
+    {
+      "id": "src/lib/mock-data.ts#Instructor",
+      "label": "Instructor",
+      "type": "interface",
+      "description": "Instructor with assigned programme IDs",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:30"
+    },
+    {
+      "id": "src/lib/mock-data.ts#Programme",
+      "label": "Programme",
+      "type": "interface",
+      "description": "Training programme with modules, instructors, roles, and written test",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:37"
+    },
+    {
+      "id": "src/lib/mock-data.ts#UserRole",
+      "label": "UserRole",
+      "type": "interface",
+      "description": "User role union: Student, Instructor, Admin, Business Development, Human Resources, Project Management",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:49"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ASSIGNABLE_ROLES",
+      "label": "ASSIGNABLE_ROLES",
+      "type": "constant",
+      "description": "Array of assignable programme roles (excludes Admin)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:59"
+    },
+    {
+      "id": "src/lib/mock-data.ts#AssignableRole",
+      "label": "AssignableRole",
+      "type": "interface",
+      "description": "Assignable role type derived from ASSIGNABLE_ROLES",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:66"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ROLE_BADGE",
+      "label": "ROLE_BADGE",
+      "type": "constant",
+      "description": "Tailwind class strings for role badge styling",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:70"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ROLE_TEXT",
+      "label": "ROLE_TEXT",
+      "type": "constant",
+      "description": "Tailwind text color classes for roles",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:79"
+    },
+    {
+      "id": "src/lib/mock-data.ts#AppUser",
+      "label": "AppUser",
+      "type": "interface",
+      "description": "User with role and programme assignment",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:88"
+    },
+    {
+      "id": "src/lib/mock-data.ts#StudentModuleProgress",
+      "label": "StudentModuleProgress",
+      "type": "interface",
+      "description": "Student progress in module with completion and MCQ score",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:100"
+    },
+    {
+      "id": "src/lib/mock-data.ts#WrittenAnswer",
+      "label": "WrittenAnswer",
+      "type": "interface",
+      "description": "Student written answer with score and feedback",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:106"
+    },
+    {
+      "id": "src/lib/mock-data.ts#StudentRecord",
+      "label": "StudentRecord",
+      "type": "interface",
+      "description": "Student record with progress and answers",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:113"
+    },
+    {
+      "id": "src/lib/mock-data.ts#INSTRUCTORS",
+      "label": "INSTRUCTORS",
+      "type": "constant",
+      "description": "Array of instructor records",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:123"
+    },
+    {
+      "id": "src/lib/mock-data.ts#PROGRAMMES",
+      "label": "PROGRAMMES",
+      "type": "constant",
+      "description": "Array of student programmes with modules and content",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:129"
+    },
+    {
+      "id": "src/lib/mock-data.ts#USERS",
+      "label": "USERS",
+      "type": "constant",
+      "description": "Array of all users (students, instructors, admin, internal roles)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:287"
+    },
+    {
+      "id": "src/lib/mock-data.ts#STUDENTS",
+      "label": "STUDENTS",
+      "type": "constant",
+      "description": "Array of student records with progress",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:312"
+    },
+    {
+      "id": "src/lib/mock-data.ts#ChatMessage",
+      "label": "ChatMessage",
+      "type": "interface",
+      "description": "Chat message from student or instructor",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:450"
+    },
+    {
+      "id": "src/lib/mock-data.ts#MessageThread",
+      "label": "MessageThread",
+      "type": "interface",
+      "description": "Message thread between student and instructor",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:457"
+    },
+    {
+      "id": "src/lib/mock-data.ts#THREADS",
+      "label": "THREADS",
+      "type": "constant",
+      "description": "Array of message threads",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:465"
+    },
+    {
+      "id": "src/lib/mock-data.ts#programmeName",
+      "label": "programmeName",
+      "type": "function",
+      "description": "Get programme name by ID",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:516"
+    },
+    {
+      "id": "src/lib/mock-data.ts#instructorName",
+      "label": "instructorName",
+      "type": "function",
+      "description": "Get instructor name by ID",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:520"
+    },
+    {
+      "id": "src/lib/mock-data.ts#INTERNAL_PROGRAMMES",
+      "label": "INTERNAL_PROGRAMMES",
+      "type": "constant",
+      "description": "Array of internal training programmes (Business Development, HR, Project Management, Instructor)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:533"
+    },
+    {
+      "id": "src/lib/mock-data.ts#INTERNAL_STUDENTS",
+      "label": "INTERNAL_STUDENTS",
+      "type": "constant",
+      "description": "Array of internal learner records (instructors and role holders)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:962"
+    },
+    {
+      "id": "src/lib/mock-data.ts#INTERNAL_THREADS",
+      "label": "INTERNAL_THREADS",
+      "type": "constant",
+      "description": "Array of internal message threads",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:1192"
+    },
+    {
+      "id": "src/lib/mock-data.ts#internalProgrammeName",
+      "label": "internalProgrammeName",
+      "type": "function",
+      "description": "Get internal programme name by ID",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:1299"
+    },
+    {
+      "id": "src/lib/mock-data.ts#isInstructorLearner",
+      "label": "isInstructorLearner",
+      "type": "function",
+      "description": "Check if learner record corresponds to an Instructor user",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:1305"
+    },
+    {
+      "id": "src/lib/mock-data.ts#learnerRole",
+      "label": "learnerRole",
+      "type": "function",
+      "description": "Get user role for a learner ID",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/mock-data.ts:1311"
+    },
+    {
+      "id": "src/lib/portal-store.tsx#PortalStore",
+      "label": "PortalStore",
+      "type": "interface",
+      "description": "In-memory store for programmes, users, students, threads (student and internal)",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/portal-store.tsx:23"
+    },
+    {
+      "id": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "label": "PortalStoreProvider",
+      "type": "component",
+      "description": "Context provider for PortalStore state",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/portal-store.tsx:43"
+    },
+    {
+      "id": "src/lib/portal-store.tsx#usePortalStore",
+      "label": "usePortalStore",
+      "type": "function",
+      "description": "Hook to access PortalStore context",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/portal-store.tsx:76"
+    },
+    {
+      "id": "src/lib/utils.ts#cn",
+      "label": "cn",
+      "type": "function",
+      "description": "Utility to merge Tailwind classes using clsx and twMerge",
+      "confidence": "EXTRACTED",
+      "source_location": "src/lib/utils.ts:4"
+    },
+    {
+      "id": "src/mail/authMailer.ts#sendVerificationEmail",
+      "label": "sendVerificationEmail",
+      "type": "function",
+      "description": "Send email verification message via Mailgun",
+      "confidence": "EXTRACTED",
+      "source_location": "src/mail/authMailer.ts:12"
+    },
+    {
+      "id": "src/mail/authMailer.ts#sendResetEmail",
+      "label": "sendResetEmail",
+      "type": "function",
+      "description": "Send password reset email via Mailgun",
+      "confidence": "EXTRACTED",
+      "source_location": "src/mail/authMailer.ts:34"
+    },
+    {
+      "id": "src/mail/authMailer.ts#sendWelcomeEmail",
+      "label": "sendWelcomeEmail",
+      "type": "function",
+      "description": "Send welcome email after successful signup",
+      "confidence": "EXTRACTED",
+      "source_location": "src/mail/authMailer.ts:60"
+    },
+    {
+      "id": "src/models/userModel.ts#UserSchema",
+      "label": "UserSchema",
+      "type": "class",
+      "description": "Mongoose schema for User with userId, name, username, email, password, salt, role, verified",
+      "confidence": "EXTRACTED",
+      "source_location": "src/models/userModel.ts:4"
+    },
+    {
+      "id": "src/models/userModel.ts",
+      "label": "userModel",
+      "type": "module",
+      "description": "Default export: Mongoose User model",
+      "confidence": "EXTRACTED",
+      "source_location": "src/models/userModel.ts:24"
+    },
+    {
+      "id": "src/proxy.ts#PROTECTED_ROUTES",
+      "label": "PROTECTED_ROUTES",
+      "type": "constant",
+      "description": "Route protection config mapping paths to allowed roles",
+      "confidence": "EXTRACTED",
+      "source_location": "src/proxy.ts:6"
+    },
+    {
+      "id": "src/proxy.ts#proxy",
+      "label": "proxy",
+      "type": "function",
+      "description": "Next.js middleware for authentication and role-based routing",
+      "confidence": "EXTRACTED",
+      "source_location": "src/proxy.ts:13"
+    },
+    {
+      "id": "src/schema/userSchema.ts#authRoleEnum",
+      "label": "authRoleEnum",
+      "type": "constant",
+      "description": "Zod enum for user roles",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:3"
+    },
+    {
+      "id": "src/schema/userSchema.ts#userSchema",
+      "label": "userSchema",
+      "type": "constant",
+      "description": "Zod schema for User response with all fields",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:5"
+    },
+    {
+      "id": "src/schema/userSchema.ts#createUserSchema",
+      "label": "createUserSchema",
+      "type": "constant",
+      "description": "Zod schema for user creation with validation",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:17"
+    },
+    {
+      "id": "src/schema/userSchema.ts#updateUserSchema",
+      "label": "updateUserSchema",
+      "type": "constant",
+      "description": "Zod schema for user updates with optional fields",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:25"
+    },
+    {
+      "id": "src/schema/userSchema.ts#UserResponse",
+      "label": "UserResponse",
+      "type": "interface",
+      "description": "Inferred type from userSchema",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:32"
+    },
+    {
+      "id": "src/schema/userSchema.ts#CreateUserInput",
+      "label": "CreateUserInput",
+      "type": "interface",
+      "description": "Inferred type from createUserSchema",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:33"
+    },
+    {
+      "id": "src/schema/userSchema.ts#UpdateUserInput",
+      "label": "UpdateUserInput",
+      "type": "interface",
+      "description": "Inferred type from updateUserSchema",
+      "confidence": "EXTRACTED",
+      "source_location": "src/schema/userSchema.ts:34"
+    },
+    {
+      "id": "src/types/userDoc.ts#AuthRole",
+      "label": "AuthRole",
+      "type": "interface",
+      "description": "Auth role union type for database users",
+      "confidence": "EXTRACTED",
+      "source_location": "src/types/userDoc.ts:1"
+    },
+    {
+      "id": "src/types/userDoc.ts#User",
+      "label": "User",
+      "type": "interface",
+      "description": "Database user document with authentication fields",
+      "confidence": "EXTRACTED",
+      "source_location": "src/types/userDoc.ts:3"
+    },
+    {
+      "id": "src/utils/badgeColor.ts#roleBadgeColor",
+      "label": "roleBadgeColor",
+      "type": "constant",
+      "description": "Tailwind class mapping for role badge colors",
+      "confidence": "EXTRACTED",
+      "source_location": "src/utils/badgeColor.ts:3"
+    },
+    {
+      "id": "src/utils/badgeColor.ts#verificationBadgeColor",
+      "label": "verificationBadgeColor",
+      "type": "constant",
+      "description": "Tailwind class mapping for verification status badge colors",
+      "confidence": "EXTRACTED",
+      "source_location": "src/utils/badgeColor.ts:12"
+    },
+    {
+      "id": "features.md",
+      "label": "features",
+      "type": "config",
+      "description": "Feature documentation: timezone settings, account settings, mailgun integration, toasting, Zod form validation",
+      "confidence": "EXTRACTED",
+      "source_location": "features.md:1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src/app/admin/layout.tsx#AdminLayout",
+      "target": "src/app/admin/layout.tsx#AdminShell",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/page.tsx#AdminOverview",
+      "target": "@/lib/portal-store",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/layout.tsx#AdminShell",
+      "target": "@/components/portal-shell",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/layout.tsx#AdminShell",
+      "target": "@/lib/portal-store",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/performance/page.tsx#AdminPerformancePage",
+      "target": "@/lib/portal-store",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/programmes/page.tsx#ProgrammesPage",
+      "target": "@/lib/portal-store",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/programmes/page.tsx#ProgrammeEditor",
+      "target": "src/app/admin/programmes/page.tsx#moveInArray",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/programmes/page.tsx#ModuleCard",
+      "target": "src/app/admin/programmes/page.tsx#ContentItemRow",
+      "label": "renders",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/programmes/page.tsx#ContentItemRow",
+      "target": "src/app/admin/programmes/page.tsx#McqEditor",
+      "label": "renders",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "target": "src/app/admin/users/page.tsx#fetchUsers",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "target": "src/app/api/admin/users/route.ts#GET",
+      "label": "calls",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "target": "src/app/admin/users/page.tsx#toCsv",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "target": "src/app/admin/users/page.tsx#downloadCsv",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/users/page.tsx#AdminUsersPage",
+      "target": "src/app/admin/users/page.tsx#AdminUsersContent",
+      "label": "renders",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/api/admin/users/route.ts#POST",
+      "target": "@/schema/userSchema",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/api/admin/users/route.ts#POST",
+      "target": "@/auth/server",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/api/admin/users/[id]/route.ts#PATCH",
+      "target": "@/schema/userSchema",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/api/auth/login/route.ts#POST",
+      "target": "@/db/mongodb",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/api/auth/login/route.ts#POST",
+      "target": "@/auth/server",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "scripts/seed.ts#seed",
+      "target": "scripts/seed.ts#SEED_USERS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "scripts/seed.ts#seed",
+      "target": "scripts/seed.ts#UserSchema",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/admin/programmes/page.tsx#ProgrammeEditor",
+      "target": "src/app/admin/programmes/page.tsx#ModuleCard",
+      "label": "renders",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/evaluations/page.tsx#InstructorEvaluationsPage",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/evaluations/page.tsx#InstructorEvaluationsPage",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/layout.tsx#InstructorLayout",
+      "target": "src/app/instructor/layout.tsx#InstructorShell",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/layout.tsx#InstructorShell",
+      "target": "src/components/portal-shell.tsx",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/instructor/messages/page.tsx#InstructorMessagesPage",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/messages/page.tsx#InstructorMessagesPage",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/app/instructor/page.tsx#ProgrammeRow",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/app/instructor/page.tsx#QueueRow",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/app/instructor/page.tsx#MessageRow",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#InstructorOverview",
+      "target": "src/app/instructor/page.tsx#InternalDivider",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#ProgrammeRow",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#QueueRow",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/instructor/page.tsx#MessageRow",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/instructor/students/page.tsx#InstructorStudentsPage",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/instructor/students/page.tsx#InstructorStudentsPage",
+      "target": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/internal/page.tsx#Internal",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/internal/page.tsx#Internal",
+      "target": "src/components/instructor-chat.tsx#InstructorChat",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/layout.tsx#RootLayout",
+      "target": "src/components/misc/superuser-bubble.tsx#SuperuserBubble",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/layout.tsx#RootLayout",
+      "target": "src/components/misc/use-placeholder.tsx#PlaceholderProvider",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/login/page.tsx#Login",
+      "target": "src/auth/client.ts",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/app/logout/page.tsx#LogoutPage",
+      "target": "src/auth/client.ts#logout",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/page.tsx#RootPage",
+      "target": "src/app/student/page.tsx",
+      "label": "redirects to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/student/page.tsx#Dashboard",
+      "target": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/app/student/page.tsx#Dashboard",
+      "target": "src/components/instructor-chat.tsx#InstructorChat",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/instructor-chat.tsx#InstructorChat",
+      "target": "src/lib/mock-data.ts",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/learner-role-badge.tsx#LearnerRoleBadge",
+      "target": "src/lib/mock-data.ts",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/misc/placeholder-guard.tsx#PlaceholderGuard",
+      "target": "src/components/misc/use-placeholder.tsx#usePlaceholder",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/misc/superuser-bubble.tsx#SuperuserBubble",
+      "target": "src/components/misc/use-placeholder.tsx#usePlaceholder",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/auth/client.ts",
+      "target": "src/types/userDoc.ts",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/auth/server.ts",
+      "target": "src/types/userDoc.ts",
+      "label": "imports",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/misc/use-placeholder.tsx#PlaceholderProvider",
+      "target": "src/components/misc/use-placeholder.tsx#PlaceholderContext",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/misc/use-placeholder.tsx#usePlaceholder",
+      "target": "src/components/misc/use-placeholder.tsx#PlaceholderContext",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/avatar.tsx#Avatar",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/avatar.tsx#AvatarFallback",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenu",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuContent",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuItem",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuSeparator",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/portal-shell.tsx#PortalShell",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuTrigger",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/query-provider.tsx#QueryProvider",
+      "target": "src/components/query-provider.tsx",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/button.tsx#Button",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/dialog.tsx#Dialog",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/dialog.tsx#DialogContent",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/dialog.tsx#DialogHeader",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/dialog.tsx#DialogTitle",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/resource-preview-dialog.tsx#ResourcePreviewDialog",
+      "target": "src/components/ui/dialog.tsx#DialogDescription",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/role-badge.tsx#RoleBadge",
+      "target": "src/components/ui/badge.tsx#Badge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/button.tsx#Button",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/badge.tsx#Badge",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/input.tsx#Input",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#Dialog",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#DialogContent",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#DialogHeader",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#DialogTitle",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#DialogDescription",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/student-detail-dialog.tsx#StudentDetailDialog",
+      "target": "src/components/ui/dialog.tsx#DialogFooter",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/theme/theme-provider.tsx#ThemeProvider",
+      "target": "src/components/theme/theme-provider.tsx",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/theme/theme-toggle.tsx#ThemeToggle",
+      "target": "src/components/ui/button.tsx#Button",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/avatar.tsx#AvatarBadge",
+      "target": "src/components/ui/avatar.tsx#Avatar",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/avatar.tsx#AvatarGroup",
+      "target": "src/components/ui/avatar.tsx#Avatar",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/avatar.tsx#AvatarGroupCount",
+      "target": "src/components/ui/avatar.tsx#AvatarGroup",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/badge.tsx#Badge",
+      "target": "src/components/ui/badge.tsx#badgeVariants",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/button.tsx#Button",
+      "target": "src/components/ui/button.tsx#buttonVariants",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/card.tsx#Card",
+      "target": "src/components/ui/card.tsx",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/dialog.tsx#DialogContent",
+      "target": "src/components/ui/dialog.tsx#DialogPortal",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/dialog.tsx#DialogContent",
+      "target": "src/components/ui/dialog.tsx#DialogOverlay",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/dialog.tsx#DialogContent",
+      "target": "src/components/ui/button.tsx#Button",
+      "label": "imports",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/dropdown-menu.tsx#DropdownMenuContent",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuPortal",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/dropdown-menu.tsx#DropdownMenuSubContent",
+      "target": "src/components/ui/dropdown-menu.tsx#DropdownMenuContent",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/dropdown-menu.tsx#DropdownMenuCheckboxItem",
+      "target": "src/components/ui/dropdown-menu.tsx",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/dropdown-menu.tsx#DropdownMenuRadioItem",
+      "target": "src/components/ui/dropdown-menu.tsx",
+      "label": "uses",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "src/components/ui/progress.tsx#Progress",
+      "target": "src/components/ui/progress.tsx#ProgressTrack",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/progress.tsx#Progress",
+      "target": "src/components/ui/progress.tsx#ProgressIndicator",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#Select",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectGroup",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectValue",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectTrigger",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectContent",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectLabel",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectItem",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectSeparator",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectScrollUpButton",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/select.tsx#SelectScrollDownButton",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/switch.tsx#Switch",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#Table",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableHeader",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableBody",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableFooter",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableRow",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableHead",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableCell",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/table.tsx#TableCaption",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/tabs.tsx#Tabs",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/tabs.tsx#TabsList",
+      "target": "src/components/ui/tabs.tsx#tabsListVariants",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/tabs.tsx#TabsList",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/tabs.tsx#TabsTrigger",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/tabs.tsx#TabsContent",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/components/ui/textarea.tsx#Textarea",
+      "target": "src/lib/utils.ts#cn",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/hooks/use-current-user.tsx#useUser",
+      "target": "src/hooks/use-current-user.tsx#UserSession",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/hooks/use-current-user.tsx#useUser",
+      "target": "src/hooks/use-current-user.tsx#getInitials",
+      "label": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/hooks/use-current-user.tsx#useUser",
+      "target": "src/types/userDoc.ts#AuthRole",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/instructor-context.ts#CURRENT_INSTRUCTOR",
+      "target": "src/lib/mock-data.ts#INSTRUCTORS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#Programme",
+      "target": "src/lib/mock-data.ts#ProgrammeModule",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#Programme",
+      "target": "src/lib/mock-data.ts#WrittenQuestion",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#Programme",
+      "target": "src/lib/mock-data.ts#AssignableRole",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#ProgrammeModule",
+      "target": "src/lib/mock-data.ts#ModuleItem",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#ModuleItem",
+      "target": "src/lib/mock-data.ts#LessonType",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#ModuleItem",
+      "target": "src/lib/mock-data.ts#McqQuestion",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#StudentRecord",
+      "target": "src/lib/mock-data.ts#StudentModuleProgress",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#StudentRecord",
+      "target": "src/lib/mock-data.ts#WrittenAnswer",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#MessageThread",
+      "target": "src/lib/mock-data.ts#ChatMessage",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#programmeName",
+      "target": "src/lib/mock-data.ts#PROGRAMMES",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#instructorName",
+      "target": "src/lib/mock-data.ts#INSTRUCTORS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#internalProgrammeName",
+      "target": "src/lib/mock-data.ts#INTERNAL_PROGRAMMES",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#isInstructorLearner",
+      "target": "src/lib/mock-data.ts#USERS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/mock-data.ts#learnerRole",
+      "target": "src/lib/mock-data.ts#USERS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStore",
+      "target": "src/lib/mock-data.ts#Programme",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStore",
+      "target": "src/lib/mock-data.ts#AppUser",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStore",
+      "target": "src/lib/mock-data.ts#StudentRecord",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStore",
+      "target": "src/lib/mock-data.ts#MessageThread",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/portal-store.tsx#PortalStore",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#PROGRAMMES",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#USERS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#STUDENTS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#THREADS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#INTERNAL_PROGRAMMES",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#INTERNAL_STUDENTS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#PortalStoreProvider",
+      "target": "src/lib/mock-data.ts#INTERNAL_THREADS",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/lib/portal-store.tsx#usePortalStore",
+      "target": "src/lib/portal-store.tsx#PortalStore",
+      "label": "returns",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/models/userModel.ts#UserSchema",
+      "target": "src/types/userDoc.ts#User",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/proxy.ts#proxy",
+      "target": "src/proxy.ts#PROTECTED_ROUTES",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/proxy.ts#proxy",
+      "target": "src/types/userDoc.ts#AuthRole",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/schema/userSchema.ts#userSchema",
+      "target": "src/schema/userSchema.ts#authRoleEnum",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/schema/userSchema.ts#createUserSchema",
+      "target": "src/schema/userSchema.ts#authRoleEnum",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/schema/userSchema.ts#updateUserSchema",
+      "target": "src/schema/userSchema.ts#authRoleEnum",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/utils/badgeColor.ts#roleBadgeColor",
+      "target": "src/lib/mock-data.ts#UserRole",
+      "label": "uses",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "src/utils/badgeColor.ts#verificationBadgeColor",
+      "target": "src/types/userDoc.ts#User",
+      "label": "uses",
+      "confidence": "INFERRED"
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

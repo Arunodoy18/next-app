@@ -51,7 +51,7 @@ export type UserRole =
   | "Instructor"
   | "Admin"
   | "Business Development"
-  | "HR"
+  | "Human Resources"
   | "Project Management";
 
 // The five roles a programme can be toggled for and a learner can hold. Admin
@@ -59,7 +59,7 @@ export type UserRole =
 export const ASSIGNABLE_ROLES = [
   "Student",
   "Instructor",
-  "HR",
+  "Human Resources",
   "Project Management",
   "Business Development",
 ] as const;
@@ -68,23 +68,21 @@ export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 // One Tailwind class string per role so badges scan at a glance. Shared by the
 // admin users table and the reusable <RoleBadge> component.
 export const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-muted text-muted-foreground border-border",
-  Instructor: "bg-blue-500/10 text-blue-600 border-blue-600",
-  Admin: "bg-amber-500/10 text-amber-600 border-amber-600",
-  "Business Development": "bg-emerald-500/10 text-emerald-600 border-emerald-600",
-  HR: "bg-rose-500/10 text-rose-600 border-rose-600",
-  "Project Management": "bg-cyan-500/10 text-cyan-600 border-cyan-600",
+  Student: "bg-stone-100 text-stone-800 dark:bg-stone-700/50 dark:text-stone-100",
+  Instructor: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  Admin: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400",
+  "Business Development": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  "Human Resources": "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400",
+  "Project Management": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
 };
 
-// Just the text colour per role — used to tint a learner's name to match their
-// role (Students stay default). Mirrors the text colour in ROLE_BADGE.
 export const ROLE_TEXT: Record<UserRole, string> = {
   Student: "",
-  Instructor: "text-blue-600",
-  Admin: "text-amber-600",
-  "Business Development": "text-emerald-600",
-  HR: "text-rose-600",
-  "Project Management": "text-cyan-600",
+  Instructor: "text-blue-800 dark:text-blue-400",
+  Admin: "text-violet-800 dark:text-violet-400",
+  "Business Development": "text-orange-800 dark:text-orange-400",
+  "Human Resources": "text-rose-800 dark:text-rose-400",
+  "Project Management": "text-cyan-800 dark:text-cyan-400",
 };
 
 export interface AppUser {
@@ -300,10 +298,10 @@ export const USERS: AppUser[] = [
   { id: "u7", name: "Arthur Pendelton", email: "a.pendelton@blackmont.ac.uk", role: "Instructor", signupDate: "2021-11-05T14:15:00Z" },
   { id: "u8", name: "Admin User", email: "admin@blackmont.ac.uk", role: "Admin", signupDate: "2020-01-10T08:00:00Z" },
   { id: "u13", name: "Sophie Walker", email: "s.walker@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2023-06-14T09:30:00Z" },
-  { id: "u14", name: "James Carter", email: "j.carter@blackmont.ac.uk", role: "HR", programmeIds: ["ip2"], signupDate: "2023-07-21T10:15:00Z" },
+  { id: "u14", name: "James Carter", email: "j.carter@blackmont.ac.uk", role: "Human Resources", programmeIds: ["ip2"], signupDate: "2023-07-21T10:15:00Z" },
   { id: "u15", name: "Grace Hughes", email: "g.hughes@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2023-08-30T11:00:00Z" },
   { id: "u16", name: "Daniel Cooper", email: "d.cooper@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-01-09T09:45:00Z" },
-  { id: "u17", name: "Lena Hoffmann", email: "l.hoffmann@blackmont.ac.uk", role: "HR", programmeIds: ["ip2"], signupDate: "2024-02-12T10:20:00Z" },
+  { id: "u17", name: "Lena Hoffmann", email: "l.hoffmann@blackmont.ac.uk", role: "Human Resources", programmeIds: ["ip2"], signupDate: "2024-02-12T10:20:00Z" },
   { id: "u18", name: "Marcus Lee", email: "m.lee@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2024-03-04T11:30:00Z" },
   { id: "u19", name: "Isabella Rossi", email: "i.rossi@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-02-19T09:50:00Z" },
   { id: "u20", name: "Nathan Brooks", email: "n.brooks@blackmont.ac.uk", role: "Business Development", programmeIds: ["ip1"], signupDate: "2024-04-01T10:05:00Z" },
@@ -664,7 +662,7 @@ export const INTERNAL_PROGRAMMES: Programme[] = [
     name: "People & Culture Foundations",
     description: "People policies, compliance, and employee relations for the HR track.",
     instructorIds: ["ins3"],
-    roles: ["HR"],
+    roles: ["Human Resources"],
     modules: [
       {
         id: "ip2-m1",

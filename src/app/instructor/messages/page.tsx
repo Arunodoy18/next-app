@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
+import { learnerRole, ROLE_BADGE, type MessageThread } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { Send, MessageSquare } from "lucide-react";
@@ -104,6 +105,7 @@ export default function InstructorMessagesPage() {
   };
 
   return (
+    <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <PageTitle title="Instructor Portal" />
       <div>
@@ -137,7 +139,7 @@ export default function InstructorMessagesPage() {
                     <div className="flex items-center gap-1.5">
                       <p
                         className={`text-sm m-0 truncate font-normal ${
-                          role ? ROLE_TEXT[role] : ""
+                          role ? ROLE_BADGE[role] : ""
                         }`}
                       >
                         {studentName(t.studentId)}
@@ -226,5 +228,6 @@ export default function InstructorMessagesPage() {
         </Card>
       </div>
     </div>
+    </PlaceholderGuard>
   );
 }

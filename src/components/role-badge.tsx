@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { ROLE_BADGE, type UserRole } from "@/lib/mock-data";
+import { roleBadgeColor } from "@/utils/badgeColor";
+import type { UserRole } from "@/lib/mock-data";
 
-// Coloured badge for any role (Student/Instructor/Admin or a department role).
-// Pass `className` (e.g. "ml-2") when placing it inline after a name.
-export default function RoleBadge({ role, className = "" }: { role: UserRole; className?: string }) {
+export default function RoleBadge({ role, className = "" }: { role: UserRole | string; className?: string }) {
+  const colors = roleBadgeColor[role as UserRole] ?? "bg-stone-100 text-stone-800 dark:bg-stone-700/50 dark:text-stone-100";
   return (
-    <Badge className={`align-middle font-medium ${ROLE_BADGE[role]} ${className}`}>
+    <Badge className={`align-middle font-medium ${colors} ${className}`}>
       {role}
     </Badge>
   );

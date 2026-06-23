@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -133,6 +134,7 @@ export default function AdminPerformancePage() {
   };
 
   return (
+    <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <PageTitle title="Admin Portal" />
       <div>
@@ -322,5 +324,6 @@ export default function AdminPerformancePage() {
         onSaveEvaluation={saveEvaluation}
       />
     </div>
+    </PlaceholderGuard>
   );
 }

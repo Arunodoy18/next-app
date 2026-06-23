@@ -2,9 +2,12 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import RoleBadge from "@/components/role-badge";
+import { verificationBadgeColor } from "@/utils/badgeColor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,16 +33,15 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { usePortalStore } from "@/lib/portal-store";
 import PageTitle from "@/components/page-title";
-import { ASSIGNABLE_ROLES, type AppUser, type UserRole } from "@/lib/mock-data";
-import { Plus, Trash2, Download, Search } from "lucide-react";
+import type { UserResponse } from "@/schema/userSchema";
+import type { AuthRole } from "@/types/userDoc";
+import { ASSIGNABLE_ROLES } from "@/lib/mock-data";
+import { Plus, Trash2, Download, Search, Pencil, Loader2 } from "lucide-react";
 
-let idCounter = 5000;
-const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
+const ALL_ROLES: AuthRole[] = [...ASSIGNABLE_ROLES, "Admin"];
 
 function toCsv(rows: string[][]): string {
-  // Quote fields and escape embedded quotes so commas/quotes survive.
   return rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
 }
 
@@ -53,6 +55,21 @@ function downloadCsv(filename: string, csv: string) {
   URL.revokeObjectURL(url);
 }
 
+async function fetchUsers(): Promise<UserResponse[]> {
+  const res = await fetch("/api/admin/users");
+  if (!res.ok) throw new Error("Failed to fetch users");
+  return res.json();
+}
+
+interface EditingUser {
+  _id?: string;
+  name: string;
+  email: string;
+  role?: AuthRole;
+}
+
+const emptyUser: EditingUser = { name: "", email: "", role: undefined};
+
 export default function AdminUsersPage() {
   return (
     <Suspense>
@@ -62,17 +79,16 @@ export default function AdminUsersPage() {
 }
 
 function AdminUsersContent() {
-  const { users, setUsers, programmes, internalProgrammes } = usePortalStore();
-  // Instructors/admins can be allotted any programme — standard (student) or
-  // internal (role) tracks.
-  const allProgrammes = useMemo(() => [...programmes, ...internalProgrammes], [programmes, internalProgrammes]);
-  const resolveProgrammeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
-  const [editingUser, setEditingUser] = useState<AppUser | null>(null);
+  const queryClient = useQueryClient();
+  const { data: users = [], isLoading } = useQuery({ queryKey: ["admin-users"], queryFn: fetchUsers });
+
+  const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
   const searchParams = useSearchParams();
-  const initialType = searchParams.get("type") as UserRole | null;
+  const initialType = searchParams.get("type") as AuthRole | null;
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<UserRole | "all">(initialType ?? "all");
+  const [roleFilter, setRoleFilter] = useState<AuthRole | "all">(initialType ?? "all");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -83,45 +99,76 @@ function AdminUsersContent() {
     });
   }, [users, search, roleFilter]);
 
-  const openUser = (user: AppUser) => {
-    setEditingUser(user);
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete user");
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-users"] }),
+  });
+
+  const openNew = () => {
+    setEditingUser({ ...emptyUser });
     setDialogOpen(true);
   };
 
-  const saveUser = () => {
+  const openEdit = (u: UserResponse) => {
+    setEditingUser({ _id: u._id, name: u.name, email: u.email, role: u.role });
+    setDialogOpen(true);
+  };
+
+  const saveUser = async () => {
     if (!editingUser) return;
-    setUsers((prev) => {
-      const exists = prev.some((u) => u.id === editingUser.id);
-      return exists ? prev.map((u) => (u.id === editingUser.id ? editingUser : u)) : [...prev, editingUser];
-    });
-    setDialogOpen(false);
+    setSaving(true);
+    try {
+      if (editingUser._id) {
+        const res = await fetch(`/api/admin/users/${editingUser._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: editingUser.name, email: editingUser.email, role: editingUser.role }),
+        });
+        if (!res.ok) throw new Error("Failed to update user");
+      } else {
+        const res = await fetch("/api/admin/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingUser),
+        });
+        if (!res.ok) throw new Error("Failed to create user");
+      }
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setDialogOpen(false);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // A user's programme label: students enrol in one; instructors/admins can
-  // be allotted several.
-  const programmeLabel = (u: AppUser) => {
-    if (u.role === "Student") return u.programmeId ? resolveProgrammeName(u.programmeId) : "";
-    return (u.programmeIds ?? []).map(resolveProgrammeName).join(", ");
-  };
-
-  const header = ["Name", "Email", "Type", "Programme", "Signup Date"];
-  const userRow = (u: AppUser) => [u.name, u.email, u.role, programmeLabel(u), new Date(u.signupDate).toLocaleDateString("en-GB")];
+  const header = ["Name", "Email", "Role", "Verification", "Signup Date"];
+  const userRow = (u: UserResponse) => [
+    u.name,
+    u.email,
+    u.role,
+    u.verified,
+    new Date(u.createdAt).toLocaleDateString("en-GB"),
+  ];
 
   const exportUsers = () => {
     downloadCsv("users.csv", toCsv([header, ...users.map(userRow)]));
   };
 
-  const exportUser = (u: AppUser) => {
-    const slug = (u.name || u.email || u.id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const exportUser = (u: UserResponse) => {
+    const slug = (u.name || u.email || u._id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     downloadCsv(`${slug || "user"}.csv`, toCsv([header, userRow(u)]));
   };
+
+  const isNew = !editingUser?._id;
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <PageTitle title="Admin Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Users</h1>
-        <p className="text-muted-foreground mt-1">Students, instructors, and admins across the platform. Filter by type.</p>
+        <p className="text-muted-foreground mt-1">Manage all users across the platform.</p>
       </div>
 
       <Card className="shadow-sm">
@@ -129,20 +176,19 @@ function AdminUsersContent() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base font-medium m-0">All Users</CardTitle>
-              <CardDescription>Click a row to edit details, type, or enrolment.</CardDescription>
+              <CardDescription>Use the edit button to modify details or role.</CardDescription>
             </div>
           </div>
           <div className="w-full flex flex-col lg:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 lg:items-center lg:justify-between min-w-0">
-            <Select value={roleFilter} onValueChange={(v) => setRoleFilter((v ?? "all") as UserRole | "all")}>
+            <Select value={roleFilter} onValueChange={(v) => setRoleFilter((v ?? "all") as AuthRole | "all")}>
               <SelectTrigger className="w-full lg:w-48 bg-background shrink-0">
                 <span className="flex flex-1 text-left truncate">{roleFilter === "all" ? "All Users" : roleFilter}</span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Users</SelectItem>
-                {ASSIGNABLE_ROLES.map((r) => (
+                {ALL_ROLES.map((r) => (
                   <SelectItem key={r} value={r}>{r}</SelectItem>
                 ))}
-                <SelectItem value="Admin">Admin</SelectItem>
               </SelectContent>
             </Select>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full lg:w-auto min-w-0">
@@ -162,7 +208,7 @@ function AdminUsersContent() {
                 <Button
                   size="sm"
                   className="h-9 flex-1 sm:flex-none bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                  onClick={() => openUser({ id: nextId("u"), name: "", email: "", role: "Student", signupDate: new Date().toISOString() })}
+                  onClick={openNew}
                 >
                   <Plus size={14} className="mr-1.5" /> New User
                 </Button>
@@ -176,69 +222,70 @@ function AdminUsersContent() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Programme</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Verification</TableHead>
                 <TableHead>Signup Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((u) => {
-                const signupDateObj = new Date(u.signupDate);
-                const formattedDate = new Intl.DateTimeFormat("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                }).format(signupDateObj);
-
-                return (
-                <TableRow key={u.id} className="cursor-pointer group hover:bg-muted/50 transition-colors" onClick={() => openUser({ ...u })}>
-                  <TableCell className="font-medium">{u.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{u.email}</TableCell>
-                  <TableCell>
-                    <RoleBadge role={u.role} />
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {programmeLabel(u) || "N/A"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        title="Export this user"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          exportUser(u);
-                        }}
-                      >
-                        <Download size={14} />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="icon-sm"
-                        title="Delete user"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setUsers((prev) => prev.filter((x) => x.id !== u.id));
-                        }}
-                      >
-                        <Trash2 size={14} />
-                      </Button>
-                    </div>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-12">
+                    <Loader2 className="animate-spin mx-auto text-muted-foreground" size={24} />
                   </TableCell>
                 </TableRow>
-              )})}
-              {filtered.length === 0 && (
+              ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
                     No users match your filters.
                   </TableCell>
                 </TableRow>
+              ) : (
+                filtered.map((u) => {
+                  const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  }).format(new Date(u.createdAt));
+
+                  return (
+                    <TableRow key={u._id} className="group hover:bg-muted/50 transition-colors">
+                      <TableCell className="font-medium">{u.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{u.email}</TableCell>
+                      <TableCell>
+                        <RoleBadge role={u.role} />
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`font-medium ${verificationBadgeColor[u.verified]}`}>
+                          {u.verified === "complete" ? "Complete" : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-0.5 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                          <Button variant="secondary" size="icon-sm" title="Edit user" onClick={() => openEdit(u)}>
+                            <Pencil size={14} />
+                          </Button>
+                          <Button variant="ghost" size="icon-sm" title="Export this user" onClick={() => exportUser(u)}>
+                            <Download size={14} />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon-sm"
+                            title="Delete user"
+                            onClick={() => deleteMutation.mutate(u._id)}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
@@ -250,14 +297,15 @@ function AdminUsersContent() {
           {editingUser && (
             <>
               <DialogHeader>
-                <DialogTitle>{editingUser.name || "New User"}</DialogTitle>
-                <DialogDescription>Edit user details, type, and programme enrolment.</DialogDescription>
+                <DialogTitle>{isNew ? "New User" : editingUser.name}</DialogTitle>
+                <DialogDescription>{isNew ? "Create a new user account." : "Edit user details and role."}</DialogDescription>
               </DialogHeader>
 
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label>Name</Label>
                   <Input
+                    placeholder="Enter the name"
                     value={editingUser.name}
                     onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                   />
@@ -265,88 +313,32 @@ function AdminUsersContent() {
                 <div className="flex flex-col gap-1.5">
                   <Label>Email</Label>
                   <Input
+                    placeholder="Enter the email"
                     value={editingUser.email}
                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label>Type</Label>
+                  <Label>Role</Label>
                   <Select
-                    value={editingUser.role}
-                    onValueChange={(value) => setEditingUser({ ...editingUser, role: (value ?? "Student") as UserRole })}
+                    value={editingUser.role ?? ""}
+                    onValueChange={(value) => setEditingUser({ ...editingUser, role: value as AuthRole })}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {ASSIGNABLE_ROLES.map((r) => (
+                      {ALL_ROLES.map((r) => (
                         <SelectItem key={r} value={r}>{r}</SelectItem>
                       ))}
-                      <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                {editingUser.role === "Student" ? (
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Enrolled Programme</Label>
-                    <Select
-                      items={Object.fromEntries(programmes.map((p) => [p.id, p.name]))}
-                      value={editingUser.programmeId ?? null}
-                      onValueChange={(value) => setEditingUser({ ...editingUser, programmeId: value ?? undefined })}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a programme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {programmes.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Allotted Programmes</Label>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {allProgrammes.map((p) => {
-                        const assigned = (editingUser.programmeIds ?? []).includes(p.id);
-                        return (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() =>
-                              setEditingUser({
-                                ...editingUser,
-                                programmeIds: assigned
-                                  ? (editingUser.programmeIds ?? []).filter((id) => id !== p.id)
-                                  : [...(editingUser.programmeIds ?? []), p.id],
-                              })
-                            }
-                            className={`inline-flex items-center h-7 rounded-full border px-2.5 text-xs font-medium transition-colors ${
-                              assigned
-                                ? "border-transparent bg-[#7e55f6] text-white hover:bg-[#6742d4]"
-                                : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }`}
-                          >
-                            {p.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <p className="text-xs text-muted-foreground m-0">
-                      {editingUser.role === "Admin"
-                        ? "Admins can be allotted one or more programmes."
-                        : "Tap a programme to assign or remove it."}
-                    </p>
-                  </div>
-                )}
               </div>
 
               <DialogFooter>
-                <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={saveUser}>
-                  Save User
+                <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" disabled={saving} onClick={saveUser}>
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : isNew ? "Create User" : "Save Changes"}
                 </Button>
               </DialogFooter>
             </>

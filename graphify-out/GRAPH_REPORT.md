@@ -1,143 +1,274 @@
-# Graph Report - .  (2026-06-17)
+# Graph Report - .  (2026-06-23)
 
 ## Corpus Check
-- 0 files · ~0 words
-- Verdict: corpus is large enough that graph structure adds value.
+- Corpus is ~35,711 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 350 nodes · 819 edges · 18 communities (15 shown, 3 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 26 edges (avg confidence: 0.82)
+- 629 nodes · 1093 edges · 105 communities (29 shown, 76 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Dashboard & Layout Shell|Dashboard & Layout Shell]]
-- [[_COMMUNITY_Portal Navigation & Roles|Portal Navigation & Roles]]
-- [[_COMMUNITY_UI Primitives & Admin Pages|UI Primitives & Admin Pages]]
-- [[_COMMUNITY_Chat, Dialogs & Editors|Chat, Dialogs & Editors]]
-- [[_COMMUNITY_Implementation Notes & Progress Model|Implementation Notes & Progress Model]]
-- [[_COMMUNITY_Auth Pages & Messaging|Auth Pages & Messaging]]
-- [[_COMMUNITY_shadcn Component Config|shadcn Component Config]]
-- [[_COMMUNITY_TypeScript Config|TypeScript Config]]
-- [[_COMMUNITY_Build Tooling & Dependencies|Build Tooling & Dependencies]]
-- [[_COMMUNITY_Data Model & Portal Concepts|Data Model & Portal Concepts]]
-- [[_COMMUNITY_Next.js Docs & Bootstrap|Next.js Docs & Bootstrap]]
-- [[_COMMUNITY_Authentication Logic|Authentication Logic]]
-- [[_COMMUNITY_Brand Icon|Brand Icon]]
-- [[_COMMUNITY_Claude Permissions|Claude Permissions]]
-- [[_COMMUNITY_PostCSS Config|PostCSS Config]]
-- [[_COMMUNITY_Permissions Allowlist|Permissions Allowlist]]
+- [[_COMMUNITY_UI Badge Components|UI Badge Components]]
+- [[_COMMUNITY_UI Button Components|UI Button Components]]
+- [[_COMMUNITY_Admin User Management|Admin User Management]]
+- [[_COMMUNITY_UI Dropdown Menu|UI Dropdown Menu]]
+- [[_COMMUNITY_Theme System|Theme System]]
+- [[_COMMUNITY_UI Badge Components|UI Badge Components]]
+- [[_COMMUNITY_Instructor Chat System|Instructor Chat System]]
+- [[_COMMUNITY_Utilities|Utilities]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_UI Dropdown Menu|UI Dropdown Menu]]
+- [[_COMMUNITY_Instructor Chat System|Instructor Chat System]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Theme System|Theme System]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Custom Hooks|Custom Hooks]]
+- [[_COMMUNITY_Admin User Management|Admin User Management]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Admin User Management|Admin User Management]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Admin Dashboard|Admin Dashboard]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 24|Community 24]]
+- [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Database & Models|Database & Models]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Community 35|Community 35]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Custom Hooks|Custom Hooks]]
+- [[_COMMUNITY_Community 39|Community 39]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Configuration|Configuration]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Admin User Management|Admin User Management]]
+- [[_COMMUNITY_Admin User Management|Admin User Management]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Custom Hooks|Custom Hooks]]
+- [[_COMMUNITY_Evaluation Management|Evaluation Management]]
+- [[_COMMUNITY_Page Components|Page Components]]
+- [[_COMMUNITY_Page Components|Page Components]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication & Tokens|Authentication & Tokens]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication & Tokens|Authentication & Tokens]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication & Tokens|Authentication & Tokens]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Page Components|Page Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Context Providers|Context Providers]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Theme System|Theme System]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Custom Components|Custom Components]]
+- [[_COMMUNITY_Database & Models|Database & Models]]
+- [[_COMMUNITY_Database & Models|Database & Models]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Mock Data|Mock Data]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Authentication|Authentication]]
+- [[_COMMUNITY_Database & Models|Database & Models]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
+- [[_COMMUNITY_Schema Validation|Schema Validation]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 44 edges
-2. `INSTRUCTORS` - 34 edges
-3. `usePortalStore` - 22 edges
-4. `Button()` - 21 edges
-5. `Card()` - 16 edges
-6. `CardContent()` - 16 edges
-7. `compilerOptions` - 16 edges
-8. `CardHeader()` - 15 edges
-9. `CardTitle()` - 15 edges
-10. `CardDescription()` - 14 edges
+1. `cn()` - 75 edges
+2. `Button()` - 19 edges
+3. `usePortalStore()` - 19 edges
+4. `compilerOptions` - 16 edges
+5. `Card()` - 15 edges
+6. `CardContent()` - 15 edges
+7. `CardHeader()` - 13 edges
+8. `CardTitle()` - 13 edges
+9. `CardDescription()` - 12 edges
+10. `Badge()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Bundled Next.js Docs (node_modules/next/dist/docs/)` --semantically_similar_to--> `Official Next.js Documentation`  [INFERRED] [semantically similar]
-  AGENTS.md → README.md
-- `Implementation Guide` --semantically_similar_to--> `Backend Implementation Notes`  [INFERRED] [semantically similar]
-  IMPLEMENTATION_GUIDE.md → IMPLEMENTATION.md
-- `Frontend-Only Prototype Scope` --rationale_for--> `next-app package`  [INFERRED]
-  IMPLEMENTATION_GUIDE.md → package.json
-- `Next.js Breaking Changes Warning` --conceptually_related_to--> `Next.js Project README`  [INFERRED]
-  AGENTS.md → README.md
-- `Prototype Caveat: Dashboard Reads Hardcoded PROGRAMMES` --conceptually_related_to--> `Frontend-Only Prototype Scope`  [INFERRED]
-  IMPLEMENTATION.md → IMPLEMENTATION_GUIDE.md
+- `InstructorMessagesPage()` --calls--> `initials()`  [INFERRED]
+  src/app/instructor/messages/page.tsx → src/components/instructor-chat.tsx
+- `DropdownMenuLabel()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/dropdown-menu.tsx → src/lib/utils.ts
+- `DropdownMenuSubTrigger()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/dropdown-menu.tsx → src/lib/utils.ts
+- `DropdownMenuSubContent()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/dropdown-menu.tsx → src/lib/utils.ts
+- `DropdownMenuCheckboxItem()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/dropdown-menu.tsx → src/lib/utils.ts
 
 ## Import Cycles
 - None detected.
 
-## Hyperedges (group relationships)
-- **Admin Portal Component Set** — implementation_guide_data_table, implementation_guide_edit_dialog, implementation_guide_module_editor, implementation_guide_written_test_editor [EXTRACTED 0.85]
-- **Placeholder Data Model Entities** — implementation_guide_programme, implementation_guide_module, implementation_guide_student, implementation_guide_instructor [EXTRACTED 0.85]
-- **Progress Behaviour On Content Change** — implementation_progress_models, implementation_sequential_unlock, implementation_certificate_persistence [INFERRED 0.75]
-- **Portal shell layouts** — layout_adminshell, layout_instructorshell, portal_shell_portalshell, portal_store_useportalstore [INFERRED 0.85]
-- **Written-test evaluation flow** — performance_page_adminperformancepage, evaluations_page_instructorevaluationspage, student_detail_dialog_studentdetaildialog [INFERRED 0.85]
-- **Programme curriculum builder** — programmes_page_programmeeditor, programmes_page_modulecard, programmes_page_contentitemrow, programmes_page_mcqeditor [EXTRACTED 1.00]
-- **Portal store seeded from mock datasets** — lib_portal_store_portalstoreprovider, lib_mock_data_programmes, lib_mock_data_students, lib_mock_data_threads [INFERRED 0.85]
-- **Internal instructor-learner track mirrors student datasets** — lib_mock_data_internal_programmes, lib_mock_data_internal_students, lib_mock_data_internal_threads [INFERRED 0.75]
-- **Per-conversation chat persisted via localStorage keys** — components_instructor_chat_instructorchat, components_instructor_chat_storagekey, components_instructor_chat_loadmessages [EXTRACTED 1.00]
+## Communities (105 total, 76 thin omitted)
 
-## Communities (18 total, 3 thin omitted)
+### Community 0 - "UI Badge Components"
+Cohesion: 0.08
+Nodes (42): AdminOverview(), LearnerRoleBadge(), InstructorEvaluationsPage(), InstructorOverview(), learnerRole(), programmeName(), ROLE_BADGE, usePortalStore() (+34 more)
 
-### Community 0 - "Dashboard & Layout Shell"
+### Community 1 - "UI Button Components"
+Cohesion: 0.06
+Nodes (50): ChatMessage, initials(), InstructorChat(), loadMessages(), storageKey(), PreviewTarget, Drafts, emptyDrafts() (+42 more)
+
+### Community 2 - "Admin User Management"
+Cohesion: 0.08
+Nodes (32): hashPassword(), ROLE_HOME, signToken(), TokenPayload, verifyPassword(), verifyToken(), cached, connectToDatabase() (+24 more)
+
+### Community 3 - "UI Dropdown Menu"
 Cohesion: 0.05
-Nodes (54): metadata, questrial, logout, Dashboard(), gradeLetter(), Module, Programme, Quiz (+46 more)
+Nodes (43): dependencies, @base-ui/react, bcryptjs, class-variance-authority, clsx, form-data, @hello-pangea/dnd, jsonwebtoken (+35 more)
 
-### Community 1 - "Portal Navigation & Roles"
+### Community 4 - "Theme System"
 Cohesion: 0.10
-Nodes (38): PortalNavItem, InstructorEvaluationsPage(), CURRENT_INSTRUCTOR, INITIALS, AdminLayout, AdminShell, InstructorLayout, InstructorShell (+30 more)
+Nodes (13): metadata, questrial, UserRole, PlaceholderGuard(), CREDS, SuperuserBubble(), PlaceholderContext, PlaceholderProvider() (+5 more)
 
-### Community 2 - "UI Primitives & Admin Pages"
-Cohesion: 0.12
-Nodes (22): SORT_OPTIONS, SORT_OPTIONS, Badge(), badgeVariants, SelectContent(), SelectItem(), SelectTrigger(), SelectValue() (+14 more)
-
-### Community 3 - "Chat, Dialogs & Editors"
+### Community 5 - "UI Badge Components"
 Cohesion: 0.13
-Nodes (20): ChatMessage, loadMessages(), storageKey(), PreviewTarget, Drafts, INSTRUCTORS, ContentItemRow(), ITEM_META (+12 more)
+Nodes (22): cn(), Avatar(), AvatarBadge(), AvatarFallback(), AvatarGroup(), AvatarGroupCount(), AvatarImage(), CardAction() (+14 more)
 
-### Community 4 - "Implementation Notes & Progress Model"
+### Community 6 - "Instructor Chat System"
 Cohesion: 0.07
-Nodes (32): Backend Implementation Notes, Certificate Once Earned Stays Earned, Completed Item IDs localStorage Map, Behaviour When Content Added To Started Programme, Implementation Guide, Frontend-Only Prototype Scope, StudentRecord.moduleProgress, Dual Progress Models (Learner vs Records) (+24 more)
+Nodes (27): AppUser, AssignableRole, ChatMessage, INTERNAL_PROGRAMMES, INTERNAL_STUDENTS, INTERNAL_THREADS, LessonType, McqQuestion (+19 more)
 
-### Community 5 - "Auth Pages & Messaging"
-Cohesion: 0.21
-Nodes (12): instructorName, AdminOverview, PageTitle, Button(), buttonVariants, Card(), CardContent(), CardDescription() (+4 more)
+### Community 7 - "Utilities"
+Cohesion: 0.08
+Nodes (26): Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator (+18 more)
 
-### Community 6 - "shadcn Component Config"
+### Community 8 - "Schema Validation"
 Cohesion: 0.09
 Nodes (21): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent (+13 more)
 
-### Community 7 - "TypeScript Config"
+### Community 9 - "Configuration"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
-### Community 8 - "Build Tooling & Dependencies"
-Cohesion: 0.11
-Nodes (16): devDependencies, eslint, tailwindcss, @tailwindcss/postcss, @types/node, @types/react, @types/react-dom, typescript (+8 more)
+### Community 10 - "UI Dropdown Menu"
+Cohesion: 0.14
+Nodes (11): DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut() (+3 more)
 
-### Community 9 - "Data Model & Portal Concepts"
-Cohesion: 0.20
-Nodes (14): Admin Portal (/admin), Placeholder Data Shape, DataTable Component, EditDialog Component, Instructor Entity, Instructor Portal (/instructor), Module Entity, ModuleEditor Component (+6 more)
+### Community 11 - "Instructor Chat System"
+Cohesion: 0.16
+Nodes (18): InstructorEvaluationsPage, InstructorMessagesPage, InstructorOverview, InternalDivider, MessageRow, ProgrammeRow, QueueRow, InstructorStudentsPage (+10 more)
 
-### Community 10 - "Next.js Docs & Bootstrap"
-Cohesion: 0.25
-Nodes (9): Bundled Next.js Docs (node_modules/next/dist/docs/), Next.js Breaking Changes Warning, CLAUDE.md Project Instructions, create-next-app Bootstrap, Development Server (npm run dev), Geist Font via next/font, Official Next.js Documentation, Next.js Project README (+1 more)
+### Community 12 - "Authentication"
+Cohesion: 0.14
+Nodes (13): logout(), Dashboard(), gradeLetter(), Module, Programme, PROGRAMMES, Quiz, Resource (+5 more)
 
-### Community 11 - "Authentication Logic"
-Cohesion: 0.32
-Nodes (6): authenticate, login, Account, ACCOUNTS, AuthRole, Login()
+### Community 13 - "Theme System"
+Cohesion: 0.16
+Nodes (17): ResourcePreviewDialog, RoleBadge, StudentDetailDialog, ThemeToggle, Badge, badgeVariants, Button, buttonVariants (+9 more)
 
-### Community 12 - "Brand Icon"
+### Community 14 - "Mock Data"
+Cohesion: 0.15
+Nodes (14): gradeLetter(), Internal(), Module, Programme, PROGRAMMES, Quiz, Resource, RESOURCE_ICONS (+6 more)
+
+### Community 15 - "Custom Hooks"
+Cohesion: 0.15
+Nodes (13): PortalShell, Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, DropdownMenu, DropdownMenuContent (+5 more)
+
+### Community 16 - "Admin User Management"
+Cohesion: 0.27
+Nodes (7): AdminShell(), getSession(), PortalNavItem, getInitials(), useUser(), InstructorShell(), PortalStoreProvider()
+
+### Community 18 - "Admin User Management"
+Cohesion: 0.33
+Nodes (6): AdminUsersContent, AdminUsersPage, downloadCsv, fetchUsers, toCsv, GET /api/admin/users
+
+### Community 19 - "Authentication"
+Cohesion: 0.33
+Nodes (6): UserSession, getInitials, useUser, PROTECTED_ROUTES, proxy, AuthRole
+
+### Community 20 - "Admin Dashboard"
+Cohesion: 0.40
+Nodes (5): ContentItemRow, McqEditor, ModuleCard, ProgrammeEditor, moveInArray
+
+### Community 22 - "Authentication"
+Cohesion: 0.50
+Nodes (4): authRoleEnum, createUserSchema, updateUserSchema, userSchema
+
+### Community 23 - "Community 23"
+Cohesion: 0.67
+Nodes (3): Bundled Next.js Docs (node_modules/next/dist/docs/), Next.js Breaking Changes Warning, CLAUDE.md Project Instructions
+
+### Community 24 - "Community 24"
 Cohesion: 1.00
 Nodes (3): App Icon SVG, Brand Glyph (Ascending Bars / Growth Motif), Purple Brand Color #7e55f6
 
+### Community 27 - "Schema Validation"
+Cohesion: 0.67
+Nodes (3): SEED_USERS, UserSchema, seed
+
+### Community 28 - "Custom Components"
+Cohesion: 0.67
+Nodes (3): Progress, ProgressIndicator, ProgressTrack
+
+### Community 29 - "Mock Data"
+Cohesion: 0.67
+Nodes (3): CURRENT_INSTRUCTOR, INSTRUCTORS, instructorName
+
+### Community 30 - "Database & Models"
+Cohesion: 0.67
+Nodes (3): UserSchema, User, verificationBadgeColor
+
 ## Knowledge Gaps
-- **114 isolated node(s):** `allow`, `$schema`, `style`, `rsc`, `tsx` (+109 more)
+- **133 isolated node(s):** `allow`, `$schema`, `style`, `rsc`, `tsx` (+128 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **76 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `Dashboard & Layout Shell` to `UI Primitives & Admin Pages`, `Chat, Dialogs & Editors`, `Auth Pages & Messaging`?**
-  _High betweenness centrality (0.061) - this node is a cross-community bridge._
-- **Why does `INSTRUCTORS` connect `Chat, Dialogs & Editors` to `Dashboard & Layout Shell`, `Portal Navigation & Roles`, `UI Primitives & Admin Pages`, `Auth Pages & Messaging`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
-- **Why does `Button()` connect `Auth Pages & Messaging` to `Dashboard & Layout Shell`, `Portal Navigation & Roles`, `UI Primitives & Admin Pages`, `Chat, Dialogs & Editors`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+- **Why does `cn()` connect `UI Badge Components` to `UI Badge Components`, `UI Button Components`, `UI Dropdown Menu`, `Mock Data`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Why does `AuthRole` connect `Admin User Management` to `Admin User Management`, `UI Badge Components`, `Authentication`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **Why does `Button()` connect `UI Button Components` to `UI Badge Components`, `Theme System`, `UI Badge Components`, `Authentication`, `Mock Data`?**
+  _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **What connects `allow`, `$schema`, `style` to the rest of the system?**
-  _115 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Dashboard & Layout Shell` be split into smaller, more focused modules?**
-  _Cohesion score 0.050724637681159424 - nodes in this community are weakly interconnected._
-- **Should `Portal Navigation & Roles` be split into smaller, more focused modules?**
-  _Cohesion score 0.10434782608695652 - nodes in this community are weakly interconnected._
-- **Should `UI Primitives & Admin Pages` be split into smaller, more focused modules?**
-  _Cohesion score 0.1166429587482219 - nodes in this community are weakly interconnected._
+  _133 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `UI Badge Components` be split into smaller, more focused modules?**
+  _Cohesion score 0.07960014809329878 - nodes in this community are weakly interconnected._
+- **Should `UI Button Components` be split into smaller, more focused modules?**
+  _Cohesion score 0.0567287784679089 - nodes in this community are weakly interconnected._
+- **Should `Admin User Management` be split into smaller, more focused modules?**
+  _Cohesion score 0.07928118393234672 - nodes in this community are weakly interconnected._

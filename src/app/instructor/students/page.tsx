@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -149,6 +150,7 @@ export default function InstructorStudentsPage() {
   };
 
   return (
+    <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <PageTitle title="Instructor Portal" />
       <div>
@@ -362,6 +364,7 @@ export default function InstructorStudentsPage() {
         onEvaluate={goEvaluate}
       />
     </div>
+    </PlaceholderGuard>
   );
 }
 
