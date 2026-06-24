@@ -140,7 +140,7 @@ export default function ProgrammesPage() {
           <CardHeader className="px-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium m-0">Student programmes</CardTitle>
-              <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={() => addProgramme("standard")}>
+              <Button size="xs" onClick={() => addProgramme("standard")}>
                 <Plus size={12} /> New
               </Button>
             </div>
@@ -150,10 +150,11 @@ export default function ProgrammesPage() {
             {programmes.map((p) => {
               const active = selectedKind === "standard" && p.id === selectedId;
               return (
-                <button
+                <Button
                   key={p.id}
                   onClick={() => selectProgramme("standard", active ? null : p.id)}
-                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border cursor-pointer ${
+                  variant="ghost"
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
                       : "border-transparent hover:bg-muted"
@@ -190,7 +191,7 @@ export default function ProgrammesPage() {
                       active ? "text-[#7e55f6]" : "text-muted-foreground/40 group-hover:text-muted-foreground"
                     }`}
                   />
-                </button>
+                </Button>
               );
             })}
           </CardContent>
@@ -201,7 +202,7 @@ export default function ProgrammesPage() {
           <CardHeader className="px-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium m-0">Internal Programmes</CardTitle>
-              <Button size="xs" className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" onClick={() => addProgramme("internal")}>
+              <Button size="xs" onClick={() => addProgramme("internal")}>
                 <Plus size={12} /> New
               </Button>
             </div>
@@ -213,10 +214,11 @@ export default function ProgrammesPage() {
             {internalProgrammes.map((p) => {
               const active = selectedKind === "internal" && p.id === selectedId;
               return (
-                <button
+                <Button
                   key={p.id}
                   onClick={() => selectProgramme("internal", active ? null : p.id)}
-                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 transition-colors border cursor-pointer ${
+                  variant="ghost"
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
                       : "border-transparent hover:bg-muted"
@@ -253,7 +255,7 @@ export default function ProgrammesPage() {
                       active ? "text-[#7e55f6]" : "text-muted-foreground/40 group-hover:text-muted-foreground"
                     }`}
                   />
-                </button>
+                </Button>
               );
             })}
           </CardContent>
@@ -476,7 +478,6 @@ function ProgrammeEditor({
                 )}
                 <Button
                   size="sm"
-                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
                   onClick={saveDetails}
                 >
                   <Check size={14} /> Save
@@ -513,20 +514,18 @@ function ProgrammeEditor({
                   {INSTRUCTORS.map((ins) => {
                     const assigned = programme.instructorIds.includes(ins.id);
                     return (
-                      <button
+                      <Button
                         key={ins.id}
                         type="button"
                         onClick={() => toggleInstructor(ins.id)}
                         title={ins.email}
-                        className={`inline-flex items-center gap-1.5 h-7 rounded-full border px-2.5 text-xs font-medium transition-colors ${
-                          assigned
-                            ? "border-transparent bg-[#7e55f6] text-white hover:bg-[#6742d4]"
-                            : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`}
+                        variant={assigned ? "default" : "outline"}
+                        size="sm"
+                        className="inline-flex items-center gap-1.5"
                       >
                         {assigned ? <Check size={12} /> : <Plus size={12} />}
                         {ins.name}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -538,16 +537,18 @@ function ProgrammeEditor({
                   {ASSIGNABLE_ROLES.map((r) => {
                     const on = (programme.roles ?? []).includes(r);
                     return (
-                      <button
+                      <Button
                         key={r}
                         type="button"
                         onClick={() => toggleRole(r)}
-                        className={`inline-flex items-center h-7 rounded-full border px-2.5 text-xs font-medium transition-all ${ROLE_BADGE[r]} ${
+                        variant="outline"
+                        size="sm"
+                        className={`inline-flex items-center h-7 rounded-full px-2.5 text-xs font-medium transition-all ${ROLE_BADGE[r]} ${
                           on ? "ring-2 ring-current ring-offset-1 ring-offset-background" : "opacity-40 hover:opacity-75"
                         }`}
                       >
                         {r}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -623,7 +624,7 @@ function ProgrammeEditor({
             )}
             <Button
               size="sm"
-              className={editing ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
+              className={editing ? "" : ""}
               variant={editing ? "default" : "outline"}
               onClick={() => (editing ? setEditing(false) : startEditCurriculum())}
             >
@@ -700,7 +701,7 @@ function ProgrammeEditor({
             )}
             <Button
               size="sm"
-              className={editingTest ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}
+              className={editingTest ? "" : ""}
               variant={editingTest ? "default" : "outline"}
               onClick={() => (editingTest ? setEditingTest(false) : startEditTest())}
             >
@@ -832,17 +833,19 @@ function ModuleCard({
             <GripVertical size={14} />
           </div>
         )}
-        <button
+        <Button
           type="button"
           onClick={onToggle}
           title={expanded ? "Collapse module" : "Expand module"}
+          variant="ghost"
+          size="sm"
           className="flex items-center gap-1.5 shrink-0 rounded-md px-1.5 py-1 hover:bg-muted transition-colors"
         >
           {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           <span className="size-6 rounded-md bg-background border border-border text-xs font-medium text-muted-foreground flex items-center justify-center">
             {index + 1}
           </span>
-        </button>
+        </Button>
         {editing ? (
           <Input
             value={module.title}
@@ -851,11 +854,11 @@ function ModuleCard({
             className="flex-1 h-9 min-w-24 font-medium bg-background"
           />
         ) : (
-          <button type="button" onClick={onToggle} className="flex-1 min-w-0 text-left">
+          <Button type="button" onClick={onToggle} variant="ghost" className="flex-1 min-w-0 h-auto text-left justify-start">
             <span className="block text-sm font-medium truncate">
               {module.title || `Module ${index + 1}`}
             </span>
-          </button>
+          </Button>
         )}
         <span className="text-xs text-muted-foreground whitespace-nowrap hidden md:inline px-1">
           {lessonCount} lesson{lessonCount === 1 ? "" : "s"} · {quizCount} quiz{quizCount === 1 ? "" : "zes"}
@@ -909,7 +912,7 @@ function ModuleCard({
                         <Button
                           variant="default"
                           size="sm"
-                          className="bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-sm"
+                          className="shadow-sm"
                         />
                       }
                     >
@@ -1050,10 +1053,11 @@ function ContentItemRow({
   if (!editing) {
     return (
       <div className="rounded-lg border border-[#7e55f6]/25 bg-card overflow-hidden">
-        <button
+        <Button
           type="button"
           onClick={() => setQuizOpen((v) => !v)}
-          className="w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-muted/40 transition-colors"
+          variant="ghost"
+          className="w-full flex items-center gap-2 px-2.5 py-2 h-auto text-left hover:bg-muted/40 transition-colors justify-start"
         >
           <div className="size-7 rounded-md bg-[#7e55f6] text-white flex items-center justify-center shrink-0">
             <Meta.icon size={14} />
@@ -1068,7 +1072,7 @@ function ContentItemRow({
             size={16}
             className={`shrink-0 text-muted-foreground transition-transform ${quizOpen ? "rotate-180" : ""}`}
           />
-        </button>
+        </Button>
 
         {quizOpen && (
           <div className="px-2.5 pb-2.5 pt-1 flex flex-col gap-3 border-t border-border">

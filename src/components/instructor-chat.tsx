@@ -1,17 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { INSTRUCTORS, PROGRAMMES } from "@/lib/mock-data";
-import { Send, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
+import { Send, MessageSquare, ChevronLeft } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -43,16 +37,17 @@ function initials(name: string) {
     .join("");
 }
 
+/**
+ * Inline messaging panel rendered inside the portal dashboards (at
+ * /internal/messages and /student/messages), so the surrounding sidebar
+ * chrome stays put. Mirrors the two-pane layout of the instructor inbox.
+ */
 export default function InstructorChat({
   user,
   programmeId,
-  open,
-  onOpenChange,
 }: {
   user: string;
   programmeId: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }) {
   // Instructors allocated to the active programme.
   const instructors = useMemo(() => {
@@ -63,18 +58,21 @@ export default function InstructorChat({
       .filter((i): i is (typeof INSTRUCTORS)[number] => Boolean(i));
   }, [programmeId]);
 
-  // null = instructor list view; an id = open conversation.
-  const [selectedInstructorId, setSelectedInstructorId] = useState<string | null>(null);
+  const [selectedInstructorId, setSelectedInstructorId] = useState<string | null>(
+    instructors[0]?.id ?? null
+  );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
+  const [mobileShowChat, setMobileShowChat] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Reset to the instructor list when the dialog reopens or the programme changes.
-  const [prevReset, setPrevReset] = useState({ open, instructors });
-  if (prevReset.open !== open || prevReset.instructors !== instructors) {
-    setPrevReset({ open, instructors });
-    setSelectedInstructorId(null);
+  // Reset selection when the programme (instructor list) changes.
+  const [prevInstructors, setPrevInstructors] = useState(instructors);
+  if (prevInstructors !== instructors) {
+    setPrevInstructors(instructors);
+    setSelectedInstructorId(instructors[0]?.id ?? null);
     setDraft("");
+    setMobileShowChat(false);
   }
 
   const activeInstructor = instructors.find((i) => i.id === selectedInstructorId) ?? null;
@@ -84,13 +82,19 @@ export default function InstructorChat({
   const [prevKey, setPrevKey] = useState(key);
   if (prevKey !== key) {
     setPrevKey(key);
-    if (key) setMessages(loadMessages(key));
+    setMessages(key ? loadMessages(key) : []);
   }
 
   // Keep the view pinned to the newest message.
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages, selectedInstructorId]);
+
+  const openInstructor = (id: string) => {
+    setSelectedInstructorId(id);
+    setDraft("");
+    setMobileShowChat(true);
+  };
 
   const send = () => {
     const text = draft.trim();
@@ -111,127 +115,132 @@ export default function InstructorChat({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
-        {activeInstructor ? (
-          /* ---- Conversation view ---- */
-          <>
-            <DialogHeader className="flex flex-row items-center gap-2 px-3 py-3 border-b border-border space-y-0">
-              <button
-                type="button"
-                onClick={() => setSelectedInstructorId(null)}
-                className="flex items-center justify-center size-8 rounded-lg hover:bg-muted transition-colors shrink-0"
-                aria-label="Back to instructors"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
-                {initials(activeInstructor.name)}
-              </div>
-              <div className="min-w-0 text-left">
-                <DialogTitle className="text-sm font-medium truncate">{activeInstructor.name}</DialogTitle>
-                <DialogDescription className="text-xs truncate">{activeInstructor.email}</DialogDescription>
-              </div>
-            </DialogHeader>
+    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+      <div>
+        <h1 className="text-3xl font-normal m-0">Messages</h1>
+        <p className="text-muted-foreground mt-1">Chat with the instructors on your programme.</p>
+      </div>
 
-            <div ref={scrollRef} className="flex-1 min-h-[240px] flex flex-col gap-3 px-4 sm:px-5 py-4 overflow-y-auto">
-              {messages.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
-                  <MessageSquare size={26} />
-                  <p className="text-sm m-0">No messages yet. Say hello!</p>
-                </div>
-              ) : (
-                messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm break-words ${
-                      m.from === "student"
-                        ? "self-end bg-[#7e55f6] text-white rounded-br-sm"
-                        : "self-start bg-muted rounded-bl-sm"
-                    }`}
-                  >
-                    <p className="m-0 whitespace-pre-wrap">{m.text}</p>
-                    <p
-                      className={`m-0 mt-1 text-[10px] ${
-                        m.from === "student" ? "text-white/70" : "text-muted-foreground"
-                      }`}
-                    >
-                      {m.sentAt}
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-4 items-start">
+        {/* Instructor list — hidden on mobile when a chat is open */}
+        <Card className={`shadow-sm py-2 gap-0 ${mobileShowChat ? "hidden lg:flex" : ""}`}>
+          <CardContent className="px-2 flex flex-col gap-1">
+            {instructors.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8 m-0">
+                No instructor is assigned to this programme yet.
+              </p>
+            )}
+            {instructors.map((ins) => {
+              const preview = lastMessagePreview(ins.id);
+              const isActive = ins.id === selectedInstructorId;
+              return (
+                <Button
+                  key={ins.id}
+                  onClick={() => openInstructor(ins.id)}
+                  variant="ghost"
+                  className={`flex items-start gap-2.5 rounded-lg p-2.5 h-auto text-left transition-colors border justify-start w-full ${
+                    isActive ? "border-[#7e55f6]/40 bg-[#7e55f6]/8" : "border-transparent hover:bg-muted"
+                  }`}
+                >
+                  <div className="size-8 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-xs font-medium shrink-0">
+                    {initials(ins.name)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm m-0 truncate font-normal">{ins.name}</p>
+                    <p className="text-xs text-muted-foreground m-0 mt-0.5 line-clamp-2">
+                      {preview ?? "No messages yet"}
                     </p>
                   </div>
-                ))
-              )}
-            </div>
+                </Button>
+              );
+            })}
+          </CardContent>
+        </Card>
 
-            <div className="flex items-end gap-2 px-4 sm:px-5 py-3 border-t border-border">
-              <Textarea
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    send();
-                  }
-                }}
-                placeholder="Type your message (Enter to send)"
-                className="flex-1 min-h-10 max-h-32 resize-none"
-              />
-              <Button
-                size="icon"
-                className="bg-[#7e55f6] hover:bg-[#6742d4] text-white shrink-0 size-10"
-                disabled={!draft.trim()}
-                onClick={send}
-              >
-                <Send size={15} />
-              </Button>
-            </div>
-          </>
-        ) : (
-          /* ---- Instructor list view ---- */
-          <>
-            <DialogHeader className="px-4 sm:px-5 py-4 border-b border-border">
-              <DialogTitle>Message your instructor</DialogTitle>
-              <DialogDescription>
-                {instructors.length > 0
-                  ? "Pick an instructor allocated to this programme to open the chat."
-                  : "No instructor is assigned to this programme yet."}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="flex-1 min-h-[200px] flex flex-col gap-1 px-2 py-2 overflow-y-auto">
-              {instructors.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2 p-8">
-                  <MessageSquare size={28} />
-                  <p className="text-sm m-0 text-center">No instructor is assigned to this programme yet.</p>
+        {/* Conversation — hidden on mobile when the list is showing */}
+        <Card className={`shadow-sm min-h-[60vh] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
+          {activeInstructor ? (
+            <>
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0 lg:hidden"
+                  onClick={() => setMobileShowChat(false)}
+                  aria-label="Back to instructors"
+                >
+                  <ChevronLeft size={18} />
+                </Button>
+                <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
+                  {initials(activeInstructor.name)}
                 </div>
-              ) : (
-                instructors.map((ins) => {
-                  const preview = lastMessagePreview(ins.id);
-                  return (
-                    <button
-                      key={ins.id}
-                      type="button"
-                      onClick={() => setSelectedInstructorId(ins.id)}
-                      className="flex items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-muted"
+                <div className="min-w-0">
+                  <p className="text-sm font-medium m-0 truncate">{activeInstructor.name}</p>
+                  <p className="text-xs text-muted-foreground m-0 truncate">{activeInstructor.email}</p>
+                </div>
+              </div>
+
+              <CardContent ref={scrollRef} className="flex-1 flex flex-col gap-3 py-4 overflow-y-auto">
+                {messages.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
+                    <MessageSquare size={26} />
+                    <p className="text-sm m-0">No messages yet. Say hello!</p>
+                  </div>
+                ) : (
+                  messages.map((m) => (
+                    <div
+                      key={m.id}
+                      className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm break-words ${
+                        m.from === "student"
+                          ? "self-end bg-[#7e55f6] text-white rounded-br-sm"
+                          : "self-start bg-muted rounded-bl-sm"
+                      }`}
                     >
-                      <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
-                        {initials(ins.name)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium m-0 truncate">{ins.name}</p>
-                        <p className="text-xs text-muted-foreground m-0 mt-0.5 truncate">
-                          {preview ?? "No messages yet"}
-                        </p>
-                      </div>
-                      <ChevronRight size={16} className="text-muted-foreground/40 shrink-0" />
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
+                      <p className="m-0 whitespace-pre-wrap">{m.text}</p>
+                      <p
+                        className={`m-0 mt-1 text-[10px] ${
+                          m.from === "student" ? "text-white/70" : "text-muted-foreground"
+                        }`}
+                      >
+                        {m.sentAt}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+
+              <div className="flex items-end gap-2 px-4 py-3 border-t border-border">
+                <Textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      send();
+                    }
+                  }}
+                  placeholder="Type a message"
+                  className="flex-1 min-h-10 max-h-32 resize-none"
+                />
+                <Button
+                  size="icon"
+                  className="shrink-0 size-10"
+                  disabled={!draft.trim()}
+                  onClick={send}
+                >
+                  <Send size={15} />
+                </Button>
+              </div>
+            </>
+          ) : (
+            <CardContent className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
+              <MessageSquare size={28} />
+              <p className="text-sm m-0">Select an instructor to start chatting.</p>
+            </CardContent>
+          )}
+        </Card>
+      </div>
+    </div>
   );
 }

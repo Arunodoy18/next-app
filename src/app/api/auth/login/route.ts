@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const role = user.role as AuthRole;
   const token = signToken({
-    userId: user._id.toString(),
+    userId: user.userId,
     name: user.name,
     username: user.username,
     email: user.email,

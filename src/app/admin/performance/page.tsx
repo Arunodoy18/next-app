@@ -295,7 +295,7 @@ export default function AdminPerformancePage() {
                       key={i}
                       variant={page === i + 1 ? "default" : "ghost"}
                       size="sm"
-                      className={`w-8 h-8 p-0 ${page === i + 1 ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : ""}`}
+                      className="w-8 h-8 p-0"
                       onClick={() => setPage(i + 1)}
                     >
                       {i + 1}

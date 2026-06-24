@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import Logo from "@/components/logo/logo";
 import { logout } from "@/auth/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ import {
   Moon,
   LogOut,
   type LucideIcon,
+  UserCog,
 } from "lucide-react";
 
 export interface PortalNavItem {
@@ -80,7 +82,19 @@ export default function PortalShell({
     <DropdownMenuContent align="end" className="w-56">
       <p className="px-1.5 py-1.5 text-sm font-medium text-foreground">{userLabel}</p>
       <DropdownMenuSeparator />
-      <DropdownMenuItem className="text-base py-2 [&_svg]:size-[18px]">
+      <DropdownMenuItem
+        className="text-base py-2 [&_svg]:size-[18px]"
+        onClick={() => {
+          const settingsPath = pathname.startsWith("/admin")
+            ? "/admin/settings"
+            : pathname.startsWith("/instructor")
+            ? "/instructor/settings"
+            : pathname.startsWith("/internal")
+            ? "/internal/settings"
+            : "/student/settings";
+          router.push(settingsPath);
+        }}
+      >
         <Settings size={18} />
         Account Settings
       </DropdownMenuItem>
@@ -114,15 +128,17 @@ export default function PortalShell({
           topBarVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <button
+        <Button
           type="button"
           onClick={() => setSidebarOpen(true)}
+          variant="ghost"
+          size="icon"
           className={`flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted transition-colors ${
             sidebarOpen ? "pointer-events-none opacity-50" : ""
           }`}
         >
           <Menu size={20} />
-        </button>
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -144,13 +160,15 @@ export default function PortalShell({
 
       {/* Desktop sidebar expand toggle (when collapsed) */}
       {sidebarCollapsed && (
-        <button
+        <Button
           type="button"
           onClick={() => setSidebarCollapsed(false)}
+          variant="ghost"
+          size="icon"
           className="hidden lg:flex fixed top-9 -translate-y-1/2 left-4 z-50 items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
         >
           <PanelLeftIcon size={16} />
-        </button>
+        </Button>
       )}
 
       {/* Top-right account menu (desktop) */}
@@ -183,38 +201,40 @@ export default function PortalShell({
             sidebarCollapsed ? "lg:w-0 lg:border-0" : "lg:w-72 xl:w-80"
           }`}
         >
-          {/* Desktop sidebar collapse toggle */}
-          {!sidebarCollapsed && (
-            <button
-              type="button"
-              onClick={() => setSidebarCollapsed(true)}
-              className="hidden lg:flex absolute top-9 -translate-y-1/2 right-3 z-10 items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
-            >
-              <PanelLeftIcon size={16} />
-            </button>
-          )}
           <div className="w-80 lg:w-72 xl:w-80 h-full flex flex-col p-4 gap-6 overflow-hidden">
-            <div className="flex items-center justify-between gap-2 px-1">
-              <div className="flex items-center gap-[0.25rem] text-[1.4rem] font-normal whitespace-nowrap">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-4 text-[1.4rem] font-normal whitespace-nowrap min-w-0">
                 <Logo
                   width="22"
-                  height="42"
+                  height="50"
                   color="currentColor"
                   className="shrink-0 text-foreground transition-colors hover:text-[#7e55f6]"
-                  style={{ marginRight: "0.7rem" }}
                 />
-                <div>
+                <div className="truncate">
                   <span className="text-foreground">Blackmont</span>{" "}
                   <span className="text-muted-foreground">{portalName}</span>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => setSidebarOpen(false)}
+                variant="ghost"
+                size="icon"
                 className="flex items-center justify-center h-8 w-8 shrink-0 rounded-lg hover:bg-muted transition-colors lg:hidden"
               >
                 <X size={18} />
-              </button>
+              </Button>
+              {!sidebarCollapsed && (
+                <Button
+                  type="button"
+                  onClick={() => setSidebarCollapsed(true)}
+                  variant="ghost"
+                  size="icon"
+                  className="hidden lg:flex items-center justify-center h-7 w-7 shrink-0 rounded-md hover:bg-muted transition-colors"
+                >
+                  <PanelLeftIcon size={16} />
+                </Button>
+              )}
             </div>
 
             <nav className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
@@ -250,6 +270,28 @@ export default function PortalShell({
                 );
               })}
             </nav>
+
+            <div className="border-t border-border pt-4">
+              {(() => {
+                const isSettingsActive = pathname.endsWith("/settings");
+                return (
+                  <Link
+                    href={`${basePath}/settings`}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
+                      isSettingsActive
+                        ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                        : "border border-border hover:bg-muted text-foreground"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 font-medium truncate">
+                      <UserCog size={16} className={`shrink-0 ${isSettingsActive ? "text-white" : "text-[#7e55f6]"}`} />
+                      Account Settings
+                    </span>
+                  </Link>
+                );
+              })()}
+            </div>
           </div>
         </aside>
 

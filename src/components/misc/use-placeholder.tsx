@@ -1,6 +1,21 @@
 "use client";
 
-import { createContext, useContext, useState, useSyncExternalStore, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useCallback, useSyncExternalStore, type ReactNode } from "react";
+
+let localListeners: (() => void)[] = [];
+
+function emitChange() {
+  for (const l of localListeners) l();
+}
+
+function subscribe(cb: () => void) {
+  localListeners.push(cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    localListeners = localListeners.filter((l) => l !== cb);
+    window.removeEventListener("storage", cb);
+  };
+}
 
 function getSnapshot() {
   return localStorage.getItem("placeholder-mode") === "true";
@@ -10,22 +25,15 @@ function getServerSnapshot() {
   return false;
 }
 
-function subscribe(cb: () => void) {
-  window.addEventListener("storage", cb);
-  return () => window.removeEventListener("storage", cb);
-}
-
 const PlaceholderContext = createContext({ show: false, toggle: () => {} });
 
 export function PlaceholderProvider({ children }: { children: ReactNode }) {
-  const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const [show, setShow] = useState(stored);
+  const show = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggle = useCallback(() => {
-    const next = !show;
-    setShow(next);
-    localStorage.setItem("placeholder-mode", String(next));
-  }, [show]);
+    localStorage.setItem("placeholder-mode", String(!getSnapshot()));
+    emitChange();
+  }, []);
 
   return (
     <PlaceholderContext.Provider value={{ show, toggle }}>

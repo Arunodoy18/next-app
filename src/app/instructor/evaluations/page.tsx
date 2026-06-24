@@ -4,6 +4,7 @@ import { useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
@@ -59,10 +60,11 @@ export default function InstructorEvaluationsPage() {
   };
 
   const studentRow = (s: (typeof students)[number], pending: number) => (
-    <button
+    <Button
       key={s.id}
       onClick={() => setSelectedId(s.id)}
-      className="flex items-center gap-3 rounded-lg border border-border p-3 text-left hover:bg-muted/50 transition-colors w-full"
+      variant="ghost"
+      className="flex items-center gap-3 rounded-lg border border-border p-3 h-auto text-left hover:bg-muted/50 transition-colors w-full justify-start"
     >
       <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
         {s.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
@@ -82,7 +84,7 @@ export default function InstructorEvaluationsPage() {
         <Badge className="bg-green-500/10 text-green-600 border-transparent shrink-0">Evaluated</Badge>
       )}
       <ChevronRight size={16} className="text-muted-foreground shrink-0" />
-    </button>
+    </Button>
   );
 
   return (

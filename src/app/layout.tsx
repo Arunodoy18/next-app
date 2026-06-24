@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import QueryProvider from "@/components/query-provider";
 import SuperuserBubble from "@/components/misc/superuser-bubble";
 import { PlaceholderProvider } from "@/components/misc/use-placeholder";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const questrial = Questrial({
@@ -44,6 +45,7 @@ export default function RootLayout({
               <ThemeToggle />
               {children}
               <SuperuserBubble />
+              <Toaster />
             </PlaceholderProvider>
           </QueryProvider>
         </ThemeProvider>

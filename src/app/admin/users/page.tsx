@@ -3,13 +3,17 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import RoleBadge from "@/components/role-badge";
 import { verificationBadgeColor } from "@/utils/badgeColor";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableHeader,
@@ -33,8 +37,19 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import PageTitle from "@/components/page-title";
-import type { UserResponse } from "@/schema/userSchema";
+import type { UserResponse, CreateUserInput, UpdateUserInput } from "@/schema/userSchema";
+import { createUserSchema, updateUserSchema } from "@/schema/userSchema";
 import type { AuthRole } from "@/types/userDoc";
 import { ASSIGNABLE_ROLES } from "@/lib/mock-data";
 import { Plus, Trash2, Download, Search, Pencil, Loader2 } from "lucide-react";
@@ -61,15 +76,6 @@ async function fetchUsers(): Promise<UserResponse[]> {
   return res.json();
 }
 
-interface EditingUser {
-  _id?: string;
-  name: string;
-  email: string;
-  role?: AuthRole;
-}
-
-const emptyUser: EditingUser = { name: "", email: "", role: undefined};
-
 export default function AdminUsersPage() {
   return (
     <Suspense>
@@ -82,13 +88,25 @@ function AdminUsersContent() {
   const queryClient = useQueryClient();
   const { data: users = [], isLoading } = useQuery({ queryKey: ["admin-users"], queryFn: fetchUsers });
 
-  const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingUser, setDeletingUser] = useState<UserResponse | null>(null);
   const searchParams = useSearchParams();
   const initialType = searchParams.get("type") as AuthRole | null;
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<AuthRole | "all">(initialType ?? "all");
+
+  const isNew = !editingId;
+  const editingUser = editingId ? users.find((u) => u.userId === editingId) : null;
+
+  const form = useForm<CreateUserInput>({
+    resolver: zodResolver(isNew ? createUserSchema : updateUserSchema) as never,
+    defaultValues: {
+      name: editingUser?.name || "",
+      email: editingUser?.email || "",
+      role: editingUser?.role,
+    },
+  });
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -104,43 +122,64 @@ function AdminUsersContent() {
       const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete user");
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => {
+      toast.success("User deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setDeletingUser(null);
+    },
+    onError: () => {
+      toast.error("Failed to delete user");
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: CreateUserInput | UpdateUserInput) => {
+      if (isNew) {
+        const res = await fetch("/api/admin/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || "Failed to create user");
+        }
+        return res.json();
+      } else {
+        const res = await fetch(`/api/admin/users/${editingId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: data.name, email: data.email, role: data.role }),
+        });
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || "Failed to update user");
+        }
+        return res.json();
+      }
+    },
+    onSuccess: () => {
+      toast.success(isNew ? "User created successfully" : "User updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setDialogOpen(false);
+      setEditingId(null);
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error(error.message || (isNew ? "Failed to create user" : "Failed to update user"));
+    },
   });
 
   const openNew = () => {
-    setEditingUser({ ...emptyUser });
+    setEditingId(null);
+    form.reset({ name: "", email: "", role: undefined });
     setDialogOpen(true);
   };
 
   const openEdit = (u: UserResponse) => {
-    setEditingUser({ _id: u._id, name: u.name, email: u.email, role: u.role });
+    setEditingId(u.userId);
+    form.reset({ name: u.name, email: u.email, role: u.role });
     setDialogOpen(true);
-  };
-
-  const saveUser = async () => {
-    if (!editingUser) return;
-    setSaving(true);
-    try {
-      if (editingUser._id) {
-        const res = await fetch(`/api/admin/users/${editingUser._id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: editingUser.name, email: editingUser.email, role: editingUser.role }),
-        });
-        if (!res.ok) throw new Error("Failed to update user");
-      } else {
-        const res = await fetch("/api/admin/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editingUser),
-        });
-        if (!res.ok) throw new Error("Failed to create user");
-      }
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      setDialogOpen(false);
-    } finally {
-      setSaving(false);
-    }
   };
 
   const header = ["Name", "Email", "Role", "Verification", "Signup Date"];
@@ -154,14 +193,14 @@ function AdminUsersContent() {
 
   const exportUsers = () => {
     downloadCsv("users.csv", toCsv([header, ...users.map(userRow)]));
+    toast.success("CSV exported");
   };
 
   const exportUser = (u: UserResponse) => {
-    const slug = (u.name || u.email || u._id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const slug = (u.name || u.email || u.userId).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     downloadCsv(`${slug || "user"}.csv`, toCsv([header, userRow(u)]));
+    toast.success(`Exported ${u.name || u.email}`);
   };
-
-  const isNew = !editingUser?._id;
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
@@ -198,16 +237,15 @@ function AdminUsersContent() {
                   placeholder="Search name or email"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 h-9 w-full bg-background"
+                  className="pl-9 w-full bg-background"
                 />
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                <Button variant="outline" size="sm" className="h-9 flex-1 sm:flex-none" onClick={exportUsers}>
+                <Button variant="outline"   className="flex-1 sm:flex-none" onClick={exportUsers}>
                   <Download size={14} className="mr-1.5" /> Export CSV
                 </Button>
                 <Button
-                  size="sm"
-                  className="h-9 flex-1 sm:flex-none bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                   className="flex-1 sm:flex-none"
                   onClick={openNew}
                 >
                   <Plus size={14} className="mr-1.5" /> New User
@@ -230,11 +268,16 @@ function AdminUsersContent() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12">
-                    <Loader2 className="animate-spin mx-auto text-muted-foreground" size={24} />
-                  </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
+                  </TableRow>
+                ))
               ) : filtered.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
@@ -253,7 +296,7 @@ function AdminUsersContent() {
                   }).format(new Date(u.createdAt));
 
                   return (
-                    <TableRow key={u._id} className="group hover:bg-muted/50 transition-colors">
+                    <TableRow key={u.userId} className="group hover:bg-muted/50 transition-colors">
                       <TableCell className="font-medium">{u.name}</TableCell>
                       <TableCell className="text-muted-foreground">{u.email}</TableCell>
                       <TableCell>
@@ -277,7 +320,7 @@ function AdminUsersContent() {
                             variant="destructive"
                             size="icon-sm"
                             title="Delete user"
-                            onClick={() => deleteMutation.mutate(u._id)}
+                            onClick={() => setDeletingUser(u)}
                           >
                             <Trash2 size={14} />
                           </Button>
@@ -292,59 +335,96 @@ function AdminUsersContent() {
         </CardContent>
       </Card>
 
-      <Dialog open={dialogOpen} onOpenChange={(open) => !open && setDialogOpen(false)}>
+      <Dialog open={dialogOpen} onOpenChange={(open) => {
+        setDialogOpen(open);
+        if (!open) {
+          setEditingId(null);
+          form.reset();
+        }
+      }}>
         <DialogContent>
-          {editingUser && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{isNew ? "New User" : editingUser.name}</DialogTitle>
-                <DialogDescription>{isNew ? "Create a new user account." : "Edit user details and role."}</DialogDescription>
-              </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>{isNew ? "New User" : `Edit ${editingUser?.name}`}</DialogTitle>
+            <DialogDescription>{isNew ? "Create a new user. A verification email will be sent to set up their credentials." : "Edit user details and role."}</DialogDescription>
+          </DialogHeader>
 
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <Label>Name</Label>
-                  <Input
-                    placeholder="Enter the name"
-                    value={editingUser.name}
-                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label>Email</Label>
-                  <Input
-                    placeholder="Enter the email"
-                    value={editingUser.email}
-                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label>Role</Label>
-                  <Select
-                    value={editingUser.role ?? ""}
-                    onValueChange={(value) => setEditingUser({ ...editingUser, role: value as AuthRole })}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ALL_ROLES.map((r) => (
-                        <SelectItem key={r} value={r}>{r}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+          <form onSubmit={form.handleSubmit((data) => saveMutation.mutate(data))}>
+            <FieldGroup>
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input {...field} id="name" placeholder="Enter the name" aria-invalid={fieldState.invalid} />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="email"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input {...field} id="email" placeholder="Enter the email" aria-invalid={fieldState.invalid} />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="role"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="role">Role</FieldLabel>
+                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full" id="role">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ALL_ROLES.map((r) => (
+                          <SelectItem key={r} value={r}>{r}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
 
-              <DialogFooter>
-                <Button className="bg-[#7e55f6] hover:bg-[#6742d4] text-white" disabled={saving} onClick={saveUser}>
-                  {saving ? <Loader2 size={16} className="animate-spin" /> : isNew ? "Create User" : "Save Changes"}
-                </Button>
-              </DialogFooter>
-            </>
-          )}
+            <DialogFooter className="mt-5">
+              <Button type="submit" disabled={saveMutation.isPending}>
+                {saveMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : isNew ? "Create User" : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deletingUser?.name}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deletingUser) deleteMutation.mutate(deletingUser.userId);
+              }}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? <Loader2 className="animate-spin" size={16} /> : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

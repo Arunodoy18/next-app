@@ -96,13 +96,13 @@ export default function StudentDetailDialog({
           <>
             <div className="px-4 sm:px-6 py-5 border-b border-border shrink-0 bg-card/50">
               <DialogHeader>
-              <DialogTitle>
-                {view.student.name}
-                <LearnerRoleBadge id={view.student.id} className="ml-2" />
-              </DialogTitle>
-              <DialogDescription>
-                {view.student.email} · {view.programme.name}
-              </DialogDescription>
+                <DialogTitle>
+                  {view.student.name}
+                  <LearnerRoleBadge id={view.student.id} className="ml-2" />
+                </DialogTitle>
+                <DialogDescription>
+                  {view.student.email} · {view.programme.name}
+                </DialogDescription>
               </DialogHeader>
             </div>
 
@@ -162,7 +162,7 @@ export default function StudentDetailDialog({
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="relative mt-1">
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-muted-foreground/20 rounded-full" />
                             <p className="text-[15px] text-muted-foreground pl-5 py-1 m-0 whitespace-pre-wrap break-words leading-relaxed">
@@ -227,7 +227,6 @@ export default function StudentDetailDialog({
               <div className="px-4 sm:px-6 py-4 border-t border-border bg-card/50 shrink-0">
                 <DialogFooter>
                   <Button
-                    className="bg-[#7e55f6] hover:bg-[#6742d4] text-white"
                     onClick={() => onEvaluate(view.student.id)}
                   >
                     <ClipboardCheck size={15} className="mr-2" />
@@ -248,7 +247,7 @@ export default function StudentDetailDialog({
                     )}
                   </div>
                   <Button
-                    className="bg-[#7e55f6] hover:bg-[#6742d4] text-white px-8 h-10 rounded-full font-medium"
+                    className="font-medium"
                     onClick={save}
                     disabled={!hasInput}
                   >

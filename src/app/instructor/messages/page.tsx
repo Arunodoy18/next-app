@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { learnerRole, ROLE_BADGE, type MessageThread } from "@/lib/mock-data";
+import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
-import { Send, MessageSquare } from "lucide-react";
+import { Send, MessageSquare, ChevronLeft } from "lucide-react";
 
 let idCounter = 9000;
 const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
@@ -43,6 +43,7 @@ export default function InstructorMessagesPage() {
   ];
   const [activeId, setActiveId] = useState<string | null>(myThreads[0]?.id ?? null);
   const [reply, setReply] = useState("");
+  const [mobileShowChat, setMobileShowChat] = useState(false);
 
   const active = myThreads.find((t) => t.id === activeId) ?? null;
 
@@ -91,6 +92,7 @@ export default function InstructorMessagesPage() {
   const openThread = (id: string) => {
     setActiveId(id);
     setReply("");
+    setMobileShowChat(true);
     updateThread(id, (t) => ({ ...t, unread: false }));
   };
 
@@ -114,8 +116,8 @@ export default function InstructorMessagesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-4 items-start">
-        {/* Thread list */}
-        <Card className="shadow-sm py-2 gap-0">
+        {/* Thread list — hidden on mobile when a chat is open */}
+        <Card className={`shadow-sm py-2 gap-0 ${mobileShowChat ? "hidden lg:flex" : ""}`}>
           <CardContent className="px-2 flex flex-col gap-1">
             {myThreads.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-8 m-0">No messages yet.</p>
@@ -125,10 +127,11 @@ export default function InstructorMessagesPage() {
               const isActive = t.id === activeId;
               const role = learnerRole(t.studentId);
               return (
-                <button
+                <Button
                   key={t.id}
                   onClick={() => openThread(t.id)}
-                  className={`flex items-start gap-2.5 rounded-lg p-2.5 text-left transition-colors border ${
+                  variant="ghost"
+                  className={`flex items-start gap-2.5 rounded-lg p-2.5 h-auto text-left transition-colors border justify-start w-full ${
                     isActive ? "border-[#7e55f6]/40 bg-[#7e55f6]/8" : "border-transparent hover:bg-muted"
                   }`}
                 >
@@ -139,7 +142,7 @@ export default function InstructorMessagesPage() {
                     <div className="flex items-center gap-1.5">
                       <p
                         className={`text-sm m-0 truncate font-normal ${
-                          role ? ROLE_BADGE[role] : ""
+                          role ? ROLE_TEXT[role] : ""
                         }`}
                       >
                         {studentName(t.studentId)}
@@ -151,17 +154,27 @@ export default function InstructorMessagesPage() {
                       {last ? last.text : "No messages yet"}
                     </p>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </CardContent>
         </Card>
 
-        {/* Conversation */}
-        <Card className="shadow-sm min-h-[60vh] flex flex-col">
+        {/* Conversation — hidden on mobile when thread list is showing */}
+        <Card className={`shadow-sm min-h-[60vh] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
           {active ? (
             <>
               <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0 lg:hidden"
+                  onClick={() => setMobileShowChat(false)}
+                  aria-label="Back to conversations"
+                >
+                  <ChevronLeft size={18} />
+                </Button>
                 <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
                   {initials(studentName(active.studentId))}
                 </div>
@@ -206,12 +219,12 @@ export default function InstructorMessagesPage() {
                       sendReply();
                     }
                   }}
-                  placeholder="Reply to the student (Enter to send)"
+                  placeholder="Type a message"
                   className="flex-1 min-h-10 max-h-32 resize-none"
                 />
                 <Button
                   size="icon"
-                  className="bg-[#7e55f6] hover:bg-[#6742d4] text-white shrink-0 size-10"
+                  className="shrink-0 size-10"
                   disabled={!reply.trim()}
                   onClick={sendReply}
                 >

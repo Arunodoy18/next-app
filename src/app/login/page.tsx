@@ -52,22 +52,21 @@ export default function Login() {
         <span className="font-medium">Back to Home</span>
       </Link>
 
-      <Card className="w-full max-w-[450px] shadow-lg pt-12 pb-12 px-4 sm:px-8 rounded-xl">
-        <CardHeader className="text-center pb-8">
-          <CardTitle className="text-4xl leading-[1] font-normal m-0">Academy Access</CardTitle>
-          <p className="text-sm text-muted-foreground mt-3 m-0">
+      <Card className="w-full max-w-[450px] shadow-lg pt-10 pb-10 px-6 sm:px-8 rounded-xl">
+        <CardHeader className="text-center pb-4 px-0">
+          <CardTitle className="text-3xl leading-tight font-normal m-0">Academy Access</CardTitle>
+          <p className="text-sm text-muted-foreground mt-1.5 m-0">
             Sign in with your credentials to continue
           </p>
         </CardHeader>
 
-        <CardContent className="p-0">
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2">
+        <CardContent className="p-0"> <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-1.5">
               <Label className="text-sm font-medium" htmlFor="username">Username</Label>
               <div className="relative flex items-center">
                 <User className="absolute left-4 text-muted-foreground" size={20} />
                 <Input
-                  className="pl-12 text-base h-12 rounded-lg"
+                  className="pl-12 h-10"
                   type="text"
                   id="username"
                   placeholder="Enter your username"
@@ -77,12 +76,12 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <Label className="text-sm font-medium" htmlFor="password">Password</Label>
               <div className="relative flex items-center">
                 <Lock className="absolute left-4 text-muted-foreground" size={20} />
                 <Input
-                  className="pl-12 text-base h-12 rounded-lg"
+                  className="pl-12 h-10"
                   type="password"
                   id="password"
                   placeholder="Enter your password"
@@ -105,7 +104,7 @@ export default function Login() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 text-base font-semibold mt-2 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md"
+              className="w-full mt-4 h-10"
             >
               {loading ? <Loader2 size={20} className="animate-spin" /> : 'Log In'}
             </Button>

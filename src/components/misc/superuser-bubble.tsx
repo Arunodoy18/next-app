@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, KeyRound, X, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { roleBadgeColor } from "@/utils/badgeColor";
@@ -22,26 +22,51 @@ export default function SuperuserBubble() {
   const [loading, setLoading] = useState<string | null>(null);
   const [showPasswords, setShowPasswords] = useState(false);
   const { show: showPlaceholder, toggle: togglePlaceholder } = usePlaceholder();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
   const login = async (cred: (typeof CREDS)[number]) => {
     setLoading(cred.username);
     try {
-      const res = await fetch("/api/auth/login", {
+      const usersRes = await fetch("/api/auth/superuser");
+      if (!usersRes.ok) {
+        alert("Superuser endpoint not available. Check NODE_ENV=development");
+        return;
+      }
+      const users = await usersRes.json() as Array<{ userId: string; role: string }>;
+      const user = users.find((u) => u.role === cred.role);
+      if (!user) {
+        alert(`No ${cred.role} user found in database`);
+        return;
+      }
+
+      const res = await fetch("/api/auth/superuser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: cred.username, password: cred.password }),
+        body: JSON.stringify({ userId: user.userId }),
       });
       if (res.ok) {
+        const data = await res.json();
         setOpen(false);
-        router.push(cred.home);
+        router.push(data.home || cred.home);
       }
     } finally {
-      if (!loading) setLoading(null);
+      setLoading(null);
     }
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[9999]">
+    <div ref={containerRef} className="fixed bottom-5 right-5 z-[9999]">
       {open && (
         <div className="absolute bottom-14 right-0 w-80 rounded-xl border border-border bg-background shadow-2xl overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/50">
@@ -106,7 +131,7 @@ export default function SuperuserBubble() {
         className="h-11 w-11 rounded-full bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-lg flex items-center justify-center transition-all hover:scale-105"
         title="Superuser Access"
       >
-<KeyRound size={18} />
+        <KeyRound size={18} />
       </button>
     </div>
   );

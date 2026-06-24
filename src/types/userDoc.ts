@@ -7,9 +7,11 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  salt: string;
   role: AuthRole;
   verified: "pending" | "complete";
+  credentialsToken?: string | null;
+  credentialsTokenExpiry?: Date | null;
+  credentialsVerified: "pending" | "complete";
   createdAt: Date;
   updatedAt: Date;
 }

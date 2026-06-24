@@ -119,6 +119,7 @@
 
 :root {
   --primary: #7e55f6;
+  --primary-foreground: white;
   --primary-hover: #6742d4;
   --primary-light: #8e6bf7;
   --bg-color: #0a0a0a;

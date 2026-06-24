@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import connectToDatabase from "@/db/mongodb";
 import User from "@/models/userModel";
 import { createUserSchema } from "@/schema/userSchema";
-import { hashPassword } from "@/auth/server";
+import { sendCredentialsVerificationEmail } from "@/email/templates";
+import { generateUsername } from "@/utils/credentials";
 
 export async function GET() {
   await connectToDatabase();
@@ -20,21 +22,29 @@ export async function POST(req: NextRequest) {
 
   await connectToDatabase();
 
-  const existing = await User.findOne({ username: parsed.data.username });
+  const existing = await User.findOne({ email: parsed.data.email });
   if (existing) {
-    return NextResponse.json({ error: "Username already exists" }, { status: 409 });
+    return NextResponse.json({ error: "Email already exists" }, { status: 409 });
   }
 
-  const { hash, salt } = await hashPassword(parsed.data.password);
+  const username = await generateUsername(parsed.data.name);
+
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
   const user = await User.create({
     name: parsed.data.name,
-    username: parsed.data.username,
+    username,
     email: parsed.data.email,
-    password: hash,
-    salt,
+    password: "pending_verification",
     role: parsed.data.role,
+    verified: "pending",
+    credentialsToken: verificationToken,
+    credentialsTokenExpiry: expiry,
   });
 
-  const { password: _, salt: __, ...safeUser } = user.toObject();
-  return NextResponse.json(safeUser, { status: 201 });
+  await sendCredentialsVerificationEmail(user.email, user.name, verificationToken);
+
+  const savedUser = await User.findById(user._id).select("-password").lean();
+  return NextResponse.json(savedUser, { status: 201 });
 }

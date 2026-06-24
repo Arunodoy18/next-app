@@ -6,15 +6,27 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { Mail, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { Mail, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react';
 import PageTitle from '@/components/page-title';
 
 export default function ForgotPassword() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setLoading(true);
+    try {
+      await fetch('/api/auth/forgot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setIsSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,49 +37,51 @@ export default function ForgotPassword() {
         <span className="font-medium">Back to Login</span>
       </Link>
 
-      <Card className="w-full max-w-[450px] shadow-lg pt-12 pb-12 px-4 sm:px-8 rounded-xl">
+      <Card className="w-full max-w-[450px] shadow-lg pt-10 pb-10 px-6 sm:px-8 rounded-xl">
         {isSubmitted ? (
           <div className="flex flex-col items-center justify-center text-center animate-in fade-in duration-500">
-            <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
-            <CardTitle className="text-2xl font-normal m-0 mb-4">
+            <CheckCircle2 className="w-14 h-14 text-green-500 mb-4" />
+            <CardTitle className="text-xl font-semibold m-0 mb-2">
               Check Your Email
             </CardTitle>
-            <p className="text-muted-foreground text-center mb-8 px-4">
+            <p className="text-muted-foreground text-center mb-6 text-sm">
               We have emailed a password reset link to your inbox. Please check your inbox and spam folder.
             </p>
             <Link href="/" className="w-full">
-              <Button type="button" className="w-full h-12 text-base font-semibold bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md">
+              <Button type="button" className="w-full h-10">
                 Back to Home
               </Button>
             </Link>
           </div>
         ) : (
           <>
-            <CardHeader className="text-center pb-8">
-              <CardTitle className="text-4xl leading-[1] font-normal m-0">Reset Password</CardTitle>
-              <CardDescription className="mt-2">
+            <CardHeader className="text-center pb-4 px-0">
+              <CardTitle className="text-3xl leading-tight font-normal m-0">Reset Password</CardTitle>
+              <CardDescription className="mt-1.5 text-sm">
                 Enter your email and we&apos;ll send you the reset link.
               </CardDescription>
             </CardHeader>
 
             <CardContent className="p-0">
-              <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-                <div className="flex flex-col gap-2">
+              <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-1.5">
                   <Label className="text-sm font-medium" htmlFor="email">Email Address</Label>
                   <div className="relative flex items-center">
                     <Mail className="absolute left-4 text-muted-foreground" size={20} />
                     <Input
-                      className="pl-12 text-base h-12 rounded-lg"
+                      className="pl-12 h-10"
                       type="email"
                       id="email"
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full h-12 text-base font-semibold mt-2 bg-[#7e55f6] hover:bg-[#6742d4] text-white shadow-md">
-                  Send Reset Link
+                <Button type="submit" disabled={loading} className="w-full mt-4 h-10">
+                  {loading ? <Loader2 size={20} className="animate-spin" /> : 'Send Reset Link'}
                 </Button>
               </form>
             </CardContent>

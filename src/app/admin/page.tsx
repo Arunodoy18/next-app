@@ -116,22 +116,24 @@ export default function AdminOverview() {
           {badgeProgrammes.map((p) => {
             const active = selectedIds.has(p.id);
             return (
-              <button
+              <Button
                 key={p.id}
                 type="button"
                 onClick={() => toggleProgramme(p.id)}
                 aria-pressed={active}
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                variant="ghost"
+                size="sm"
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
                   active
                     ? p.role
                       ? ROLE_BADGE[p.role]
                       : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    : "border-border text-muted-foreground hover:bg-muted line-through decoration-1"
+                    : "border border-border text-muted-foreground hover:bg-muted line-through decoration-1"
                 }`}
               >
                 {active ? <Check size={11} /> : <Plus size={11} />}
                 {p.name}
-              </button>
+              </Button>
             );
           })}
         </div>
