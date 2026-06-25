@@ -27,6 +27,7 @@ import {
   LogOut,
   type LucideIcon,
   UserCog,
+  ArrowRightLeft,
 } from "lucide-react";
 
 export interface PortalNavItem {
@@ -45,6 +46,7 @@ export default function PortalShell({
   userInitials,
   sidebarContent,
   sidebarFooter,
+  crossPortalLink,
   children,
 }: {
   title?: string;
@@ -55,6 +57,7 @@ export default function PortalShell({
   userInitials: string;
   sidebarContent?: (closeSidebar: () => void) => ReactNode;
   sidebarFooter?: (closeSidebar: () => void) => ReactNode;
+  crossPortalLink?: { href: string; label: string };
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -158,7 +161,17 @@ export default function PortalShell({
   ) : null;
 
   const defaultFooter = (
-    <div className="border-t border-border pt-4">
+    <div className="border-t border-border pt-4 flex flex-col gap-1">
+      {crossPortalLink && (
+        <Link
+          href={crossPortalLink.href}
+          onClick={closeSidebar}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-[#7e55f6] hover:bg-[#6742d4] text-white font-medium"
+        >
+          <ArrowRightLeft size={16} className="shrink-0" />
+          {crossPortalLink.label}
+        </Link>
+      )}
       {(() => {
         const isSettingsActive = pathname.endsWith("/settings");
         return (

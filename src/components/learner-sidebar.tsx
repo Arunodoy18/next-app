@@ -23,6 +23,9 @@ import {
   Settings,
 } from "lucide-react";
 import { useLearner, CERTIFICATE_VIEW, GRADE_VIEW, WRITTEN_EXAM_VIEW } from "@/components/learner-context";
+import { useUser } from "@/hooks/use-current-user";
+import Link from "next/link";
+import { ArrowRightLeft } from "lucide-react";
 
 const RESOURCE_ICONS: Record<string, typeof PlayCircle> = {
   video: PlayCircle,
@@ -222,6 +225,8 @@ export function LearnerSidebarFooter({ closeSidebar }: { closeSidebar: () => voi
   const { basePath, settingsPath, messagesPath, showCertificate } = config;
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useUser();
+  const isInstructor = user?.role === "Instructor";
 
   const showMessages = pathname === messagesPath;
   const showGrade = activeModule === GRADE_VIEW;
@@ -272,6 +277,16 @@ export function LearnerSidebarFooter({ closeSidebar }: { closeSidebar: () => voi
           <Award size={18} />
           <span className="font-medium">Certificate</span>
         </button>
+      )}
+      {isInstructor && basePath === "/internal" && (
+        <Link
+          href="/instructor"
+          onClick={closeSidebar}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm w-full bg-[#7e55f6] hover:bg-[#6742d4] text-white font-medium"
+        >
+          <ArrowRightLeft size={18} />
+          Access Portal
+        </Link>
       )}
       <button
         type="button"

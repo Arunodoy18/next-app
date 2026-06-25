@@ -32,6 +32,7 @@ function InstructorShell({ children }: { children: ReactNode }) {
       basePath="/instructor"
       userLabel={displayName}
       userInitials={initials}
+      crossPortalLink={{ href: "/internal", label: "Access Academy" }}
     >
       {children}
     </PortalShell>
