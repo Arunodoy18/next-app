@@ -9,7 +9,6 @@ import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
 import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
-import PageTitle from "@/components/page-title";
 import { Send, MessageSquare, ChevronLeft } from "lucide-react";
 import { formatSentAt } from "@/utils/formatTime";
 
@@ -110,7 +109,6 @@ export default function InstructorMessagesPage() {
   return (
     <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Messages</h1>
         <p className="text-muted-foreground mt-1">Questions and queries from your students.</p>

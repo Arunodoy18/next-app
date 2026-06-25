@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DragDropContext, Droppable, Draggable, type DropResult, type DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import ResourcePreviewDialog, { type PreviewTarget } from "@/components/resource-preview-dialog";
-import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import {
   INSTRUCTORS,
@@ -125,7 +124,6 @@ export default function ProgrammesPage() {
   return (
     <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Admin Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Programmes</h1>
         <p className="text-muted-foreground mt-1">

@@ -10,7 +10,6 @@ import { Progress } from "@/components/ui/progress";
 import { usePortalStore } from "@/lib/portal-store";
 import { instructorName, ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
 import RoleBadge from "@/components/role-badge";
-import PageTitle from "@/components/page-title";
 import {
   GraduationCap,
   Users,
@@ -107,7 +106,6 @@ export default function AdminOverview() {
   return (
     <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Admin Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Overview</h1>
         <p className="text-muted-foreground mt-1">Everything across the academy at a glance.</p>

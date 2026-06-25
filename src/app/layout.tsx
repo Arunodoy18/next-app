@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Questrial } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -14,12 +15,23 @@ const questrial = Questrial({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Blackmont Academy",
-    template: "%s",
-  },
+const TITLE_MAP: Record<string, string> = {
+  admin: "Admin Portal",
+  instructor: "Instructor Portal",
+  student: "Student Dashboard",
+  internal: "Internal Dashboard",
+  login: "Login",
+  forgot: "Forgot Password",
+  verify: "Verify Account",
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const heads = await headers();
+  const pathname = heads.get("x-pathname") ?? "/";
+  const segment = pathname.split("/")[1] ?? "";
+  const title = TITLE_MAP[segment] ?? "Blackmont Academy";
+  return { title };
+}
 
 export default function RootLayout({
   children,

@@ -134,7 +134,7 @@ export default function AccountSettings() {
     );
   }
 
-  const credentialsVerified = user?.credentialsVerified === "complete";
+  const credentialsVerified = user?.verified === "complete";
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6">

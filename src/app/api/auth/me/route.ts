@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
         name: user?.name,
         email: user?.email,
         createdAt: user?.createdAt,
-        credentialsVerified: user?.verified,
+        verified: user?.verified,
       },
     });
   } catch {

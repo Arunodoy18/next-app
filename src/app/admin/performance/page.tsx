@@ -24,7 +24,6 @@ import {
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
 import LearnerRoleBadge from "@/components/learner-role-badge";
-import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { type WrittenAnswer } from "@/lib/mock-data";
 import { Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
@@ -136,7 +135,6 @@ export default function AdminPerformancePage() {
   return (
     <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Admin Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Performance</h1>
         <p className="text-muted-foreground mt-1">

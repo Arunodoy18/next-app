@@ -11,7 +11,6 @@ export interface User {
   verified: "pending" | "complete";
   credentialsToken?: string | null;
   credentialsTokenExpiry?: Date | null;
-  credentialsVerified: "pending" | "complete";
   createdAt: Date;
   updatedAt: Date;
 }

@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { Mail, CheckCircle2, ChevronLeft, Loader2 } from 'lucide-react';
-import PageTitle from '@/components/page-title';
 
 export default function ForgotPassword() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -31,7 +30,6 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background relative">
-      <PageTitle title="Forgot Password" />
       <Link href="/login" className="absolute top-6 left-6 flex items-center gap-2 text-muted-foreground hover:text-[#7e55f6]">
         <ChevronLeft size={20} />
         <span className="font-medium">Back to Login</span>

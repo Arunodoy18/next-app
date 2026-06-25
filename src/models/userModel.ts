@@ -18,7 +18,6 @@ const UserSchema = new Schema<User>(
     verified: { type: String, enum: ["pending", "complete"], default: "pending" },
     credentialsToken: { type: String, default: null },
     credentialsTokenExpiry: { type: Date, default: null },
-    credentialsVerified: { type: String, enum: ["pending", "complete"], default: "pending" },
   },
   { timestamps: true, collection: "Users" }
 );

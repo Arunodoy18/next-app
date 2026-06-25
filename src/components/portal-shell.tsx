@@ -36,11 +36,6 @@ export interface PortalNavItem {
   badge?: number;
 }
 
-/**
- * Shared portal chrome matching the student dashboard: full-height
- * collapsible sidebar with the logo, floating avatar menu on desktop,
- * hide-on-scroll topbar + slide-in sidebar on mobile.
- */
 export default function PortalShell({
   title,
   portalName,
@@ -48,14 +43,18 @@ export default function PortalShell({
   basePath,
   userLabel,
   userInitials,
+  sidebarContent,
+  sidebarFooter,
   children,
 }: {
-  title: string;
+  title?: string;
   portalName: string;
-  items: PortalNavItem[];
+  items?: PortalNavItem[];
   basePath: string;
   userLabel: string;
   userInitials: string;
+  sidebarContent?: (closeSidebar: () => void) => ReactNode;
+  sidebarFooter?: (closeSidebar: () => void) => ReactNode;
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -75,6 +74,8 @@ export default function PortalShell({
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const closeSidebar = () => setSidebarOpen(false);
 
   const isActive = (href: string) => (href === basePath ? pathname === href : pathname.startsWith(href));
 
@@ -118,6 +119,66 @@ export default function PortalShell({
         Log Out
       </DropdownMenuItem>
     </DropdownMenuContent>
+  );
+
+  const defaultNav = items && title ? (
+    <nav className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+      <p className="text-xs uppercase tracking-wide text-muted-foreground px-3 mb-1">{title}</p>
+      {items.map((item) => {
+        const active = isActive(item.href);
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={closeSidebar}
+            className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
+              active
+                ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                : "border border-border hover:bg-muted text-foreground"
+            }`}
+          >
+            <span className="flex items-center gap-2 font-medium truncate">
+              <Icon size={16} className={`shrink-0 ${active ? "text-white" : "text-[#7e55f6]"}`} />
+              {item.label}
+            </span>
+            {item.badge !== undefined && item.badge > 0 && (
+              <span
+                className={`text-xs rounded-full px-1.5 py-px leading-4 shrink-0 font-medium ${
+                  active ? "bg-white/20 text-white" : "bg-[#7e55f6] text-white"
+                }`}
+              >
+                {item.badge}
+              </span>
+            )}
+          </Link>
+        );
+      })}
+    </nav>
+  ) : null;
+
+  const defaultFooter = (
+    <div className="border-t border-border pt-4">
+      {(() => {
+        const isSettingsActive = pathname.endsWith("/settings");
+        return (
+          <Link
+            href={`${basePath}/settings`}
+            onClick={closeSidebar}
+            className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
+              isSettingsActive
+                ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                : "border border-border hover:bg-muted text-foreground"
+            }`}
+          >
+            <span className="flex items-center gap-2 font-medium truncate">
+              <UserCog size={16} className={`shrink-0 ${isSettingsActive ? "text-white" : "text-[#7e55f6]"}`} />
+              Account Settings
+            </span>
+          </Link>
+        );
+      })()}
+    </div>
   );
 
   return (
@@ -190,12 +251,12 @@ export default function PortalShell({
           className={`fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm lg:hidden transition-opacity duration-300 ease-in-out ${
             sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
-          onClick={() => setSidebarOpen(false)}
+          onClick={closeSidebar}
         />
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen w-80 shrink-0 border-r border-border bg-background overflow-hidden transition-transform duration-300 ease-in-out lg:transition-[width,padding,border] ${
+          className={`fixed lg:sticky inset-y-0 lg:inset-y-auto lg:top-0 left-0 z-50 lg:h-screen max-w-[85vw] w-80 shrink-0 border-r border-border bg-background overflow-hidden transition-transform duration-300 ease-in-out lg:transition-[width,padding,border] ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 ${
             sidebarCollapsed ? "lg:w-0 lg:border-0" : "lg:w-72 xl:w-80"
@@ -217,7 +278,7 @@ export default function PortalShell({
               </div>
               <Button
                 type="button"
-                onClick={() => setSidebarOpen(false)}
+                onClick={closeSidebar}
                 variant="ghost"
                 size="icon"
                 className="flex items-center justify-center h-8 w-8 shrink-0 rounded-lg hover:bg-muted transition-colors lg:hidden"
@@ -237,61 +298,9 @@ export default function PortalShell({
               )}
             </div>
 
-            <nav className="flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground px-3 mb-1">{title}</p>
-              {items.map((item) => {
-                const active = isActive(item.href);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
-                      active
-                        ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                        : "border border-border hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2 font-medium truncate">
-                      <Icon size={16} className={`shrink-0 ${active ? "text-white" : "text-[#7e55f6]"}`} />
-                      {item.label}
-                    </span>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span
-                        className={`text-xs rounded-full px-1.5 py-px leading-4 shrink-0 font-medium ${
-                          active ? "bg-white/20 text-white" : "bg-[#7e55f6] text-white"
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+            {sidebarContent ? sidebarContent(closeSidebar) : defaultNav}
 
-            <div className="border-t border-border pt-4">
-              {(() => {
-                const isSettingsActive = pathname.endsWith("/settings");
-                return (
-                  <Link
-                    href={`${basePath}/settings`}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
-                      isSettingsActive
-                        ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
-                        : "border border-border hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2 font-medium truncate">
-                      <UserCog size={16} className={`shrink-0 ${isSettingsActive ? "text-white" : "text-[#7e55f6]"}`} />
-                      Account Settings
-                    </span>
-                  </Link>
-                );
-              })()}
-            </div>
+            {sidebarFooter ? sidebarFooter(closeSidebar) : defaultFooter}
           </div>
         </aside>
 

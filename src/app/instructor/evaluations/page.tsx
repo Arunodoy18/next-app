@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
 import LearnerRoleBadge from "@/components/learner-role-badge";
-import PageTitle from "@/components/page-title";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
 import { type WrittenAnswer } from "@/lib/mock-data";
@@ -90,7 +89,6 @@ export default function InstructorEvaluationsPage() {
   return (
     <PlaceholderGuard>
     <div className="max-w-4xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Evaluations</h1>
         <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your students.</p>

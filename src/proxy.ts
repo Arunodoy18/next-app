@@ -10,6 +10,13 @@ const PROTECTED_ROUTES: Record<string, AuthRole[]> = {
   "/admin": ["Admin"],
 };
 
+function forward(request: NextRequest, extra?: Record<string, string>) {
+  const headers = new Headers(request.headers);
+  headers.set("x-pathname", request.nextUrl.pathname);
+  if (extra) for (const [k, v] of Object.entries(extra)) headers.set(k, v);
+  return NextResponse.next({ request: { headers } });
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -22,14 +29,14 @@ export function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL(home, request.url));
       }
     }
-    return NextResponse.next();
+    return forward(request);
   }
 
   const matchedRoute = Object.keys(PROTECTED_ROUTES).find((route) =>
     pathname.startsWith(route)
   );
 
-  if (!matchedRoute) return NextResponse.next();
+  if (!matchedRoute) return forward(request);
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   if (!token) {
@@ -49,13 +56,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(home, request.url));
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-user-id", payload.userId);
-  requestHeaders.set("x-user-role", payload.role);
-  requestHeaders.set("x-user-name", payload.username);
-  requestHeaders.set("x-user-email", payload.email);
-
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return forward(request, {
+    "x-user-id": payload.userId,
+    "x-user-role": payload.role,
+    "x-user-name": payload.username,
+    "x-user-email": payload.email,
+  });
 }
 
 export const config = {

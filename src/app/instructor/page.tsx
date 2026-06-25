@@ -12,7 +12,6 @@ import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
 import { ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import RoleBadge from "@/components/role-badge";
-import PageTitle from "@/components/page-title";
 import { formatSentAt } from "@/utils/formatTime";
 import {
   Users,
@@ -176,7 +175,6 @@ export default function InstructorOverview() {
   return (
     <PlaceholderGuard>
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <PageTitle title="Instructor Portal" />
       <div>
         <h1 className="text-3xl font-normal m-0">Welcome, {CURRENT_INSTRUCTOR.name}</h1>
         <div className="flex items-center gap-1.5 mt-2 flex-wrap">
