@@ -5,8 +5,11 @@ import { verifyCredentialsSchema } from "@/schema/settingsSchema";
 import { sendCredentialsEmail } from "@/email/templates";
 import { generatePassword } from "@/utils/credentials";
 import bcrypt from "bcryptjs";
+import { rateLimit, getClientIp } from "@/utils/rateLimit";
 
 export async function GET(req: NextRequest) {
+  const limited = rateLimit(getClientIp(req.headers), "verify-get", { maxRequests: 10, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
     return NextResponse.json({ error: "Token is required" }, { status: 400 });
@@ -26,6 +29,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(getClientIp(req.headers), "verify-post", { maxRequests: 5, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
+
   const body = await req.json();
   const parsed = verifyCredentialsSchema.safeParse(body);
 

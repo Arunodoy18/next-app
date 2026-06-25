@@ -5,14 +5,21 @@ import User from "@/models/userModel";
 import { createUserSchema } from "@/schema/userSchema";
 import { sendCredentialsVerificationEmail } from "@/email/templates";
 import { generateUsername } from "@/utils/credentials";
+import { requireAuth } from "@/auth/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = requireAuth(req, "Admin");
+  if (!auth.ok) return auth.response;
+
   await connectToDatabase();
   const users = await User.find({}).select("-password -salt").sort({ createdAt: -1 }).lean();
   return NextResponse.json(users);
 }
 
 export async function POST(req: NextRequest) {
+  const auth = requireAuth(req, "Admin");
+  if (!auth.ok) return auth.response;
+
   const body = await req.json();
   const parsed = createUserSchema.safeParse(body);
 
@@ -36,7 +43,7 @@ export async function POST(req: NextRequest) {
     name: parsed.data.name,
     username,
     email: parsed.data.email,
-    password: "pending_verification",
+    password: null,
     role: parsed.data.role,
     verified: "pending",
     credentialsToken: verificationToken,

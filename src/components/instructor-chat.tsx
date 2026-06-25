@@ -20,14 +20,47 @@ function storageKey(user: string, programmeId: string, instructorId: string) {
   return `${STORAGE_PREFIX}${user}-${programmeId}-${instructorId}`;
 }
 
-function loadMessages(key: string): ChatMessage[] {
+const SAMPLE_CONVERSATIONS: Record<string, ChatMessage[]> = {
+  ins1: [
+    { id: "s1", from: "instructor", text: "Hi there! Have you started on Module 2 yet?", sentAt: ago(60 * 24 * 10) },
+    { id: "s2", from: "student", text: "Not yet, I was finishing up the assignment from Module 1.", sentAt: ago(60 * 24 * 10 - 15) },
+    { id: "s3", from: "instructor", text: "No worries — take your time with it. Let me know if you need any help with the case study section.", sentAt: ago(60 * 24 * 9) },
+    { id: "s4", from: "student", text: "Will do, thanks!", sentAt: ago(60 * 24 * 9 - 5) },
+    { id: "s5", from: "instructor", text: "How's it going? Did you manage to get through the financial modelling exercise?", sentAt: ago(60 * 24 * 3) },
+    { id: "s6", from: "student", text: "Yeah I finished it yesterday. Had a question about the DCF assumptions though — can I send you my spreadsheet?", sentAt: ago(60 * 24 * 2) },
+    { id: "s7", from: "instructor", text: "Absolutely, just attach it in the next message or email it over.", sentAt: ago(60 * 24 * 2 - 30) },
+    { id: "s8", from: "student", text: "Sent it to your email just now.", sentAt: ago(180) },
+    { id: "s9", from: "instructor", text: "Got it, I'll review it and get back to you by end of day.", sentAt: ago(25) },
+  ],
+  ins2: [
+    { id: "s10", from: "instructor", text: "Welcome to the programme! Feel free to reach out if you have any questions.", sentAt: ago(60 * 24 * 14) },
+    { id: "s11", from: "student", text: "Thank you! I'm excited to get started.", sentAt: ago(60 * 24 * 13) },
+    { id: "s12", from: "instructor", text: "Great to hear. The first module covers the fundamentals — make sure to go through the reading materials before the quiz.", sentAt: ago(60 * 24 * 5) },
+    { id: "s13", from: "student", text: "Quick question — is the quiz timed?", sentAt: ago(60 * 5) },
+    { id: "s14", from: "instructor", text: "No, you can take as long as you need. Focus on understanding the concepts.", sentAt: ago(3) },
+  ],
+  ins3: [
+    { id: "s15", from: "student", text: "Hi, I noticed the grade for my written exam hasn't been posted yet.", sentAt: ago(60 * 24 * 4) },
+    { id: "s16", from: "instructor", text: "I'm still reviewing the submissions — should have them graded by Friday.", sentAt: ago(60 * 24 * 4 - 45) },
+    { id: "s17", from: "student", text: "Sounds good, no rush!", sentAt: ago(60 * 24 * 4 - 40) },
+  ],
+};
+
+function loadMessages(key: string, instructorId: string): ChatMessage[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(localStorage.getItem(key) ?? "[]");
-  } catch {
-    return [];
+    const stored = localStorage.getItem(key);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  const sample = SAMPLE_CONVERSATIONS[instructorId];
+  if (sample) {
+    localStorage.setItem(key, JSON.stringify(sample));
+    return sample;
   }
+  return [];
 }
+
+import { formatSentAt, ago } from "@/utils/formatTime";
 
 function initials(name: string) {
   return name
@@ -82,7 +115,7 @@ export default function InstructorChat({
   const [prevKey, setPrevKey] = useState(key);
   if (prevKey !== key) {
     setPrevKey(key);
-    setMessages(key ? loadMessages(key) : []);
+    setMessages(key && selectedInstructorId ? loadMessages(key, selectedInstructorId) : []);
   }
 
   // Keep the view pinned to the newest message.
@@ -101,7 +134,7 @@ export default function InstructorChat({
     if (!text || !key) return;
     const next: ChatMessage[] = [
       ...messages,
-      { id: `m-${Date.now()}`, from: "student", text, sentAt: "Just now" },
+      { id: `m-${Date.now()}`, from: "student", text, sentAt: new Date().toISOString() },
     ];
     setMessages(next);
     localStorage.setItem(key, JSON.stringify(next));
@@ -110,8 +143,10 @@ export default function InstructorChat({
 
   // Preview the last saved message for an instructor in the list.
   const lastMessagePreview = (instructorId: string) => {
-    const stored = loadMessages(storageKey(user, programmeId, instructorId));
-    return stored[stored.length - 1]?.text ?? null;
+    const stored = loadMessages(storageKey(user, programmeId, instructorId), instructorId);
+    const last = stored[stored.length - 1];
+    if (!last) return null;
+    return { text: last.text, time: formatSentAt(last.sentAt) };
   };
 
   return (
@@ -146,9 +181,14 @@ export default function InstructorChat({
                     {initials(ins.name)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm m-0 truncate font-normal">{ins.name}</p>
-                    <p className="text-xs text-muted-foreground m-0 mt-0.5 line-clamp-2">
-                      {preview ?? "No messages yet"}
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm m-0 truncate font-normal">{ins.name}</p>
+                      {preview && (
+                        <span className="text-[10px] text-muted-foreground shrink-0">{preview.time}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground m-0 mt-0.5 line-clamp-1">
+                      {preview?.text ?? "No messages yet"}
                     </p>
                   </div>
                 </Button>
@@ -158,7 +198,7 @@ export default function InstructorChat({
         </Card>
 
         {/* Conversation — hidden on mobile when the list is showing */}
-        <Card className={`shadow-sm min-h-[60vh] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
+        <Card className={`shadow-sm h-[calc(100vh-12rem)] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
           {activeInstructor ? (
             <>
               <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
@@ -181,7 +221,7 @@ export default function InstructorChat({
                 </div>
               </div>
 
-              <CardContent ref={scrollRef} className="flex-1 flex flex-col gap-3 py-4 overflow-y-auto">
+              <CardContent ref={scrollRef} className="flex-1 flex flex-col gap-3 py-4 overflow-y-auto min-h-0">
                 {messages.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
                     <MessageSquare size={26} />
@@ -203,7 +243,7 @@ export default function InstructorChat({
                           m.from === "student" ? "text-white/70" : "text-muted-foreground"
                         }`}
                       >
-                        {m.sentAt}
+                        {formatSentAt(m.sentAt)}
                       </p>
                     </div>
                   ))

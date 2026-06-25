@@ -11,6 +11,7 @@ import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import PageTitle from "@/components/page-title";
 import { Send, MessageSquare, ChevronLeft } from "lucide-react";
+import { formatSentAt } from "@/utils/formatTime";
 
 let idCounter = 9000;
 const nextId = (prefix: string) => `${prefix}-${idCounter++}`;
@@ -101,7 +102,7 @@ export default function InstructorMessagesPage() {
     if (!text || !active) return;
     updateThread(active.id, (t) => ({
       ...t,
-      messages: [...t.messages, { id: nextId("m"), from: "instructor" as const, text, sentAt: "Just now" }],
+      messages: [...t.messages, { id: nextId("m"), from: "instructor" as const, text, sentAt: new Date().toISOString() }],
     }));
     setReply("");
   };
@@ -148,7 +149,7 @@ export default function InstructorMessagesPage() {
                         {studentName(t.studentId)}
                       </p>
                       {t.unread && <span className="size-2 rounded-full bg-[#7e55f6] shrink-0" />}
-                      <span className="text-[10px] text-muted-foreground ml-auto shrink-0">{last?.sentAt}</span>
+                      <span className="text-[10px] text-muted-foreground ml-auto shrink-0">{last ? formatSentAt(last.sentAt) : ""}</span>
                     </div>
                     <p className="text-xs text-muted-foreground m-0 mt-0.5 line-clamp-2">
                       {last ? last.text : "No messages yet"}
@@ -161,7 +162,7 @@ export default function InstructorMessagesPage() {
         </Card>
 
         {/* Conversation — hidden on mobile when thread list is showing */}
-        <Card className={`shadow-sm min-h-[60vh] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
+        <Card className={`shadow-sm h-[calc(100vh-12rem)] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
           {active ? (
             <>
               <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
@@ -187,7 +188,7 @@ export default function InstructorMessagesPage() {
                 </div>
               </div>
 
-              <CardContent className="flex-1 flex flex-col gap-3 py-4 overflow-y-auto">
+              <CardContent className="flex-1 flex flex-col gap-3 py-4 overflow-y-auto min-h-0">
                 {active.messages.map((m) => (
                   <div
                     key={m.id}
@@ -203,7 +204,7 @@ export default function InstructorMessagesPage() {
                         m.from === "instructor" ? "text-white/70" : "text-muted-foreground"
                       }`}
                     >
-                      {m.sentAt}
+                      {formatSentAt(m.sentAt)}
                     </p>
                   </div>
                 ))}

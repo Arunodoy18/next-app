@@ -3,8 +3,12 @@ import connectToDatabase from "@/db/mongodb";
 import User from "@/models/userModel";
 import { verifyPassword, signToken, SESSION_COOKIE, ROLE_HOME } from "@/auth/server";
 import type { AuthRole } from "@/auth/server";
+import { rateLimit, getClientIp } from "@/utils/rateLimit";
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(getClientIp(req.headers), "login", { maxRequests: 10, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
+
   const { username, password } = await req.json();
 
   if (!username || !password) {
@@ -14,7 +18,7 @@ export async function POST(req: NextRequest) {
   await connectToDatabase();
 
   const user = await User.findOne({ username: username.trim().toLowerCase() });
-  if (!user) {
+  if (!user || !user.password) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 

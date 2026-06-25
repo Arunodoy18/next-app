@@ -6,7 +6,7 @@ export interface User {
   name: string;
   username: string;
   email: string;
-  password: string;
+  password: string | null;
   role: AuthRole;
   verified: "pending" | "complete";
   credentialsToken?: string | null;

@@ -13,6 +13,7 @@ import { ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
 import LearnerRoleBadge from "@/components/learner-role-badge";
 import RoleBadge from "@/components/role-badge";
 import PageTitle from "@/components/page-title";
+import { formatSentAt } from "@/utils/formatTime";
 import {
   Users,
   ClipboardCheck,
@@ -464,7 +465,7 @@ function MessageRow({
             {name}
             {learnerId && <LearnerRoleBadge id={learnerId} className="ml-2" />}
           </p>
-          <span className="text-xs text-muted-foreground ml-auto shrink-0">{last?.sentAt}</span>
+          <span className="text-xs text-muted-foreground ml-auto shrink-0">{last ? formatSentAt(last.sentAt) : ""}</span>
         </div>
         <p className="text-xs text-muted-foreground m-0 mt-0.5 line-clamp-2">{last ? last.text : "No messages yet"}</p>
       </div>
