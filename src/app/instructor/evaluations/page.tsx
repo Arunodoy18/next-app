@@ -88,7 +88,7 @@ export default function InstructorEvaluationsPage() {
 
   return (
     <PlaceholderGuard>
-    <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Evaluations</h1>
         <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your students.</p>

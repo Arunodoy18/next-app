@@ -318,7 +318,11 @@ export default function PortalShell({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 min-w-0 p-4 pt-20 sm:p-6 sm:pt-20 lg:p-8">{children}</main>
+        <main className="flex-1 min-w-0 p-4 pt-20 sm:p-6 sm:pt-20 lg:p-8">
+          <div className={sidebarCollapsed ? "max-w-7xl mx-auto" : undefined}>
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

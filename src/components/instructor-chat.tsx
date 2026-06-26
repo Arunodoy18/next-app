@@ -150,13 +150,13 @@ export default function InstructorChat({
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Messages</h1>
         <p className="text-muted-foreground mt-1">Chat with the instructors on your programme.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[325px_minmax(0,1fr)] gap-4 items-start">
         {/* Instructor list — hidden on mobile when a chat is open */}
         <Card className={`shadow-sm py-2 gap-0 ${mobileShowChat ? "hidden lg:flex" : ""}`}>
           <CardContent className="px-2 flex flex-col gap-1">
@@ -231,7 +231,7 @@ export default function InstructorChat({
                   messages.map((m) => (
                     <div
                       key={m.id}
-                      className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm break-words ${
+                      className={`max-w-[80%] rounded-xl px-3.5 py-2.5 text-sm wrap-break-word ${
                         m.from === "student"
                           ? "self-end bg-[#7e55f6] text-white rounded-br-sm"
                           : "self-start bg-muted rounded-bl-sm"

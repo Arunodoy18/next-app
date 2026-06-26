@@ -202,7 +202,7 @@ function AdminUsersContent() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Users</h1>
         <p className="text-muted-foreground mt-1">Manage all users across the platform.</p>
@@ -253,7 +253,7 @@ function AdminUsersContent() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[640px]">
+          <Table className="min-w-160">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>

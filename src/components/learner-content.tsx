@@ -89,7 +89,7 @@ export default function LearnerContent() {
 
   return (
     <PlaceholderGuard>
-      <div className="max-w-5xl mx-auto">
+      <div className="w-full">
         <div className="mb-6">
           <h1 className="text-3xl font-normal m-0">{programme.title}</h1>
           <p className="text-muted-foreground mt-1">{programme.description}</p>
@@ -218,7 +218,7 @@ export default function LearnerContent() {
 
                       {isOpen &&
                         (fullscreenItem === resource.id ? (
-                          <div className="fixed inset-0 z-[80] bg-background">
+                          <div className="fixed inset-0 z-80 bg-background">
                             {resource.type === "video" ? (
                               <div className="w-full h-full bg-black flex flex-col items-center justify-center gap-3 text-white/60">
                                 <PlayCircle size={56} strokeWidth={1.5} />
@@ -255,7 +255,7 @@ export default function LearnerContent() {
                                 <p className="text-sm m-0">Video preview placeholder</p>
                               </div>
                             ) : (
-                              <iframe src={SAMPLE_PDF_URL} className="w-full h-[400px]" title={resource.title} />
+                              <iframe src={SAMPLE_PDF_URL} className="w-full h-100" title={resource.title} />
                             )}
                             <div className="p-3 flex items-center justify-between border-t border-border">
                               <Button type="button" variant="outline" size="sm" onClick={() => setFullscreenItem(resource.id)}>
@@ -316,7 +316,7 @@ export default function LearnerContent() {
                   <div
                     className={
                       fullscreenItem === currentModule.quiz.id
-                        ? "fixed inset-0 z-[80] bg-background overflow-y-auto"
+                        ? "fixed inset-0 z-80 bg-background overflow-y-auto"
                         : "bg-card/50 rounded-xl border border-border mt-2"
                     }
                   >
@@ -363,7 +363,7 @@ export default function LearnerContent() {
                                 <span className="text-muted-foreground mr-2">{qIndex + 1}.</span>
                                 {q.question}
                               </h4>
-                              <div className="flex flex-col gap-2 ml-5">
+                              <div className="flex flex-col gap-2 ml-5 max-w-xl">
                                 {q.options.map((option, oIndex) => {
                                   const isSelected = selected === oIndex;
                                   const isCorrect = oIndex === q.answer;
@@ -389,7 +389,7 @@ export default function LearnerContent() {
                                       key={oIndex}
                                       type="button"
                                       disabled={submitted}
-                                      onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: oIndex }))}
+                                      onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: prev[qKey] === oIndex ? undefined : oIndex }))}
                                       className={`text-left p-3 rounded-lg border transition-all duration-200 group ${style}`}
                                     >
                                       <div className="flex items-start gap-3">
@@ -518,7 +518,7 @@ export default function LearnerContent() {
                     disabled={writtenSubmitted}
                     onChange={(e) => setWrittenAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
                     placeholder="Write your answer here"
-                    className="min-h-[130px] resize-y bg-background text-[15px] leading-relaxed p-3 disabled:opacity-100"
+                    className="min-h-32.5 resize-y bg-background text-[15px] leading-relaxed p-3 disabled:opacity-100"
                   />
                 </div>
               ))}

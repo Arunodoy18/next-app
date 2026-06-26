@@ -5,26 +5,17 @@ import { signToken, SESSION_COOKIE, ROLE_HOME } from "@/auth/server";
 import type { AuthRole } from "@/auth/server";
 
 export async function GET() {
-  if (process.env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Not available" }, { status: 403 });
-  }
-
   await connectToDatabase();
-  const users = await User.find({}).select("userId name username email role").lean();
+  const users = await User.find({}).select("userId username role").lean();
 
-  return NextResponse.json(users.map((u) => ({
-    userId: u.userId,
-    name: u.name,
-    username: u.username,
-    role: u.role,
-  })));
+  return NextResponse.json(
+    users
+      .filter((u) => !!u.userId)
+      .map((u) => ({ userId: u.userId, username: u.username, role: u.role }))
+  );
 }
 
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Not available" }, { status: 403 });
-  }
-
   const { userId } = await req.json();
   if (!userId) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
@@ -45,15 +36,11 @@ export async function POST(req: NextRequest) {
     role,
   });
 
-  const res = NextResponse.json({
-    success: true,
-    role,
-    home: ROLE_HOME[role],
-  });
+  const res = NextResponse.json({ success: true, role, home: ROLE_HOME[role] });
 
   res.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,

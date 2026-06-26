@@ -123,7 +123,7 @@ export default function ProgrammesPage() {
 
   return (
     <PlaceholderGuard>
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Programmes</h1>
         <p className="text-muted-foreground mt-1">
@@ -131,7 +131,7 @@ export default function ProgrammesPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[325px_minmax(0,1fr)] gap-4 items-start">
         {/* Programme lists */}
         <div className="flex flex-col gap-4 lg:sticky lg:top-8">
         <Card className="shadow-sm py-3 gap-3">
@@ -152,7 +152,7 @@ export default function ProgrammesPage() {
                   key={p.id}
                   onClick={() => selectProgramme("standard", active ? null : p.id)}
                   variant="ghost"
-                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full ${
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full whitespace-normal ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
                       : "border-transparent hover:bg-muted"
@@ -167,7 +167,7 @@ export default function ProgrammesPage() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span
-                      className={`block text-sm font-medium line-clamp-1 ${active ? "text-[#7e55f6]" : "text-foreground"}`}
+                      className={`block text-sm font-medium line-clamp-2 ${active ? "text-[#7e55f6]" : "text-foreground"}`}
                     >
                       {p.name || "Untitled Programme"}
                     </span>
@@ -216,7 +216,7 @@ export default function ProgrammesPage() {
                   key={p.id}
                   onClick={() => selectProgramme("internal", active ? null : p.id)}
                   variant="ghost"
-                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full ${
+                  className={`group flex items-center gap-2.5 text-left rounded-lg px-2.5 py-2 h-auto transition-colors border cursor-pointer justify-start w-full whitespace-normal ${
                     active
                       ? "border-[#7e55f6]/40 bg-[#7e55f6]/8"
                       : "border-transparent hover:bg-muted"
@@ -231,7 +231,7 @@ export default function ProgrammesPage() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span
-                      className={`block text-sm font-medium line-clamp-1 ${active ? "text-[#7e55f6]" : "text-foreground"}`}
+                      className={`block text-sm font-medium line-clamp-2 ${active ? "text-[#7e55f6]" : "text-foreground"}`}
                     >
                       {p.name || "Untitled Programme"}
                     </span>
@@ -1219,7 +1219,7 @@ function McqEditor({
         <Input
           value={question.question}
           onChange={(e) => onUpdate({ question: e.target.value })}
-          className="flex-1 h-9 font-medium"
+          className="flex-1 h-9 font-medium max-w-xl"
           placeholder="Question"
         />
         <Button
@@ -1241,16 +1241,18 @@ function McqEditor({
               className="accent-[#7e55f6]"
               title="Mark as correct answer"
             />
-            <Input
-              value={opt}
-              onChange={(e) => {
-                const options = [...question.options];
-                options[oIndex] = e.target.value;
-                onUpdate({ options });
-              }}
-              className={`w-full max-w-xs h-8 text-xs pl-3 ${question.answer === oIndex ? "text-[#7e55f6] font-medium" : ""}`}
-              placeholder={`Option ${oIndex + 1}`}
-            />
+            <div className="max-w-xl min-w-0">
+              <Input
+                value={opt}
+                onChange={(e) => {
+                  const options = [...question.options];
+                  options[oIndex] = e.target.value;
+                  onUpdate({ options });
+                }}
+                className={`h-8 text-xs pl-3 ${question.answer === oIndex ? "text-[#7e55f6] font-medium" : ""}`}
+                placeholder={`Option ${oIndex + 1}`}
+              />
+            </div>
             <Button
               variant="destructive"
               size="icon-xs"

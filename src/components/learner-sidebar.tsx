@@ -66,7 +66,7 @@ export function LearnerSidebarContent({ closeSidebar }: { closeSidebar: () => vo
             <span className="text-sm font-medium leading-snug truncate">{programme.title}</span>
             <ChevronsUpDown size={14} className="text-muted-foreground shrink-0" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56">
+          <DropdownMenuContent align="start" className="">
             <p className="px-1.5 py-1 text-xs font-medium text-muted-foreground">Your Programmes</p>
             <DropdownMenuSeparator />
             {PROGRAMMES.map((p) => (
@@ -89,8 +89,7 @@ export function LearnerSidebarContent({ closeSidebar }: { closeSidebar: () => vo
 
         <Progress value={programmeCompletionPercent} className="mt-1" />
         <p className="text-xs text-muted-foreground">
-          Programme completion:{" "}
-          <span className="font-medium text-foreground">{programmeCompletionPercent}%</span>
+          Programme completion: <span className="font-medium text-foreground">{programmeCompletionPercent}%</span>
         </p>
       </div>
 
@@ -114,7 +113,9 @@ export function LearnerSidebarContent({ closeSidebar }: { closeSidebar: () => vo
                   closeSidebar();
                 }}
                 className={`flex items-center justify-between gap-2 text-left px-3 py-2 rounded-lg text-sm ${
-                  isActive ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : "border border-border hover:bg-muted text-foreground"
+                  isActive
+                    ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+                    : "border border-border hover:bg-muted text-foreground"
                 }`}
               >
                 <span className="font-medium truncate">
@@ -160,7 +161,10 @@ export function LearnerSidebarContent({ closeSidebar }: { closeSidebar: () => vo
                         {locked ? (
                           <Lock size={14} className="shrink-0 text-muted-foreground/30" />
                         ) : (
-                          <CheckCircle2 size={14} className={`shrink-0 ${done ? "text-green-500" : "text-muted-foreground/30"}`} />
+                          <CheckCircle2
+                            size={14}
+                            className={`shrink-0 ${done ? "text-green-500" : "text-muted-foreground/30"}`}
+                          />
                         )}
                       </button>
                     );
@@ -204,7 +208,9 @@ export function LearnerSidebarContent({ closeSidebar }: { closeSidebar: () => vo
             closeSidebar();
           }}
           className={`flex items-center justify-between gap-2 text-left px-3 py-2 mt-1 rounded-lg text-sm ${
-            showWrittenExam ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white" : "border border-border hover:bg-muted text-foreground"
+            showWrittenExam
+              ? "bg-[#7e55f6] hover:bg-[#6742d4] text-white"
+              : "border border-border hover:bg-muted text-foreground"
           }`}
         >
           <span className="flex items-center gap-2 font-medium truncate">
@@ -271,7 +277,9 @@ export function LearnerSidebarFooter({ closeSidebar }: { closeSidebar: () => voi
             closeSidebar();
           }}
           className={`flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm w-full ${
-            showCertificateView ? "bg-[#7e55f6] text-white" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            showCertificateView
+              ? "bg-[#7e55f6] text-white"
+              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
           }`}
         >
           <Award size={18} />

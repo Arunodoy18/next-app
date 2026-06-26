@@ -150,7 +150,7 @@ export default function InstructorStudentsPage() {
 
   return (
     <PlaceholderGuard>
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Students</h1>
         <p className="text-muted-foreground mt-1">Everyone enrolled in your assigned programmes.</p>
@@ -180,7 +180,7 @@ export default function InstructorStudentsPage() {
                 value={programmeFilter}
                 onValueChange={(v) => setProgrammeFilter(v ?? "all")}
               >
-                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                <SelectTrigger className="h-9 w-45 bg-background text-base md:text-sm">
                   <Filter size={14} className="text-muted-foreground shrink-0" />
                   <SelectValue placeholder="All Programmes" />
                 </SelectTrigger>
@@ -194,7 +194,7 @@ export default function InstructorStudentsPage() {
                 </SelectContent>
               </Select>
               <Select items={SORT_OPTIONS} value={sortBy} onValueChange={(v) => setSortBy(v ?? "name-asc")}>
-                <SelectTrigger className="h-9 w-[180px] bg-background text-base md:text-sm">
+                <SelectTrigger className="h-9 w-45 bg-background text-base md:text-sm">
                   <ArrowUpDown size={14} className="text-muted-foreground shrink-0" />
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -210,7 +210,7 @@ export default function InstructorStudentsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[640px]">
+          <Table className="min-w-160">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -258,7 +258,7 @@ export default function InstructorStudentsPage() {
                     <TableCell className="text-muted-foreground">{programmeName(s.programmeId)}</TableCell>
                     <TableCell className="text-muted-foreground">{formattedDate}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2 min-w-[140px]">
+                      <div className="flex items-center gap-2 min-w-35">
                         <Progress value={totalModules ? (doneModules / totalModules) * 100 : 0} className="w-24 h-2" />
                         <span className="text-xs text-muted-foreground font-medium">
                           {doneModules}/{totalModules}
@@ -269,7 +269,7 @@ export default function InstructorStudentsPage() {
                       {avgGrade === null ? (
                         <span className="text-xs text-muted-foreground">N/A</span>
                       ) : (
-                        <div className="flex items-center gap-2 min-w-[140px]">
+                        <div className="flex items-center gap-2 min-w-35">
                           <Progress value={avgGrade} className="w-24 h-2" />
                           <span className="text-xs text-muted-foreground font-medium">{avgGrade}%</span>
                         </div>
