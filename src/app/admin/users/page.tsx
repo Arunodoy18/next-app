@@ -134,10 +134,12 @@ function AdminUsersContent() {
   const saveMutation = useMutation({
     mutationFn: async (data: CreateUserInput | UpdateUserInput) => {
       if (isNew) {
+        const username = data.name.trim().toLowerCase().replace(/\s+/g, ".");
+        const password = Math.random().toString(36).slice(-8);
         const res = await fetch("/api/admin/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ ...data, username, password }),
         });
         if (!res.ok) {
           const error = await res.json();
@@ -180,6 +182,8 @@ function AdminUsersContent() {
     form.reset({ name: u.name, email: u.email, role: u.role });
     setDialogOpen(true);
   };
+
+
 
   const header = ["Name", "Email", "Role", "Verification", "Signup Date"];
   const userRow = (u: UserResponse) => [
