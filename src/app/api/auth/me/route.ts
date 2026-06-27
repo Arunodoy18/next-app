@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE, verifyToken } from "@/auth/server";
+import { SESSION_COOKIE, verifyToken, setSessionCookie } from "@/auth/server";
+import type { AuthRole } from "@/auth/server";
 import connectToDatabase from "@/db/mongodb";
 import User from "@/models/userModel";
 
@@ -17,18 +18,26 @@ export async function GET(req: NextRequest) {
 
   try {
     await connectToDatabase();
-    const user = await User.findOne({ userId: payload.userId }).select("-password");
+    const user = await User.findOne({ userId: payload.userId });
 
-    return NextResponse.json({
-      session: {
-        ...payload,
-        name: user?.name,
-        email: user?.email,
-        createdAt: user?.createdAt,
-        verified: user?.verified,
-      },
+    if (!user) {
+      const res = NextResponse.json({ session: null });
+      res.cookies.set(SESSION_COOKIE, "", { maxAge: 0, path: "/" });
+      return res;
+    }
+    const fresh = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      role: user.role as AuthRole,
+    };
+
+    const res = NextResponse.json({
+      session: { ...fresh, createdAt: user.createdAt, verified: user.verified },
     });
+    setSessionCookie(res, fresh);
+    return res;
   } catch {
-    return NextResponse.json({ session: null });
+    return NextResponse.json({ session: payload });
   }
 }

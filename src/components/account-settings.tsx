@@ -21,10 +21,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import RoleBadge from "@/components/role-badge";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 import { changeNameSchema, type ChangeNameInput } from "@/schema/settingsSchema";
-import { Separator } from "@/components/ui/separator";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 async function fetchCurrentUser() {
   const res = await fetch("/api/auth/me");
@@ -42,7 +41,6 @@ export default function AccountSettings() {
   const queryClient = useQueryClient();
   const { data: user, isLoading } = useQuery({ queryKey: ["current-user"], queryFn: fetchCurrentUser });
 
-  const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [showConfirmName, setShowConfirmName] = useState(false);
 
   const nameForm = useForm<ChangeNameInput>({
@@ -73,27 +71,12 @@ export default function AccountSettings() {
     },
   });
 
-  const resetCredentialsMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch("/api/auth/reset", { method: "POST" });
-      if (!res.ok) throw new Error("Failed to request reset");
-      return res.json();
-    },
-    onSuccess: () => {
-      toast.success("Verification email sent to your inbox");
-      setShowConfirmReset(false);
-    },
-    onError: () => {
-      toast.error("Failed to send reset email");
-    },
-  });
-
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
         <div>
           <h1 className="text-3xl font-normal m-0">Account Settings</h1>
-          <p className="text-muted-foreground mt-1">Manage your account and credentials.</p>
+          <p className="text-muted-foreground mt-1">Manage your account.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -102,31 +85,31 @@ export default function AccountSettings() {
             <CardHeader>
               <Skeleton className="h-6 w-32" />
             </CardHeader>
-            <CardContent className="flex flex-col gap-5">
-              <div className="grid grid-cols-2 gap-4 pb-4 border-b border-border">
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="flex flex-col gap-2">
+                  <div key={i} className="flex flex-col gap-1">
                     <Skeleton className="h-3 w-16" />
                     <Skeleton className="h-4 w-24" />
                   </div>
                 ))}
               </div>
-              <div className="flex flex-col gap-3">
-                <Skeleton className="h-3 w-24" />
-                <Skeleton className="h-8 w-full max-w-xs" />
-                <Skeleton className="h-8 w-16" />
-              </div>
             </CardContent>
           </Card>
 
-          {/* Reset Credentials Card Skeleton */}
+          {/* Account Actions Card Skeleton */}
           <Card className="shadow-sm">
             <CardHeader>
-              <Skeleton className="h-6 w-40" />
+              <Skeleton className="h-6 w-36" />
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-8 w-24" />
+            <CardContent className="flex flex-col gap-5">
+              <div>
+                <Skeleton className="h-3 w-24 mb-2" />
+                <div className="flex items-end gap-2">
+                  <Skeleton className="h-9 w-48" />
+                  <Skeleton className="h-9 w-16" />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -140,7 +123,7 @@ export default function AccountSettings() {
     <div className="max-w-6xl mx-auto flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Account Settings</h1>
-        <p className="text-muted-foreground mt-1">Manage your account and credentials.</p>
+        <p className="text-muted-foreground mt-1">Manage your account.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -158,7 +141,7 @@ export default function AccountSettings() {
               <div className="flex flex-col gap-1">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Role</p>
                 <div>
-                  <RoleBadge role={user?.role} />
+                  <Badge className={`align-middle ${ROLE_BADGE[user?.role as keyof typeof ROLE_BADGE]}`}>{user?.role}</Badge>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
@@ -227,19 +210,6 @@ export default function AccountSettings() {
                 )}
               />
             </form>
-
-            <Separator />
-
-            <Field>
-              <FieldLabel className="text-xs uppercase tracking-wide font-medium">Reset Credentials</FieldLabel>
-              <Button
-                className="max-w-sm"
-                onClick={() => setShowConfirmReset(true)}
-              >
-                <Mail size={12} className="mr-1" />
-                Send Email
-              </Button>
-            </Field>
           </CardContent>
         </Card>
       </div>
@@ -272,30 +242,6 @@ export default function AccountSettings() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Confirm Reset Credentials Dialog */}
-      <AlertDialog open={showConfirmReset} onOpenChange={setShowConfirmReset}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Reset Credentials</AlertDialogTitle>
-            <AlertDialogDescription>
-              A verification email will be sent to <strong>{user?.email}</strong>. You&apos;ll need to confirm your identity to receive new credentials.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => resetCredentialsMutation.mutate()}
-              disabled={resetCredentialsMutation.isPending}
-            >
-              {resetCredentialsMutation.isPending ? (
-                <Loader2 className="animate-spin" size={16} />
-              ) : (
-                "Send Email"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

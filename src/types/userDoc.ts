@@ -4,13 +4,18 @@ export interface User {
   _id: string;
   userId: string;
   name: string;
-  username: string;
   email: string;
-  password: string | null;
   role: AuthRole;
   verified: "pending" | "complete";
-  credentialsToken?: string | null;
-  credentialsTokenExpiry?: Date | null;
+
+  inviteToken?: string | null;
+  inviteTokenExpiry?: Date | null;
+
+  loginToken?: string | null;
+  loginTokenExpiry?: Date | null;
+
+  loginCode?: string | null;
+  loginCodeExpiry?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

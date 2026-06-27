@@ -22,21 +22,32 @@ export const ROLE_HOME: Record<AuthRole, string> = {
 export interface TokenPayload {
   userId: string;
   name: string;
-  username: string;
   email: string;
   role: AuthRole;
 }
 
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, SALT_ROUNDS);
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+
+export async function hashSecret(secret: string): Promise<string> {
+  return bcrypt.hash(secret, SALT_ROUNDS);
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+export async function verifySecret(secret: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(secret, hash);
 }
 
 export function signToken(payload: TokenPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "30d" });
+}
+
+export function setSessionCookie(res: NextResponse, payload: TokenPayload): void {
+  res.cookies.set(SESSION_COOKIE, signToken(payload), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
 }
 
 export function verifyToken(token: string): TokenPayload | null {

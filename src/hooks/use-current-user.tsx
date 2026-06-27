@@ -1,16 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getSession } from "@/auth/client";
-import type { AuthRole } from "@/types/userDoc";
-
-interface UserSession {
-  userId: string;
-  name: string;
-  username: string;
-  email: string;
-  role: AuthRole;
-}
+import { useSession } from "@/auth/session-provider";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -24,11 +14,7 @@ function getInitials(name: string): string {
 }
 
 export function useUser() {
-  const [user, setUser] = useState<UserSession | null>(null);
-
-  useEffect(() => {
-    getSession().then(setUser);
-  }, []);
+  const user = useSession();
 
   return {
     user,

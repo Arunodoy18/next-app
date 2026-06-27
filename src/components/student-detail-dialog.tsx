@@ -14,8 +14,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CheckCircle2, Circle, ClipboardCheck } from "lucide-react";
-import LearnerRoleBadge from "@/components/learner-role-badge";
-import type { Programme, StudentRecord, WrittenAnswer } from "@/lib/mock-data";
+import { learnerRole, type Programme, type StudentRecord, type WrittenAnswer } from "@/lib/mock-data";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 
 type Drafts = Record<string, { score: string; feedback: string }>;
 
@@ -98,7 +98,7 @@ export default function StudentDetailDialog({
               <DialogHeader>
                 <DialogTitle>
                   {view.student.name}
-                  <LearnerRoleBadge id={view.student.id} className="ml-2" />
+                  {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(view.student.id))}
                 </DialogTitle>
                 <DialogDescription>
                   {view.student.email} · {view.programme.name}

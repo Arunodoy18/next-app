@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
-import LearnerRoleBadge from "@/components/learner-role-badge";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { type WrittenAnswer } from "@/lib/mock-data";
+import { learnerRole, type WrittenAnswer } from "@/lib/mock-data";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export default function InstructorEvaluationsPage() {
@@ -71,7 +71,7 @@ export default function InstructorEvaluationsPage() {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {s.name}
-          <LearnerRoleBadge id={s.id} className="ml-2" />
+          {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(s.programmeId)}</p>
       </div>

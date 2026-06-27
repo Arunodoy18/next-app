@@ -45,7 +45,6 @@ export default function LearnerContent() {
     programme,
     activeModule,
     setActiveModule,
-    expandedModule,
     setExpandedModule,
     openResource,
     setOpenResource,
@@ -389,7 +388,14 @@ export default function LearnerContent() {
                                       key={oIndex}
                                       type="button"
                                       disabled={submitted}
-                                      onClick={() => setQuizAnswers((prev) => ({ ...prev, [qKey]: prev[qKey] === oIndex ? undefined : oIndex }))}
+                                      onClick={() => setQuizAnswers((prev) => {
+                                        if (prev[qKey] === oIndex) {
+                                          const next = { ...prev };
+                                          delete next[qKey];
+                                          return next;
+                                        }
+                                        return { ...prev, [qKey]: oIndex };
+                                      })}
                                       className={`text-left p-3 rounded-lg border transition-all duration-200 group ${style}`}
                                     >
                                       <div className="flex items-start gap-3">

@@ -67,25 +67,7 @@ export const ASSIGNABLE_ROLES = [
 ] as const;
 export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 
-// One Tailwind class string per role so badges scan at a glance. Shared by the
-// admin users table and the reusable <RoleBadge> component.
-export const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-stone-100 text-stone-800 dark:bg-stone-700/50 dark:text-stone-100",
-  Instructor: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  Admin: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400",
-  "Business Development": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-  "Human Resources": "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400",
-  "Project Management": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
-};
 
-export const ROLE_TEXT: Record<UserRole, string> = {
-  Student: "",
-  Instructor: "text-blue-800 dark:text-blue-400",
-  Admin: "text-violet-800 dark:text-violet-400",
-  "Business Development": "text-orange-800 dark:text-orange-400",
-  "Human Resources": "text-rose-800 dark:text-rose-400",
-  "Project Management": "text-cyan-800 dark:text-cyan-400",
-};
 
 export interface AppUser {
   id: string;

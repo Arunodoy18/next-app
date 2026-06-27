@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { learnerRole, ROLE_TEXT, type MessageThread } from "@/lib/mock-data";
-import LearnerRoleBadge from "@/components/learner-role-badge";
+import { Badge } from "@/components/ui/badge";
+import { learnerRole, type MessageThread } from "@/lib/mock-data";
+import { ROLE_BADGE, ROLE_TEXT } from "@/utils/badgeColor";
 import { Send, MessageSquare, ChevronLeft } from "lucide-react";
 import { formatSentAt } from "@/utils/formatTime";
 
@@ -180,7 +181,7 @@ export default function InstructorMessagesPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium m-0 truncate">
                     {studentName(active.studentId)}
-                    <LearnerRoleBadge id={active.studentId} className="ml-2" />
+                    {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(active.studentId))}
                   </p>
                   <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(active.programmeId)}</p>
                 </div>

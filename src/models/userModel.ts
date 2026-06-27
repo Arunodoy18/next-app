@@ -6,18 +6,20 @@ const UserSchema = new Schema<User>(
     userId: {
       type: String,
       unique: true,
-      default: function () {
-        return Math.random().toString(36).substring(2, 10).toUpperCase();
-      },
+      default: () => crypto.randomUUID().replace(/-/g, "").substring(0, 8).toUpperCase(),
     },
     name: { type: String, required: true, trim: true },
-    username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, default: null },
     role: { type: String, required: true, enum: ["Student", "Instructor", "Admin", "Human Resources", "Project Management", "Business Development"] },
     verified: { type: String, enum: ["pending", "complete"], default: "pending" },
-    credentialsToken: { type: String, default: null },
-    credentialsTokenExpiry: { type: Date, default: null },
+    inviteToken: { type: String, default: null },
+    inviteTokenExpiry: { type: Date, default: null },
+
+    loginToken: { type: String, default: null },
+    loginTokenExpiry: { type: Date, default: null },
+    
+    loginCode: { type: String, default: null },
+    loginCodeExpiry: { type: Date, default: null },
   },
   { timestamps: true, collection: "Users" }
 );

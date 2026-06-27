@@ -9,8 +9,7 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import RoleBadge from "@/components/role-badge";
-import { verificationBadgeColor } from "@/utils/badgeColor";
+import { ROLE_BADGE, verificationBadgeColor } from "@/utils/badgeColor";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -148,7 +147,7 @@ function AdminUsersContent() {
         const res = await fetch(`/api/admin/users/${editingId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: data.name, email: data.email, role: data.role }),
+          body: JSON.stringify({ name: data.name, role: data.role }),
         });
         if (!res.ok) {
           const error = await res.json();
@@ -298,7 +297,7 @@ function AdminUsersContent() {
                       <TableCell className="font-medium">{u.name}</TableCell>
                       <TableCell className="text-muted-foreground">{u.email}</TableCell>
                       <TableCell>
-                        <RoleBadge role={u.role} />
+                        <Badge className={`align-middle ${ROLE_BADGE[u.role]}`}>{u.role}</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge className={`font-medium ${verificationBadgeColor[u.verified]}`}>
@@ -365,7 +364,8 @@ function AdminUsersContent() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
-                    <Input {...field} id="email" placeholder="Enter the email" aria-invalid={fieldState.invalid} />
+                    <Input {...field} id="email" placeholder="Enter the email" aria-invalid={fieldState.invalid} disabled={!isNew} />
+                    {!isNew && <p className="text-xs text-muted-foreground m-0">Email can&apos;t be changed after the account is created.</p>}
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}

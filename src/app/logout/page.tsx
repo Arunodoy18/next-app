@@ -2,14 +2,13 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { logout } from "@/auth/client";
 import { Loader2 } from "lucide-react";
 
 export default function LogoutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    logout().then(() => router.push("/login"));
+    fetch("/api/auth/logout", { method: "POST" }).then(() => { window.location.href = "/login"; });
   }, [router]);
 
   return (

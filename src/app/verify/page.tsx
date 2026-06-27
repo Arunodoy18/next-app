@@ -13,33 +13,37 @@ import { Label } from "@/components/ui/label";
 import { changeNameSchema, type ChangeNameInput } from "@/schema/settingsSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Loader2, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 
 function VerifyPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
   const [acceptedPolicy, setAcceptedPolicy] = useState(false);
-  const [policyDialog, setPolicyDialog] = useState<"privacy" | "cookie" | null>(null);
+  const [policyDialog, setPolicyDialog] = useState<"privacy" | "cookie" | "tos" | null>(null);
+  const [countdown, setCountdown] = useState(3);
 
-  const { data: tokenInfo, isLoading: checkingToken, isError } = useQuery({
+  const { isLoading: checkingToken, isError, data: tokenData } = useQuery({
     queryKey: ["verify-token", token],
     queryFn: async () => {
       const res = await fetch(`/api/auth/verify?token=${token}`);
       if (!res.ok) throw new Error("Invalid token");
-      return res.json() as Promise<{ type: "new" | "reset" }>;
+      return res.json() as Promise<{ valid: boolean; name: string }>;
     },
     enabled: !!token,
+    retry: false,
   });
-
-  const isNewAccount = tokenInfo?.type === "new";
 
   const form = useForm<ChangeNameInput>({
     resolver: zodResolver(changeNameSchema),
     defaultValues: { name: "" },
   });
 
-  const verifyMutation = useMutation<unknown, Error, string | undefined>({
+  useEffect(() => {
+    if (tokenData?.name) form.setValue("name", tokenData.name);
+  }, [tokenData?.name, form]);
+
+  const verifyMutation = useMutation<{ home: string }, Error, string>({
     mutationFn: async (name) => {
       const res = await fetch("/api/auth/verify", {
         method: "POST",
@@ -49,21 +53,20 @@ function VerifyPageContent() {
       if (!res.ok) throw new Error("Failed to verify");
       return res.json();
     },
-    onSuccess: () => {
-      toast.success("New credentials sent to your email");
-      setTimeout(() => router.push("/login"), 5000);
-    },
+    onSuccess: () => {},
     onError: () => {
       toast.error("Invalid or expired verification link");
     },
   });
 
   useEffect(() => {
-    if (tokenInfo?.type === "reset" && !verifyMutation.isPending && !verifyMutation.isSuccess && !verifyMutation.isError) {
-      verifyMutation.mutate(undefined);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenInfo]);
+    if (!verifyMutation.isSuccess) return;
+    const t = setTimeout(() => {
+      if (countdown <= 1) router.push(verifyMutation.data!.home);
+      else setCountdown((c) => c - 1);
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [verifyMutation.isSuccess, verifyMutation.data, countdown, router]);
 
   if (!token) {
     return (
@@ -89,11 +92,11 @@ function VerifyPageContent() {
       <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background">
         <Card className="w-full max-w-[450px] shadow-lg pt-8 pb-8 px-6 sm:px-8 rounded-xl">
           <CardHeader className="pb-4 px-0">
-            <div className="flex flex-col items-center justify-center gap-3 py-6">
-              <Loader2 size={40} className="animate-spin text-muted-foreground" />
-              <CardTitle className="text-2xl leading-tight font-normal m-0">Resetting Credentials</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">Please wait while we generate your new credentials.</p>
-            </div>
+            <Loader2 size={40} className="animate-spin text-[#7e55f6] mb-2" />
+            <CardTitle className="text-2xl leading-tight font-normal m-0">Checking Your Invitation</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1.5 m-0">
+              We&apos;re verifying your invitation link. This takes a moment.
+            </p>
           </CardHeader>
         </Card>
       </div>
@@ -119,50 +122,23 @@ function VerifyPageContent() {
     );
   }
 
-  if (!isNewAccount) {
-    if (verifyMutation.isPending) {
-      return (
-        <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background">
-          <Card className="w-full max-w-[450px] shadow-lg pt-8 pb-8 px-6 sm:px-8 rounded-xl">
-            <CardHeader className="pb-4 px-0">
-              <div className="flex flex-col items-center justify-center gap-3 py-6">
-                <Loader2 size={40} className="animate-spin text-muted-foreground" />
-                <CardTitle className="text-2xl leading-tight font-normal m-0">Resetting Credentials</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">Please wait while we generate your new credentials.</p>
-              </div>
-            </CardHeader>
-          </Card>
-        </div>
-      );
-    }
-
-    if (verifyMutation.isSuccess) {
-      return (
-        <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background">
-          <Card className="w-full max-w-[450px] shadow-lg pt-8 pb-8 px-6 sm:px-8 rounded-xl">
-            <CardHeader className="pb-4 px-0">
-              <CheckCircle2 size={40} className="text-green-500 mb-2" />
-              <CardTitle className="text-2xl leading-tight font-normal m-0">Credentials Sent</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1.5 m-0">Your new credentials have been sent to your email. Redirecting to login.</p>
-            </CardHeader>
-          </Card>
-        </div>
-      );
-    }
-
-    if (verifyMutation.isError) {
-      return (
-        <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background">
-          <Card className="w-full max-w-[450px] shadow-lg pt-8 pb-8 px-6 sm:px-8 rounded-xl">
-            <CardHeader className="pb-4 px-0">
-              <AlertCircle size={40} className="text-red-500 mb-2" />
-              <CardTitle className="text-2xl leading-tight font-normal m-0">Something Went Wrong</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1.5 m-0">Could not reset your credentials. Please try again.</p>
-            </CardHeader>
-          </Card>
-        </div>
-      );
-    }
+  if (verifyMutation.isSuccess) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-background">
+        <Card className="w-full max-w-[450px] shadow-lg pt-8 pb-8 px-6 sm:px-8 rounded-xl">
+          <CardHeader className="pb-4 px-0">
+            <CheckCircle2 size={40} className="text-green-500 mb-2" />
+            <CardTitle className="text-2xl leading-tight font-normal m-0">Account Ready</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1.5 m-0">Your account has been set up successfully.</p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Button className="w-full h-10 gap-2" onClick={() => router.push(verifyMutation.data!.home)}>
+              Continue ({countdown}s) <ArrowRight size={15} />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -171,18 +147,12 @@ function VerifyPageContent() {
         <CardHeader className="pb-4 px-0">
           <CardTitle className="text-3xl leading-tight font-normal m-0">Set Up Your Account</CardTitle>
           <p className="text-sm text-muted-foreground mt-1.5 m-0">
-            Enter your name to complete your account setup. Your credentials will be sent to your email.
+            Confirm your name to finish setting up your account.
           </p>
         </CardHeader>
 
         <CardContent className="p-0">
-          {verifyMutation.isSuccess ? (
-            <div className="flex flex-col items-center justify-center text-center gap-3 py-6">
-              <CheckCircle2 size={40} className="text-green-500" />
-              <p className="text-sm text-muted-foreground">Credentials sent to your email. Redirecting to login.</p>
-            </div>
-          ) : (
-            <form
+          <form
               onSubmit={form.handleSubmit((data) => verifyMutation.mutate(data.name))}
               className="flex flex-col gap-4"
             >
@@ -207,8 +177,10 @@ function VerifyPageContent() {
                 <span className="text-xs text-muted-foreground">
                   I agree to the{" "}
                   <button type="button" onClick={(e) => { e.stopPropagation(); setPolicyDialog("privacy"); }} className="text-foreground font-medium hover:underline underline-offset-4 cursor-pointer inline">Privacy Policy</button>
-                  {" "}and{" "}
+                  {", "}
                   <button type="button" onClick={(e) => { e.stopPropagation(); setPolicyDialog("cookie"); }} className="text-foreground font-medium hover:underline underline-offset-4 cursor-pointer inline">Cookie Policy</button>
+                  {", and "}
+                  <button type="button" onClick={(e) => { e.stopPropagation(); setPolicyDialog("tos"); }} className="text-foreground font-medium hover:underline underline-offset-4 cursor-pointer inline">Terms of Service</button>
                 </span>
               </label>
 
@@ -220,18 +192,48 @@ function VerifyPageContent() {
                 {verifyMutation.isPending ? <Loader2 size={20} className="animate-spin" /> : "Complete Setup"}
               </Button>
             </form>
-          )}
         </CardContent>
+
       </Card>
 
       <Dialog open={policyDialog !== null} onOpenChange={(open) => !open && setPolicyDialog(null)}>
         <DialogContent className="max-h-[80vh] overflow-y-auto max-w-lg">
           <DialogHeader>
-            <DialogTitle>{policyDialog === "privacy" ? "Privacy Policy" : "Cookie Policy"}</DialogTitle>
-            <DialogDescription>Last Updated: 10.10.2024</DialogDescription>
+            <DialogTitle>
+              {policyDialog === "privacy" ? "Privacy Policy" : policyDialog === "cookie" ? "Cookie Policy" : "Terms of Service"}
+            </DialogTitle>
+            <DialogDescription>
+              {policyDialog === "tos" ? "Last Updated: 27.06.2026" : "Last Updated: 10.10.2024"}
+            </DialogDescription>
           </DialogHeader>
           <div className="text-sm text-muted-foreground space-y-4 mt-2">
-            {policyDialog === "privacy" ? (
+            {policyDialog === "tos" ? (
+              <>
+                <p>Welcome to The Blackmont Academy!</p>
+                <p>These terms and conditions outline the rules and regulations for the use of The Blackmont Academy&apos;s Website, located at theblackmontacademy.com.</p>
+
+                <h3 className="text-foreground font-semibold text-sm">1. Terms</h3>
+                <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use The Blackmont Academy if you do not agree to take all of the terms and conditions stated on this page.</p>
+
+                <h3 className="text-foreground font-semibold text-sm">2. License</h3>
+                <p>Unless otherwise stated, The Blackmont Academy and/or its licensors own the intellectual property rights for all material on The Blackmont Academy. All intellectual property rights are reserved. You may access this from The Blackmont Academy for your own personal use subjected to restrictions set in these terms and conditions.</p>
+
+                <h3 className="text-foreground font-semibold text-sm">3. User Responsibilities</h3>
+                <p>You must not:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Republish material from The Blackmont Academy</li>
+                  <li>Sell, rent or sub-license material from The Blackmont Academy</li>
+                  <li>Reproduce, duplicate or copy material from The Blackmont Academy</li>
+                  <li>Redistribute content from The Blackmont Academy</li>
+                </ul>
+
+                <h3 className="text-foreground font-semibold text-sm">4. Modifications</h3>
+                <p>The Blackmont Academy reserves the right to revise these terms at any time as it sees fit, and by using this Website you are expected to review these terms on a regular basis.</p>
+
+                <h3 className="text-foreground font-semibold text-sm">Contact Us</h3>
+                <p>If you have any questions about these Terms of Service, please contact us at contact@theblackmontacademy.com</p>
+              </>
+            ) : policyDialog === "privacy" ? (
               <>
                 <p>Welcome to The Blackmont Academy!</p>
                 <p>This Privacy Policy explains how The Blackmont Academy (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects, uses, maintains, and discloses information gathered from users (each, a &quot;User&quot;) of our website and any associated services.</p>

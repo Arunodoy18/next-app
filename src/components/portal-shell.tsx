@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import Logo from "@/components/logo/logo";
-import { logout } from "@/auth/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -114,7 +113,7 @@ export default function PortalShell({
         variant="destructive"
         className="text-base py-2 [&_svg]:size-[18px]"
         onClick={async () => {
-          await logout();
+          await fetch("/api/auth/logout", { method: "POST" });
           router.push("/login");
         }}
       >

@@ -24,9 +24,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import StudentDetailDialog from "@/components/student-detail-dialog";
-import LearnerRoleBadge from "@/components/learner-role-badge";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
+import { learnerRole } from "@/lib/mock-data";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 import { Search, MessageSquare, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const SORT_OPTIONS: Record<string, string> = {
@@ -251,7 +252,7 @@ export default function InstructorStudentsPage() {
                     <TableCell>
                       <p className="font-medium m-0">
                         {s.name}
-                        <LearnerRoleBadge id={s.id} className="ml-2" />
+                        {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
                       </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>

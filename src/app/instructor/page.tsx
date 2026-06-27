@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
-import { ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
-import LearnerRoleBadge from "@/components/learner-role-badge";
-import RoleBadge from "@/components/role-badge";
+import { learnerRole, type AssignableRole } from "@/lib/mock-data";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 import { formatSentAt } from "@/utils/formatTime";
 import {
   Users,
@@ -380,7 +379,7 @@ function ProgrammeRow({
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-sm font-medium m-0 truncate">{name}</p>
           {roles.map((r) => (
-            <RoleBadge key={r} role={r} />
+            <Badge key={r} className={`align-middle ${ROLE_BADGE[r]}`}>{r}</Badge>
           ))}
         </div>
         <p className="text-xs text-muted-foreground m-0 mt-0.5">
@@ -430,7 +429,7 @@ function QueueRow({
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {name}
-          {learnerId && <LearnerRoleBadge id={learnerId} className="ml-2" />}
+          {learnerId && (r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programme}</p>
       </div>
@@ -461,7 +460,7 @@ function MessageRow({
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium m-0 truncate">
             {name}
-            {learnerId && <LearnerRoleBadge id={learnerId} className="ml-2" />}
+            {learnerId && (r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
           </p>
           <span className="text-xs text-muted-foreground ml-auto shrink-0">{last ? formatSentAt(last.sentAt) : ""}</span>
         </div>

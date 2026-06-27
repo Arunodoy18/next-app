@@ -9,7 +9,6 @@ export const userSchema = z.object({
   _id: z.string(),
   userId: z.string(),
   name: z.string(),
-  username: z.string(),
   email: z.string().email(),
   role: authRoleEnum,
   verified: z.enum(["pending", "complete"]),
@@ -25,7 +24,6 @@ export const createUserSchema = z.object({
 
 export const updateUserSchema = z.object({
   name: z.string().min(1, "Name cannot be empty").optional(),
-  email: z.string().email("Please enter a valid email").optional(),
   role: authRoleEnum.optional(),
   verified: z.enum(["pending", "complete"]).optional(),
 });

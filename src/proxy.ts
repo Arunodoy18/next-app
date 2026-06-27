@@ -20,7 +20,10 @@ function forward(request: NextRequest, extra?: Record<string, string>) {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/login" || pathname === "/forgot") {
+  if (pathname === "/login") {
+    if (request.nextUrl.searchParams.has("token")) {
+      return forward(request);
+    }
     const token = request.cookies.get(SESSION_COOKIE)?.value;
     if (token) {
       const payload = verifyToken(token);
@@ -59,7 +62,7 @@ export function proxy(request: NextRequest) {
   return forward(request, {
     "x-user-id": payload.userId,
     "x-user-role": payload.role,
-    "x-user-name": payload.username,
+    "x-user-name": payload.name,
     "x-user-email": payload.email,
   });
 }

@@ -6,6 +6,8 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import QueryProvider from "@/components/query-provider";
 import SuperuserBubble from "@/components/misc/superuser-bubble";
 import { PlaceholderProvider } from "@/components/misc/use-placeholder";
+import { SessionProvider, type SessionUser } from "@/auth/session-provider";
+import type { AuthRole } from "@/types/userDoc";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -33,11 +35,22 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const heads = await headers();
+  const role = heads.get("x-user-role");
+  const session: SessionUser | null = role
+    ? {
+        userId: heads.get("x-user-id") ?? "",
+        name: heads.get("x-user-name") ?? "",
+        email: heads.get("x-user-email") ?? "",
+        role: role as AuthRole,
+      }
+    : null;
+
   return (
     <html
       lang="en"
@@ -54,10 +67,12 @@ export default function RootLayout({
         >
           <QueryProvider>
             <PlaceholderProvider>
-              <ThemeToggle />
-              {children}
-              <SuperuserBubble />
-              <Toaster />
+              <SessionProvider value={session}>
+                <ThemeToggle />
+                {children}
+                <SuperuserBubble />
+                <Toaster />
+              </SessionProvider>
             </PlaceholderProvider>
           </QueryProvider>
         </ThemeProvider>

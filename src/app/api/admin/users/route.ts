@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import connectToDatabase from "@/db/mongodb";
 import User from "@/models/userModel";
 import { createUserSchema } from "@/schema/userSchema";
-import { sendCredentialsVerificationEmail } from "@/email/templates";
-import { generateUsername } from "@/utils/credentials";
+import { sendInviteEmail } from "@/email/templates";
+import { generateToken } from "@/auth/authTokens";
 import { requireAuth } from "@/auth/server";
 
 export async function GET(req: NextRequest) {
@@ -34,24 +33,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Email already exists" }, { status: 409 });
   }
 
-  const username = await generateUsername(parsed.data.name);
-
-  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const inviteToken = generateToken();
   const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   const user = await User.create({
     name: parsed.data.name,
-    username,
     email: parsed.data.email,
-    password: null,
     role: parsed.data.role,
     verified: "pending",
-    credentialsToken: verificationToken,
-    credentialsTokenExpiry: expiry,
+    inviteToken,
+    inviteTokenExpiry: expiry,
   });
 
-  await sendCredentialsVerificationEmail(user.email, user.name, verificationToken);
+  await sendInviteEmail(user.email, user.name, inviteToken);
 
-  const savedUser = await User.findById(user._id).select("-password").lean();
+  const savedUser = await User.findById(user._id).lean();
   return NextResponse.json(savedUser, { status: 201 });
 }

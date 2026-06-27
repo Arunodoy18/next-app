@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { usePortalStore } from "@/lib/portal-store";
-import { instructorName, ROLE_BADGE, type AssignableRole } from "@/lib/mock-data";
-import RoleBadge from "@/components/role-badge";
+import { instructorName, type AssignableRole } from "@/lib/mock-data";
+import { ROLE_BADGE } from "@/utils/badgeColor";
 import {
   GraduationCap,
   Users,
@@ -202,7 +202,7 @@ export default function AdminOverview() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-medium m-0 truncate">{p.name}</p>
                       {(p.roles ?? []).map((r) => (
-                        <RoleBadge key={r} role={r} />
+                        <Badge key={r} className={`align-middle ${ROLE_BADGE[r]}`}>{r}</Badge>
                       ))}
                     </div>
                     <p className="text-xs text-muted-foreground m-0 mt-0.5 truncate">
@@ -277,7 +277,7 @@ export default function AdminOverview() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-medium m-0 truncate">{p.name}</p>
                         {(p.roles ?? []).map((r) => (
-                          <RoleBadge key={r} role={r} />
+                          <Badge key={r} className={`align-middle ${ROLE_BADGE[r]}`}>{r}</Badge>
                         ))}
                       </div>
                       <p className="text-xs text-muted-foreground m-0 mt-0.5 truncate">
