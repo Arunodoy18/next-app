@@ -123,7 +123,7 @@ export async function sendOtpEmail(email: string, name: string, code: string) {
   await mg.messages.create(MAILGUN_DOMAIN, {
     from: FROM,
     to: email,
-    subject: `${code} – Your Blackmont Academy sign-in code`,
+    subject: `${code} - your Blackmont Academy sign-in code`,
     html,
     text: `Hi ${name},\n\nYour Blackmont Academy sign-in code is:\n\n${code}\n\nThis code expires in 15 minutes. Do not share it with anyone.\n\n- Blackmont Academy`,
     "o:tag": ["otp"],

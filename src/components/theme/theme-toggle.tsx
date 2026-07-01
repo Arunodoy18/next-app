@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
@@ -16,7 +16,8 @@ export function ThemeToggle() {
   );
 
   // Portal routes have their own theme toggle in the avatar dropdown.
-  const portalRoutes = ["/student", "/admin", "/instructor", "/internal"];
+
+  const portalRoutes = ["/consultant", "/admin", "/instructor", "/internal"];
   if (!mounted || portalRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }

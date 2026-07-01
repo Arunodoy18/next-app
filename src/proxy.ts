@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken, SESSION_COOKIE, ROLE_HOME } from "@/auth/server";
 import type { AuthRole } from "@/types/userDoc";
 
 const PROTECTED_ROUTES: Record<string, AuthRole[]> = {
-  "/student": ["Student"],
+  "/consultant": ["Consultant"],
   "/instructor": ["Instructor"],
   "/internal": ["Instructor", "Human Resources", "Project Management", "Business Development"],
   "/admin": ["Admin"],
 };
+const PUBLIC_ROUTES = ["/", "/logout", "/verify"];
 
 function forward(request: NextRequest, extra?: Record<string, string>) {
   const headers = new Headers(request.headers);
@@ -39,7 +40,12 @@ export function proxy(request: NextRequest) {
     pathname.startsWith(route)
   );
 
-  if (!matchedRoute) return forward(request);
+  if (!matchedRoute) {
+    if (PUBLIC_ROUTES.includes(pathname) || pathname.includes(".")) {
+      return forward(request);
+    }
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   if (!token) {

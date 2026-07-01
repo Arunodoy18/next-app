@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { ROLE_BADGE, verificationBadgeColor } from "@/utils/badgeColor";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
   Table,
   TableHeader,
@@ -86,6 +87,19 @@ function AdminUsersContent() {
   const queryClient = useQueryClient();
   const { data: users = [], isLoading } = useQuery({ queryKey: ["admin-users"], queryFn: fetchUsers });
 
+  // Used to block deleting your own account and the last remaining admin in the
+  // UI (the API enforces both regardless).
+  const { data: currentUserId } = useQuery({
+    queryKey: ["current-user"],
+    queryFn: async () => {
+      const res = await fetch("/api/auth/me");
+      if (!res.ok) return null;
+      const data = await res.json();
+      return (data.session?.userId as string) ?? null;
+    },
+  });
+  const adminCount = users.filter((u) => u.role === "Admin").length;
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingUser, setDeletingUser] = useState<UserResponse | null>(null);
@@ -106,6 +120,15 @@ function AdminUsersContent() {
     },
   });
 
+  // When editing, disable Save until name or role actually changes (email is
+  // locked for existing accounts, so it's not part of the comparison).
+  const watchedName = useWatch({ control: form.control, name: "name" });
+  const watchedRole = useWatch({ control: form.control, name: "role" });
+  const noChanges =
+    !isNew && editingUser
+      ? watchedName === editingUser.name && watchedRole === editingUser.role
+      : false;
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return users.filter((u) => {
@@ -118,15 +141,18 @@ function AdminUsersContent() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete user");
+      if (!res.ok) {
+        const error = await res.json().catch(() => null);
+        throw new Error(error?.error || "Failed to delete user");
+      }
     },
     onSuccess: () => {
       toast.success("User deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       setDeletingUser(null);
     },
-    onError: () => {
-      toast.error("Failed to delete user");
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete user");
     },
   });
 
@@ -147,8 +173,16 @@ function AdminUsersContent() {
         const res = await fetch(`/api/admin/users/${editingId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: data.name, role: data.role }),
+          // Send the loaded updatedAt so the server can reject a save built on a
+          // stale copy instead of silently overwriting a newer change.
+          body: JSON.stringify({ name: data.name, role: data.role, updatedAt: editingUser?.updatedAt }),
         });
+        if (res.status === 409) {
+          // Refetch so the dialog reflects the current values, and keep it open
+          // so the admin can re-apply their change on top of the latest data.
+          await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+          throw new Error("This account was changed elsewhere. Refreshed to the latest, please redo your change.");
+        }
         if (!res.ok) {
           const error = await res.json();
           throw new Error(error.error || "Failed to update user");
@@ -181,13 +215,13 @@ function AdminUsersContent() {
   };
 
   const header = ["Name", "Email", "Role", "Verification", "Signup Date"];
-  const userRow = (u: UserResponse) => [
-    u.name,
-    u.email,
-    u.role,
-    u.verified,
-    new Date(u.createdAt).toLocaleDateString("en-GB"),
-  ];
+  const userRow = (u: UserResponse) => {
+    // ISO date (YYYY-MM-DD) so spreadsheets recognise it regardless of locale,
+    // day-first strings like 30/06/2026 get mis-parsed as text in en-US Excel.
+    const created = new Date(u.createdAt);
+    const signupDate = Number.isNaN(created.getTime()) ? "" : created.toISOString().slice(0, 10);
+    return [u.name, u.email, u.role, u.verified, signupDate];
+  };
 
   const exportUsers = () => {
     downloadCsv("users.csv", toCsv([header, ...users.map(userRow)]));
@@ -292,6 +326,15 @@ function AdminUsersContent() {
                     hour12: true,
                   }).format(new Date(u.createdAt));
 
+                  // Mirror the API's delete guards in the UI so the action is
+                  // disabled (with a reason) rather than failing on click.
+                  const deleteBlockedReason =
+                    u.userId === currentUserId
+                      ? "You can't delete your own account"
+                      : u.role === "Admin" && adminCount <= 1
+                        ? "There must be at least one admin"
+                        : null;
+
                   return (
                     <TableRow key={u.userId} className="group hover:bg-muted/50 transition-colors">
                       <TableCell className="font-medium">{u.name}</TableCell>
@@ -313,14 +356,27 @@ function AdminUsersContent() {
                           <Button variant="ghost" size="icon-sm" title="Export this user" onClick={() => exportUser(u)}>
                             <Download size={14} />
                           </Button>
-                          <Button
-                            variant="destructive"
-                            size="icon-sm"
-                            title="Delete user"
-                            onClick={() => setDeletingUser(u)}
-                          >
-                            <Trash2 size={14} />
-                          </Button>
+                          {deleteBlockedReason ? (
+                            <Tooltip>
+                              {/* span trigger keeps the tooltip working even when
+                                  the button is disabled (self / last admin). */}
+                              <TooltipTrigger render={<span className="inline-flex" />}>
+                                <Button variant="destructive" size="icon-sm" disabled>
+                                  <Trash2 size={14} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{deleteBlockedReason}</TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <Button
+                              variant="destructive"
+                              size="icon-sm"
+                              title="Delete user"
+                              onClick={() => setDeletingUser(u)}
+                            >
+                              <Trash2 size={14} />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -393,7 +449,7 @@ function AdminUsersContent() {
             </FieldGroup>
 
             <DialogFooter className="mt-5">
-              <Button type="submit" disabled={saveMutation.isPending}>
+              <Button type="submit" disabled={saveMutation.isPending || noChanges}>
                 {saveMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : isNew ? "Create User" : "Save Changes"}
               </Button>
             </DialogFooter>

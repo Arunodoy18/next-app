@@ -1,4 +1,4 @@
-// REVW
+﻿// REVW
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
@@ -94,7 +94,7 @@ export default function PortalShell({
             ? "/instructor/settings"
             : pathname.startsWith("/internal")
             ? "/internal/settings"
-            : "/student/settings";
+            : "/consultant/settings";
           router.push(settingsPath);
         }}
       >
@@ -246,7 +246,11 @@ export default function PortalShell({
 
       {/* Top-right account menu (desktop) */}
       <DropdownMenu>
-        <DropdownMenuTrigger className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted transition-colors text-left">
+        <DropdownMenuTrigger
+          className={`hidden lg:flex fixed top-4 right-4 z-50 items-center gap-2 px-2 py-2 rounded-lg hover:bg-muted text-left transition-[transform,colors,opacity] duration-200 ${
+            topBarVisible ? "translate-y-0" : "-translate-y-20 opacity-0 pointer-events-none"
+          }`}
+        >
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-[#7e55f6] text-white text-sm font-medium leading-none">
               {userInitials}

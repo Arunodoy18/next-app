@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -14,66 +14,66 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CheckCircle2, Circle, ClipboardCheck } from "lucide-react";
-import { learnerRole, type Programme, type StudentRecord, type WrittenAnswer } from "@/lib/mock-data";
+import { learnerRole, type Programme, type ConsultantRecord, type WrittenAnswer } from "@/lib/mock-data";
 import { ROLE_BADGE } from "@/utils/badgeColor";
 
 type Drafts = Record<string, { score: string; feedback: string }>;
 
-// Grading inputs always start blank — instructors enter a fresh score/feedback
+// Grading inputs always start blank, instructors enter a fresh score/feedback
 // rather than editing a pre-filled value.
-function emptyDrafts(student: StudentRecord): Drafts {
+function emptyDrafts(consultant: ConsultantRecord): Drafts {
   const next: Drafts = {};
-  student.writtenAnswers.forEach((a) => {
+  consultant.writtenAnswers.forEach((a) => {
     next[a.questionId] = { score: "", feedback: "" };
   });
   return next;
 }
 
 /**
- * Shared student detail dialog.
+ * Shared consultant detail dialog.
  *
- * - `view` mode (Students roster): read-only progress + written-test status.
+ * - `view` mode (Consultants roster): read-only progress + written-test status.
  *   No grading inputs; an action button hands off to the Evaluations page.
  * - `evaluate` mode (Evaluations / Admin performance): adds the grading form.
  */
-export default function StudentDetailDialog({
-  student,
+export default function ConsultantDetailDialog({
+  consultant,
   programme,
   mode = "evaluate",
   onClose,
   onSaveEvaluation,
   onEvaluate,
 }: {
-  student: StudentRecord | null;
+  consultant: ConsultantRecord | null;
   programme: Programme | null;
   mode?: "view" | "evaluate";
   onClose: () => void;
-  onSaveEvaluation?: (studentId: string, answers: WrittenAnswer[]) => void;
-  onEvaluate?: (studentId: string) => void;
+  onSaveEvaluation?: (consultantId: string, answers: WrittenAnswer[]) => void;
+  onEvaluate?: (consultantId: string) => void;
 }) {
-  // Cache the last shown student so content stays mounted through the
-  // close animation; reset drafts only when a different student opens.
-  const [view, setView] = useState<{ student: StudentRecord; programme: Programme } | null>(
-    student && programme ? { student, programme } : null
+  // Cache the last shown consultant so content stays mounted through the
+  // close animation; reset drafts only when a different consultant opens.
+  const [view, setView] = useState<{ consultant: ConsultantRecord; programme: Programme } | null>(
+    consultant && programme ? { consultant, programme } : null
   );
-  const [drafts, setDrafts] = useState<Drafts>(() => (student ? emptyDrafts(student) : {}));
+  const [drafts, setDrafts] = useState<Drafts>(() => (consultant ? emptyDrafts(consultant) : {}));
   const [savedFlash, setSavedFlash] = useState(false);
 
-  if (student && programme && (view?.student !== student || view?.programme !== programme)) {
-    if (view?.student.id !== student.id) {
-      setDrafts(emptyDrafts(student));
+  if (consultant && programme && (view?.consultant !== consultant || view?.programme !== programme)) {
+    if (view?.consultant.id !== consultant.id) {
+      setDrafts(emptyDrafts(consultant));
       setSavedFlash(false);
     }
-    setView({ student, programme });
+    setView({ consultant, programme });
   }
 
-  const submitted = (view?.student.writtenAnswers.length ?? 0) > 0;
-  const pendingCount = view?.student.writtenAnswers.filter((a) => a.score === null).length ?? 0;
+  const submitted = (view?.consultant.writtenAnswers.length ?? 0) > 0;
+  const pendingCount = view?.consultant.writtenAnswers.filter((a) => a.score === null).length ?? 0;
   const hasInput = Object.values(drafts).some((d) => d.score.trim() !== "" || d.feedback.trim() !== "");
 
   const save = () => {
     if (!view || !onSaveEvaluation) return;
-    const updated = view.student.writtenAnswers.map((a) => {
+    const updated = view.consultant.writtenAnswers.map((a) => {
       const draft = drafts[a.questionId];
       if (!draft) return a;
       // A blank score leaves the existing value untouched; a typed value
@@ -85,23 +85,23 @@ export default function StudentDetailDialog({
         feedback: draft.feedback === "" ? a.feedback : draft.feedback,
       };
     });
-    onSaveEvaluation(view.student.id, updated);
+    onSaveEvaluation(view.consultant.id, updated);
     setSavedFlash(true);
   };
 
   return (
-    <Dialog open={!!student} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={!!consultant} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-3xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
         {view && (
           <>
             <div className="px-4 sm:px-6 py-5 border-b border-border shrink-0 bg-card/50">
               <DialogHeader>
                 <DialogTitle>
-                  {view.student.name}
-                  {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(view.student.id))}
+                  {view.consultant.name}
+                  {(r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(view.consultant.id))}
                 </DialogTitle>
                 <DialogDescription>
-                  {view.student.email} · {view.programme.name}
+                  {view.consultant.email} · {view.programme.name}
                 </DialogDescription>
               </DialogHeader>
             </div>
@@ -111,7 +111,7 @@ export default function StudentDetailDialog({
                 <h3 className="text-sm font-medium mb-3">Module Progress</h3>
                 <div className="flex flex-col gap-2">
                   {view.programme.modules.map((m) => {
-                    const p = view.student.moduleProgress.find((mp) => mp.moduleId === m.id);
+                    const p = view.consultant.moduleProgress.find((mp) => mp.moduleId === m.id);
                     return (
                       <div key={m.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
                         <div className="flex items-center gap-2">
@@ -145,11 +145,11 @@ export default function StudentDetailDialog({
                 </div>
 
                 {!submitted ? (
-                  <p className="text-sm text-muted-foreground">Student has not submitted the written test yet.</p>
+                  <p className="text-sm text-muted-foreground">Consultant has not submitted the written test yet.</p>
                 ) : (
                   <div className="flex flex-col gap-5">
                     {view.programme.writtenTest.map((q) => {
-                      const ans = view.student.writtenAnswers.find((a) => a.questionId === q.id);
+                      const ans = view.consultant.writtenAnswers.find((a) => a.questionId === q.id);
                       if (!ans) return null;
                       const draft = drafts[q.id] ?? { score: "", feedback: "" };
                       return (
@@ -227,7 +227,7 @@ export default function StudentDetailDialog({
               <div className="px-4 sm:px-6 py-4 border-t border-border bg-card/50 shrink-0">
                 <DialogFooter>
                   <Button
-                    onClick={() => onEvaluate(view.student.id)}
+                    onClick={() => onEvaluate(view.consultant.id)}
                   >
                     <ClipboardCheck size={15} className="mr-2" />
                     {pendingCount > 0 ? "Evaluate written test" : "Review evaluation"}

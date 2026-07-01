@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
@@ -20,12 +20,12 @@ export default function InstructorMessagesPage() {
   const {
     threads,
     setThreads,
-    students,
+    consultants,
     programmes,
     internalProgrammes,
     internalThreads,
     setInternalThreads,
-    internalStudents,
+    internalConsultants,
   } = usePortalStore();
 
   // Internal threads belonging to programmes this instructor delivers (or their
@@ -36,7 +36,7 @@ export default function InstructorMessagesPage() {
   const myInternalThreads = internalThreads.filter(
     (t) =>
       myInternalProgrammeIds.includes(t.programmeId) ||
-      internalStudents.some((s) => s.id === t.studentId && s.name === CURRENT_INSTRUCTOR.name)
+      internalConsultants.some((s) => s.id === t.consultantId && s.name === CURRENT_INSTRUCTOR.name)
   );
   const myThreads = [
     ...threads.filter((t) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(t.programmeId)),
@@ -57,29 +57,29 @@ export default function InstructorMessagesPage() {
 
   const allProgrammes = [...programmes, ...internalProgrammes];
   const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
-  const allStudents = [...students, ...internalStudents];
+  const allConsultants = [...consultants, ...internalConsultants];
 
-  // Open (or start) a conversation when arriving from the Students roster
-  // via /instructor/messages?student=<id>.
+  // Open (or start) a conversation when arriving from the Consultants roster
+  // via /instructor/messages?consultant=<id>.
   const [didRoute, setDidRoute] = useState(false);
   if (!didRoute && typeof window !== "undefined") {
-    const id = new URLSearchParams(window.location.search).get("student");
+    const id = new URLSearchParams(window.location.search).get("consultant");
     if (id) {
-      const existing = [...threads, ...internalThreads].find((t) => t.studentId === id);
+      const existing = [...threads, ...internalThreads].find((t) => t.consultantId === id);
       if (existing) {
         if (activeId !== existing.id) setActiveId(existing.id);
         if (existing.unread) updateThread(existing.id, (t) => ({ ...t, unread: false }));
       } else {
-        const student = allStudents.find((s) => s.id === id);
-        if (student) {
+        const consultant = allConsultants.find((s) => s.id === id);
+        if (consultant) {
           const newThread = {
             id: nextId("t"),
-            studentId: id,
-            programmeId: student.programmeId,
+            consultantId: id,
+            programmeId: consultant.programmeId,
             unread: false,
             messages: [],
           };
-          const setter = internalStudents.some((s) => s.id === id) ? setInternalThreads : setThreads;
+          const setter = internalConsultants.some((s) => s.id === id) ? setInternalThreads : setThreads;
           setter((prev) => [newThread, ...prev]);
           setActiveId(newThread.id);
         }
@@ -87,7 +87,7 @@ export default function InstructorMessagesPage() {
     }
     setDidRoute(true);
   }
-  const studentName = (id: string) => allStudents.find((s) => s.id === id)?.name ?? "Student";
+  const consultantName = (id: string) => allConsultants.find((s) => s.id === id)?.name ?? "Consultant";
   const initials = (name: string) => name.split(" ").map((w) => w[0]).slice(0, 2).join("");
 
   const openThread = (id: string) => {
@@ -112,11 +112,11 @@ export default function InstructorMessagesPage() {
     <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Messages</h1>
-        <p className="text-muted-foreground mt-1">Questions and queries from your students.</p>
+        <p className="text-muted-foreground mt-1">Questions and queries from your consultants.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[325px_minmax(0,1fr)] gap-4 items-start">
-        {/* Thread list — hidden on mobile when a chat is open */}
+        {/* Thread list, hidden on mobile when a chat is open */}
         <Card className={`shadow-sm py-2 gap-0 ${mobileShowChat ? "hidden lg:flex" : ""}`}>
           <CardContent className="px-2 flex flex-col gap-1">
             {myThreads.length === 0 && (
@@ -125,7 +125,7 @@ export default function InstructorMessagesPage() {
             {myThreads.map((t) => {
               const last = t.messages[t.messages.length - 1];
               const isActive = t.id === activeId;
-              const role = learnerRole(t.studentId);
+              const role = learnerRole(t.consultantId);
               return (
                 <Button
                   key={t.id}
@@ -136,7 +136,7 @@ export default function InstructorMessagesPage() {
                   }`}
                 >
                   <div className="size-8 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-xs font-medium shrink-0">
-                    {initials(studentName(t.studentId))}
+                    {initials(consultantName(t.consultantId))}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ export default function InstructorMessagesPage() {
                           role ? ROLE_TEXT[role] : ""
                         }`}
                       >
-                        {studentName(t.studentId)}
+                        {consultantName(t.consultantId)}
                       </p>
                       {t.unread && <span className="size-2 rounded-full bg-[#7e55f6] shrink-0" />}
                       <span className="text-[10px] text-muted-foreground ml-auto shrink-0">{last ? formatSentAt(last.sentAt) : ""}</span>
@@ -160,7 +160,7 @@ export default function InstructorMessagesPage() {
           </CardContent>
         </Card>
 
-        {/* Conversation — hidden on mobile when thread list is showing */}
+        {/* Conversation, hidden on mobile when thread list is showing */}
         <Card className={`shadow-sm h-[calc(100vh-12rem)] flex-col ${mobileShowChat ? "flex" : "hidden lg:flex"}`}>
           {active ? (
             <>
@@ -176,12 +176,12 @@ export default function InstructorMessagesPage() {
                   <ChevronLeft size={18} />
                 </Button>
                 <div className="size-9 rounded-full bg-[#7e55f6]/10 text-[#7e55f6] flex items-center justify-center text-sm font-medium shrink-0">
-                  {initials(studentName(active.studentId))}
+                  {initials(consultantName(active.consultantId))}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium m-0 truncate">
-                    {studentName(active.studentId)}
-                    {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(active.studentId))}
+                    {consultantName(active.consultantId)}
+                    {(r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(active.consultantId))}
                   </p>
                   <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(active.programmeId)}</p>
                 </div>

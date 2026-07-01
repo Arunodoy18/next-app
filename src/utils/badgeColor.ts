@@ -1,4 +1,4 @@
-import type { UserRole } from "@/lib/mock-data";
+﻿import type { UserRole } from "@/lib/mock-data";
 
 export const verificationBadgeColor: Record<"pending" | "complete", string> = {
   complete: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -6,7 +6,7 @@ export const verificationBadgeColor: Record<"pending" | "complete", string> = {
 };
 
 export const ROLE_BADGE: Record<UserRole, string> = {
-  Student: "bg-stone-100 text-stone-800 dark:bg-stone-700/50 dark:text-stone-100",
+  Consultant: "bg-stone-100 text-stone-600 dark:bg-stone-700/50 dark:text-stone-300",
   Instructor: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   Admin: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400",
   "Business Development": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
@@ -15,7 +15,7 @@ export const ROLE_BADGE: Record<UserRole, string> = {
 };
 
 export const ROLE_TEXT: Record<UserRole, string> = {
-  Student: "",
+  Consultant: "text-stone-600 dark:text-stone-300",
   Instructor: "text-blue-800 dark:text-blue-400",
   Admin: "text-violet-800 dark:text-violet-400",
   "Business Development": "text-orange-800 dark:text-orange-400",

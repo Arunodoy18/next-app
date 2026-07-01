@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+﻿import mongoose, { Schema } from "mongoose";
 import type { User } from "@/types/userDoc";
 
 const UserSchema = new Schema<User>(
@@ -10,7 +10,7 @@ const UserSchema = new Schema<User>(
     },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    role: { type: String, required: true, enum: ["Student", "Instructor", "Admin", "Human Resources", "Project Management", "Business Development"] },
+    role: { type: String, required: true, enum: ["Consultant", "Instructor", "Admin", "Human Resources", "Project Management", "Business Development"] },
     verified: { type: String, enum: ["pending", "complete"], default: "pending" },
     inviteToken: { type: String, default: null },
     inviteTokenExpiry: { type: Date, default: null },

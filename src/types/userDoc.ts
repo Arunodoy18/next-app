@@ -1,4 +1,4 @@
-export type AuthRole = "Student" | "Instructor" | "Admin" | "Human Resources" | "Project Management" | "Business Development";
+﻿export type AuthRole = "Consultant" | "Instructor" | "Admin" | "Human Resources" | "Project Management" | "Business Development";
 
 export interface User {
   _id: string;

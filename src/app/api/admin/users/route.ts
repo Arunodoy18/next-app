@@ -11,7 +11,9 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.response;
 
   await connectToDatabase();
-  const users = await User.find({}).select("-password -salt").sort({ createdAt: -1 }).lean();
+  const role = req.nextUrl.searchParams.get("role");
+  const filter = role ? { role } : {};
+  const users = await User.find(filter).select("-password -salt").sort({ createdAt: -1 }).lean();
   return NextResponse.json(users);
 }
 

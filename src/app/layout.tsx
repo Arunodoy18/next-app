@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Questrial } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import QueryProvider from "@/components/query-provider";
+import QueryProvider from "@/components/layout/query-provider";
 import SuperuserBubble from "@/components/misc/superuser-bubble";
 import { PlaceholderProvider } from "@/components/misc/use-placeholder";
 import { SessionProvider, type SessionUser } from "@/auth/session-provider";
@@ -20,7 +20,7 @@ const questrial = Questrial({
 const TITLE_MAP: Record<string, string> = {
   admin: "Admin Portal",
   instructor: "Instructor Portal",
-  student: "Student Dashboard",
+  consultant: "Consultant Dashboard",
   internal: "Internal Dashboard",
   login: "Login",
   forgot: "Forgot Password",

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import type { ReactNode } from "react";
 import { PortalStoreProvider } from "@/lib/portal-store";
-import PortalShell from "@/components/portal-shell";
+import PortalShell from "@/components/layout/portal-shell";
 import { LearnerProvider, type LearnerProgramme } from "@/components/learner-context";
 import { LearnerSidebarContent, LearnerSidebarFooter } from "@/components/learner-sidebar";
 import { useUser } from "@/hooks/use-current-user";
@@ -71,22 +71,22 @@ const PROGRAMMES: LearnerProgramme[] = [
 
 const CONFIG = {
   portalName: "Academy",
-  basePath: "/student",
-  settingsPath: "/student/settings",
-  messagesPath: "/student/messages",
+  basePath: "/consultant",
+  settingsPath: "/consultant/settings",
+  messagesPath: "/consultant/messages",
   progressKeyPrefix: "programme-progress-",
   showCertificate: true,
   programmes: PROGRAMMES,
 } as const;
 
-function StudentShell({ children }: { children: ReactNode }) {
+function ConsultantShell({ children }: { children: ReactNode }) {
   const { initials, displayName } = useUser();
 
   return (
     <LearnerProvider config={CONFIG}>
       <PortalShell
         portalName="Academy"
-        basePath="/student"
+        basePath="/consultant"
         userLabel={displayName}
         userInitials={initials}
         sidebarContent={(close) => <LearnerSidebarContent closeSidebar={close} />}
@@ -98,10 +98,10 @@ function StudentShell({ children }: { children: ReactNode }) {
   );
 }
 
-export default function StudentLayout({ children }: { children: ReactNode }) {
+export default function ConsultantLayout({ children }: { children: ReactNode }) {
   return (
     <PortalStoreProvider>
-      <StudentShell>{children}</StudentShell>
+      <ConsultantShell>{children}</ConsultantShell>
     </PortalStoreProvider>
   );
 }

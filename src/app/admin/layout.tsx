@@ -1,16 +1,16 @@
-// REVW
+﻿// REVW
 "use client";
 
 import type { ReactNode } from "react";
-import PortalShell, { type PortalNavItem } from "@/components/portal-shell";
+import PortalShell, { type PortalNavItem } from "@/components/layout/portal-shell";
 import { PortalStoreProvider, usePortalStore } from "@/lib/portal-store";
 import { useUser } from "@/hooks/use-current-user";
 import { LayoutDashboard, GraduationCap, TrendingUp, Users } from "lucide-react";
 
 function AdminShell({ children }: { children: ReactNode }) {
-  const { students } = usePortalStore();
+  const { consultants } = usePortalStore();
   const { initials, displayName } = useUser();
-  const pendingAnswers = students.reduce(
+  const pendingAnswers = consultants.reduce(
     (acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length,
     0
   );

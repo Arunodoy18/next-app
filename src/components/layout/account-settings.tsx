@@ -35,7 +35,7 @@ async function fetchCurrentUser() {
 /**
  * Account settings panel (account info + name change + credential reset).
  * Rendered inline inside the portal dashboards so the surrounding sidebar
- * chrome stays put — it is intentionally just the content, no page shell.
+ * chrome stays put, it is intentionally just the content, no page shell.
  */
 export default function AccountSettings() {
   const queryClient = useQueryClient();

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import StudentDetailDialog from "@/components/student-detail-dialog";
+import ConsultantDetailDialog from "@/components/consultant-detail-dialog";
 import { usePortalStore } from "@/lib/portal-store";
 import { learnerRole, type WrittenAnswer } from "@/lib/mock-data";
 import { ROLE_BADGE } from "@/utils/badgeColor";
@@ -40,11 +40,11 @@ const SORT_OPTIONS: Record<string, string> = {
 export default function AdminPerformancePage() {
   const {
     programmes,
-    students,
-    setStudents,
+    consultants,
+    setConsultants,
     internalProgrammes,
-    internalStudents,
-    setInternalStudents,
+    internalConsultants,
+    setInternalConsultants,
   } = usePortalStore();
   const [search, setSearch] = useState("");
   const [programmeFilter, setProgrammeFilter] = useState<string>("all");
@@ -57,7 +57,7 @@ export default function AdminPerformancePage() {
   // Internal (instructor) learners and their programmes are merged into the
   // standard performance views.
   const allProgrammes = useMemo(() => [...programmes, ...internalProgrammes], [programmes, internalProgrammes]);
-  const allStudents = useMemo(() => [...students, ...internalStudents], [students, internalStudents]);
+  const allConsultants = useMemo(() => [...consultants, ...internalConsultants], [consultants, internalConsultants]);
   const programmeName = (id: string) => allProgrammes.find((p) => p.id === id)?.name ?? "N/A";
 
   const programmeFilterItems: Record<string, string> = {
@@ -67,7 +67,7 @@ export default function AdminPerformancePage() {
 
   const filteredAndSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let result = allStudents.filter((s) => {
+    let result = allConsultants.filter((s) => {
       if (programmeFilter !== "all" && s.programmeId !== programmeFilter) return false;
       if (q && !s.name.toLowerCase().includes(q) && !s.email.toLowerCase().includes(q)) return false;
       return true;
@@ -105,12 +105,12 @@ export default function AdminPerformancePage() {
     });
 
     return result;
-  }, [allStudents, search, programmeFilter, sortBy, allProgrammes]);
+  }, [allConsultants, search, programmeFilter, sortBy, allProgrammes]);
 
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  // Reset to the first page when filters change — adjust state during render
+  // Reset to the first page when filters change, adjust state during render
   // (the React-recommended alternative to a setState-in-effect/memo).
   const [prevFilters, setPrevFilters] = useState({ search, programmeFilter, sortBy });
   if (
@@ -122,14 +122,14 @@ export default function AdminPerformancePage() {
     setPage(1);
   }
 
-  const selected = allStudents.find((s) => s.id === selectedId) ?? null;
+  const selected = allConsultants.find((s) => s.id === selectedId) ?? null;
   const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
-  const saveEvaluation = (studentId: string, answers: WrittenAnswer[]) => {
+  const saveEvaluation = (consultantId: string, answers: WrittenAnswer[]) => {
     // Route the evaluation to whichever set the learner came from.
-    const isInternal = internalStudents.some((s) => s.id === studentId);
-    const setter = isInternal ? setInternalStudents : setStudents;
-    setter((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
+    const isInternal = internalConsultants.some((s) => s.id === consultantId);
+    const setter = isInternal ? setInternalConsultants : setConsultants;
+    setter((prev) => prev.map((s) => (s.id === consultantId ? { ...s, writtenAnswers: answers } : s)));
   };
 
   return (
@@ -138,7 +138,7 @@ export default function AdminPerformancePage() {
       <div>
         <h1 className="text-3xl font-normal m-0">Performance</h1>
         <p className="text-muted-foreground mt-1">
-          Progress, quiz scores, and written-test evaluations for every student.
+          Progress, quiz scores, and written-test evaluations for every consultant.
         </p>
       </div>
 
@@ -146,15 +146,15 @@ export default function AdminPerformancePage() {
         <CardHeader className="flex flex-col gap-4 pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base font-medium m-0">All Students</CardTitle>
-              <CardDescription>Click a student for full detail. Admins can evaluate too.</CardDescription>
+              <CardTitle className="text-base font-medium m-0">All Consultants</CardTitle>
+              <CardDescription>Click a consultant for full detail. Admins can evaluate too.</CardDescription>
             </div>
           </div>
           <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
             <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search students"
+                placeholder="Search consultants"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 h-9 w-full sm:w-64 bg-background"
@@ -232,7 +232,7 @@ export default function AdminPerformancePage() {
                     <TableCell>
                       <p className="font-medium m-0">
                         {s.name}
-                        {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
+                        {(r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
                       </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
@@ -262,7 +262,7 @@ export default function AdminPerformancePage() {
               {paginated.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
-                    No students match your filters.
+                    No consultants match your filters.
                   </TableCell>
                 </TableRow>
               )}
@@ -275,7 +275,7 @@ export default function AdminPerformancePage() {
               <p className="text-sm text-muted-foreground">
                 Showing <span className="font-medium text-foreground">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to{" "}
                 <span className="font-medium text-foreground">{Math.min(page * ITEMS_PER_PAGE, filteredAndSorted.length)}</span> of{" "}
-                <span className="font-medium text-foreground">{filteredAndSorted.length}</span> students
+                <span className="font-medium text-foreground">{filteredAndSorted.length}</span> consultants
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -315,8 +315,8 @@ export default function AdminPerformancePage() {
         </CardContent>
       </Card>
 
-      <StudentDetailDialog
-        student={selected}
+      <ConsultantDetailDialog
+        consultant={selected}
         programme={selectedProgramme}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}

@@ -1,4 +1,4 @@
-// REVW
+﻿// REVW
 "use client";
 
 import { useState } from "react";
@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 export default function InstructorOverview() {
-  const { programmes, students, threads, internalProgrammes, internalStudents, internalThreads } =
+  const { programmes, consultants, threads, internalProgrammes, internalConsultants, internalThreads } =
     usePortalStore();
 
   const allProgrammes = [...programmes, ...internalProgrammes];
@@ -39,16 +39,16 @@ export default function InstructorOverview() {
     p.instructorIds.includes(CURRENT_INSTRUCTOR.id)
   );
   const myInternalProgrammeIds = myInternalProgrammes.map((p) => p.id);
-  const myInternalStudents = internalStudents.filter(
+  const myInternalConsultants = internalConsultants.filter(
     (s) => myInternalProgrammeIds.includes(s.programmeId) || s.name === CURRENT_INSTRUCTOR.name
   );
   const myInternalThreads = internalThreads.filter(
     (t) =>
       myInternalProgrammeIds.includes(t.programmeId) ||
-      internalStudents.some((s) => s.id === t.studentId && s.name === CURRENT_INSTRUCTOR.name)
+      internalConsultants.some((s) => s.id === t.consultantId && s.name === CURRENT_INSTRUCTOR.name)
   );
   const assignedProgrammes = programmes.filter((p) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(p.id));
-  const myStudents = students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
+  const myConsultants = consultants.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
 
   // Programme filter chips shown under the welcome line. All selected by
   // default; deselecting one removes its data from the stats and lists below.
@@ -73,11 +73,11 @@ export default function InstructorOverview() {
   const selInternalIds = new Set(selInternal.map((p) => p.id));
 
   // Pools limited to the currently selected programmes.
-  const stdPool = myStudents.filter((s) => selStandardIds.has(s.programmeId));
-  const intPool = myInternalStudents.filter((s) => selInternalIds.has(s.programmeId));
-  const visibleStudents = [...stdPool, ...intPool];
+  const stdPool = myConsultants.filter((s) => selStandardIds.has(s.programmeId));
+  const intPool = myInternalConsultants.filter((s) => selInternalIds.has(s.programmeId));
+  const visibleConsultants = [...stdPool, ...intPool];
 
-  const progressOf = (pool: typeof students) =>
+  const progressOf = (pool: typeof consultants) =>
     pool.length
       ? Math.round(
           (pool.reduce((acc, s) => {
@@ -89,18 +89,18 @@ export default function InstructorOverview() {
             100
         )
       : null;
-  const avgProgress = progressOf(visibleStudents);
+  const avgProgress = progressOf(visibleConsultants);
 
-  const gradesFrom = (pool: typeof students) =>
+  const gradesFrom = (pool: typeof consultants) =>
     pool.flatMap((s) => s.moduleProgress.map((m) => m.mcqScore).filter((x): x is number => x !== null));
-  const allGrades = gradesFrom(visibleStudents);
+  const allGrades = gradesFrom(visibleConsultants);
   const avgGrade = allGrades.length ? Math.round(allGrades.reduce((a, b) => a + b, 0) / allGrades.length) : null;
 
-  const pendingCount = (pool: typeof students) =>
+  const pendingCount = (pool: typeof consultants) =>
     pool.reduce((acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length, 0);
   const queue = stdPool.filter((s) => s.writtenAnswers.some((a) => a.score === null));
   const internalQueue = intPool.filter((s) => s.writtenAnswers.some((a) => a.score === null));
-  const totalPending = pendingCount(visibleStudents);
+  const totalPending = pendingCount(visibleConsultants);
 
   const unreadThreads = threads.filter((t) => selStandardIds.has(t.programmeId) && t.unread);
   const internalUnreadThreads = myInternalThreads.filter((t) => selInternalIds.has(t.programmeId) && t.unread);
@@ -109,7 +109,7 @@ export default function InstructorOverview() {
   const pct = (v: number | null) => (v !== null ? `${v}%` : "N/A");
 
   // Per-programme breakdown for the programme-wise overview.
-  const buildOverview = (progs: typeof programmes, pool: typeof students) =>
+  const buildOverview = (progs: typeof programmes, pool: typeof consultants) =>
     progs.map((p) => {
       const enrolled = pool.filter((s) => s.programmeId === p.id);
       const moduleCount = p.modules.length;
@@ -126,34 +126,34 @@ export default function InstructorOverview() {
       const grades = enrolled.flatMap((s) => s.moduleProgress.map((m) => m.mcqScore).filter((x): x is number => x !== null));
       const avgGr = grades.length ? Math.round(grades.reduce((a, b) => a + b, 0) / grades.length) : null;
       const pending = enrolled.reduce((acc, s) => acc + s.writtenAnswers.filter((a) => a.score === null).length, 0);
-      return { programme: p, students: enrolled.length, avgProgress: avgProg, avgGrade: avgGr, pending };
+      return { programme: p, consultants: enrolled.length, avgProgress: avgProg, avgGrade: avgGr, pending };
     });
-  const programmeOverview = buildOverview(selStandard, students);
-  const internalProgrammeOverview = buildOverview(selInternal, internalStudents);
+  const programmeOverview = buildOverview(selStandard, consultants);
+  const internalProgrammeOverview = buildOverview(selInternal, internalConsultants);
 
-  const studentName = (id: string) =>
-    [...students, ...internalStudents].find((s) => s.id === id)?.name ?? "Student";
+  const consultantName = (id: string) =>
+    [...consultants, ...internalConsultants].find((s) => s.id === id)?.name ?? "Consultant";
 
   const stats = [
     {
       icon: Users,
-      label: `${stdPool.length} student${stdPool.length === 1 ? "" : "s"} · ${intPool.length} instructor${
+      label: `${stdPool.length} consultant${stdPool.length === 1 ? "" : "s"} · ${intPool.length} instructor${
         intPool.length === 1 ? "" : "s"
       }`,
-      value: visibleStudents.length,
-      href: "/instructor/students",
+      value: visibleConsultants.length,
+      href: "/instructor/consultants",
     },
     {
       icon: TrendingUp,
       label: "Avg. module progress",
       value: pct(avgProgress),
-      href: "/instructor/students",
+      href: "/instructor/consultants",
     },
     {
       icon: Award,
       label: "Avg. grade",
       value: pct(avgGrade),
-      href: "/instructor/students",
+      href: "/instructor/consultants",
     },
     {
       icon: ClipboardCheck,
@@ -239,22 +239,22 @@ export default function InstructorOverview() {
           {[...programmeOverview, ...internalProgrammeOverview].length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-6 m-0">No programmes yet.</p>
           )}
-          {programmeOverview.map(({ programme, students: count, avgProgress: prog, avgGrade: grade, pending }) => (
+          {programmeOverview.map(({ programme, consultants: count, avgProgress: prog, avgGrade: grade, pending }) => (
             <ProgrammeRow
               key={programme.id}
               name={programme.name}
               roles={programme.roles ?? []}
               modules={programme.modules.length}
               count={count}
-              countNoun="student"
+              countNoun="consultant"
               avgProgress={prog}
               avgGrade={grade}
               pending={pending}
-              href={`/instructor/students?programme=${programme.id}`}
+              href={`/instructor/consultants?programme=${programme.id}`}
             />
           ))}
           {internalProgrammeOverview.length > 0 && <InternalDivider />}
-          {internalProgrammeOverview.map(({ programme, students: count, avgProgress: prog, avgGrade: grade, pending }) => (
+          {internalProgrammeOverview.map(({ programme, consultants: count, avgProgress: prog, avgGrade: grade, pending }) => (
             <ProgrammeRow
               key={programme.id}
               name={programme.name}
@@ -265,7 +265,7 @@ export default function InstructorOverview() {
               avgProgress={prog}
               avgGrade={grade}
               pending={pending}
-              href={`/instructor/students?programme=${programme.id}`}
+              href={`/instructor/consultants?programme=${programme.id}`}
             />
           ))}
         </CardContent>
@@ -308,7 +308,7 @@ export default function InstructorOverview() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-base font-medium m-0">Unread Messages</CardTitle>
-              <CardDescription>New queries from your students.</CardDescription>
+              <CardDescription>New queries from your consultants.</CardDescription>
             </div>
             <Button variant="outline" size="sm" render={<Link href="/instructor/messages" />}>
               Open inbox <ArrowRight size={13} />
@@ -320,11 +320,11 @@ export default function InstructorOverview() {
             ) : (
               <>
                 {unreadThreads.slice(0, 3).map((t) => (
-                  <MessageRow key={t.id} learnerId={t.studentId} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} />
+                  <MessageRow key={t.id} learnerId={t.consultantId} name={consultantName(t.consultantId)} last={t.messages[t.messages.length - 1]} />
                 ))}
                 {internalUnreadThreads.length > 0 && <InternalDivider />}
                 {internalUnreadThreads.slice(0, 3).map((t) => (
-                  <MessageRow key={t.id} learnerId={t.studentId} name={studentName(t.studentId)} last={t.messages[t.messages.length - 1]} />
+                  <MessageRow key={t.id} learnerId={t.consultantId} name={consultantName(t.consultantId)} last={t.messages[t.messages.length - 1]} />
                 ))}
               </>
             )}
@@ -429,7 +429,7 @@ function QueueRow({
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {name}
-          {learnerId && (r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
+          {learnerId && (r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programme}</p>
       </div>
@@ -460,7 +460,7 @@ function MessageRow({
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium m-0 truncate">
             {name}
-            {learnerId && (r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
+            {learnerId && (r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(learnerId))}
           </p>
           <span className="text-xs text-muted-foreground ml-auto shrink-0">{last ? formatSentAt(last.sentAt) : ""}</span>
         </div>

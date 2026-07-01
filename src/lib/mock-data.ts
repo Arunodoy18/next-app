@@ -1,4 +1,4 @@
-// remov1234
+﻿// remov1234
 import { ago } from "@/utils/formatTime";
 
 export type LessonType = "video" | "pdf" | "link";
@@ -49,7 +49,7 @@ export interface Programme {
 }
 
 export type UserRole =
-  | "Student"
+  | "Consultant"
   | "Instructor"
   | "Admin"
   | "Business Development"
@@ -57,9 +57,9 @@ export type UserRole =
   | "Project Management";
 
 // The five roles a programme can be toggled for and a learner can hold. Admin
-// is excluded — it is a platform role, not a programme track.
+// is excluded, it is a platform role, not a programme track.
 export const ASSIGNABLE_ROLES = [
-  "Student",
+  "Consultant",
   "Instructor",
   "Human Resources",
   "Project Management",
@@ -74,14 +74,14 @@ export interface AppUser {
   name: string;
   email: string;
   role: UserRole;
-  // Students enrol in a single programme; instructors and admins can be
+  // Consultants enrol in a single programme; instructors and admins can be
   // allotted one or more programmes.
   programmeId?: string;
   programmeIds?: string[];
   signupDate: string;
 }
 
-export interface StudentModuleProgress {
+export interface ConsultantModuleProgress {
   moduleId: string;
   completed: boolean;
   mcqScore: number | null;
@@ -94,13 +94,13 @@ export interface WrittenAnswer {
   feedback: string;
 }
 
-export interface StudentRecord {
+export interface ConsultantRecord {
   id: string;
   name: string;
   email: string;
   programmeId: string;
   signupDate: string;
-  moduleProgress: StudentModuleProgress[];
+  moduleProgress: ConsultantModuleProgress[];
   writtenAnswers: WrittenAnswer[];
 }
 
@@ -116,7 +116,7 @@ export const PROGRAMMES: Programme[] = [
     name: "Mergers & Acquisitions Consulting",
     description: "Advisory frameworks, valuation techniques, and deal execution for M&A consultants.",
     instructorIds: ["ins1", "ins3"],
-    roles: ["Student"],
+    roles: ["Consultant"],
     modules: [
       {
         id: "p1-m1",
@@ -197,7 +197,7 @@ export const PROGRAMMES: Programme[] = [
     name: "Private Equity Fundamentals",
     description: "Fund structures, portfolio strategy, and value creation for private equity professionals.",
     instructorIds: ["ins2"],
-    roles: ["Student"],
+    roles: ["Consultant"],
     modules: [
       {
         id: "p2-m1",
@@ -269,14 +269,14 @@ export const PROGRAMMES: Programme[] = [
 ];
 
 export const USERS: AppUser[] = [
-  { id: "u1", name: "Oliver Smith", email: "oliver.smith@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2023-11-12T10:00:00Z" },
-  { id: "u2", name: "Charlotte Jones", email: "charlotte.jones@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-01-05T14:30:00Z" },
-  { id: "u3", name: "Harry Williams", email: "harry.williams@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-10-20T09:15:00Z" },
-  { id: "u4", name: "Amelia Taylor", email: "amelia.taylor@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2024-02-18T11:45:00Z" },
-  { id: "u9", name: "Thomas Brown", email: "thomas.brown@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-03-01T16:20:00Z" },
-  { id: "u10", name: "Olivia Davies", email: "olivia.davies@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-12-05T08:10:00Z" },
-  { id: "u11", name: "William Evans", email: "william.evans@student.co.uk", role: "Student", programmeId: "p1", signupDate: "2024-01-22T13:05:00Z" },
-  { id: "u12", name: "Emily Thomas", email: "emily.thomas@student.co.uk", role: "Student", programmeId: "p2", signupDate: "2023-09-10T09:40:00Z" },
+  { id: "u1", name: "Oliver Smith", email: "oliver.smith@consultant.co.uk", role: "Consultant", programmeId: "p1", signupDate: "2023-11-12T10:00:00Z" },
+  { id: "u2", name: "Charlotte Jones", email: "charlotte.jones@consultant.co.uk", role: "Consultant", programmeId: "p1", signupDate: "2024-01-05T14:30:00Z" },
+  { id: "u3", name: "Harry Williams", email: "harry.williams@consultant.co.uk", role: "Consultant", programmeId: "p2", signupDate: "2023-10-20T09:15:00Z" },
+  { id: "u4", name: "Amelia Taylor", email: "amelia.taylor@consultant.co.uk", role: "Consultant", programmeId: "p2", signupDate: "2024-02-18T11:45:00Z" },
+  { id: "u9", name: "Thomas Brown", email: "thomas.brown@consultant.co.uk", role: "Consultant", programmeId: "p1", signupDate: "2024-03-01T16:20:00Z" },
+  { id: "u10", name: "Olivia Davies", email: "olivia.davies@consultant.co.uk", role: "Consultant", programmeId: "p2", signupDate: "2023-12-05T08:10:00Z" },
+  { id: "u11", name: "William Evans", email: "william.evans@consultant.co.uk", role: "Consultant", programmeId: "p1", signupDate: "2024-01-22T13:05:00Z" },
+  { id: "u12", name: "Emily Thomas", email: "emily.thomas@consultant.co.uk", role: "Consultant", programmeId: "p2", signupDate: "2023-09-10T09:40:00Z" },
   { id: "u5", name: "Alastair Montgomery", email: "a.montgomery@blackmont.ac.uk", role: "Instructor", signupDate: "2022-05-15T09:00:00Z" },
   { id: "u6", name: "Eleanor Vance", email: "e.vance@blackmont.ac.uk", role: "Instructor", signupDate: "2022-08-20T10:30:00Z" },
   { id: "u7", name: "Arthur Pendelton", email: "a.pendelton@blackmont.ac.uk", role: "Instructor", signupDate: "2021-11-05T14:15:00Z" },
@@ -293,11 +293,11 @@ export const USERS: AppUser[] = [
   { id: "u22", name: "Owen Mitchell", email: "o.mitchell@blackmont.ac.uk", role: "Project Management", programmeIds: ["ip3"], signupDate: "2024-04-22T13:40:00Z" },
 ];
 
-export const STUDENTS: StudentRecord[] = [
+export const CONSULTANTS: ConsultantRecord[] = [
   {
     id: "u1",
     name: "Oliver Smith",
-    email: "oliver.smith@student.co.uk",
+    email: "oliver.smith@consultant.co.uk",
     programmeId: "p1",
     signupDate: "2023-11-12T10:00:00Z",
     moduleProgress: [
@@ -324,7 +324,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u2",
     name: "Charlotte Jones",
-    email: "charlotte.jones@student.co.uk",
+    email: "charlotte.jones@consultant.co.uk",
     programmeId: "p1",
     signupDate: "2024-01-05T14:30:00Z",
     moduleProgress: [
@@ -336,7 +336,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u3",
     name: "Harry Williams",
-    email: "harry.williams@student.co.uk",
+    email: "harry.williams@consultant.co.uk",
     programmeId: "p2",
     signupDate: "2023-10-20T09:15:00Z",
     moduleProgress: [
@@ -356,7 +356,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u4",
     name: "Amelia Taylor",
-    email: "amelia.taylor@student.co.uk",
+    email: "amelia.taylor@consultant.co.uk",
     programmeId: "p2",
     signupDate: "2024-02-18T11:45:00Z",
     moduleProgress: [
@@ -368,7 +368,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u9",
     name: "Thomas Brown",
-    email: "thomas.brown@student.co.uk",
+    email: "thomas.brown@consultant.co.uk",
     programmeId: "p1",
     signupDate: "2024-03-01T16:20:00Z",
     moduleProgress: [
@@ -380,7 +380,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u10",
     name: "Olivia Davies",
-    email: "olivia.davies@student.co.uk",
+    email: "olivia.davies@consultant.co.uk",
     programmeId: "p2",
     signupDate: "2023-12-05T08:10:00Z",
     moduleProgress: [
@@ -400,7 +400,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u11",
     name: "William Evans",
-    email: "william.evans@student.co.uk",
+    email: "william.evans@consultant.co.uk",
     programmeId: "p1",
     signupDate: "2024-01-22T13:05:00Z",
     moduleProgress: [
@@ -412,7 +412,7 @@ export const STUDENTS: StudentRecord[] = [
   {
     id: "u12",
     name: "Emily Thomas",
-    email: "emily.thomas@student.co.uk",
+    email: "emily.thomas@consultant.co.uk",
     programmeId: "p2",
     signupDate: "2023-09-10T09:40:00Z",
     moduleProgress: [
@@ -433,14 +433,14 @@ export const STUDENTS: StudentRecord[] = [
 
 export interface ChatMessage {
   id: string;
-  from: "student" | "instructor";
+  from: "consultant" | "instructor";
   text: string;
   sentAt: string;
 }
 
 export interface MessageThread {
   id: string;
-  studentId: string;
+  consultantId: string;
   programmeId: string;
   unread: boolean;
   messages: ChatMessage[];
@@ -449,13 +449,13 @@ export interface MessageThread {
 export const THREADS: MessageThread[] = [
   {
     id: "t1",
-    studentId: "u1",
+    consultantId: "u1",
     programmeId: "p1",
     unread: true,
     messages: [
       {
         id: "t1-1",
-        from: "student",
+        from: "consultant",
         text: "Sir, in the DCF video the terminal value calculation was a bit unclear. Could you share an example with the exit multiple method?",
         sentAt: ago(60 * 24 * 2),
       },
@@ -463,13 +463,13 @@ export const THREADS: MessageThread[] = [
   },
   {
     id: "t2",
-    studentId: "u3",
+    consultantId: "u3",
     programmeId: "p2",
     unread: false,
     messages: [
       {
         id: "t2-1",
-        from: "student",
+        from: "consultant",
         text: "Is there a deadline for the programme-end written test? I want to plan my submission.",
         sentAt: ago(60 * 24 * 4 + 60 * 8),
       },
@@ -483,13 +483,13 @@ export const THREADS: MessageThread[] = [
   },
   {
     id: "t3",
-    studentId: "u2",
+    consultantId: "u2",
     programmeId: "p1",
     unread: true,
     messages: [
       {
         id: "t3-1",
-        from: "student",
+        from: "consultant",
         text: "I scored low on the Valuation Methods quiz. Is it possible to re-attempt it after revising the material?",
         sentAt: ago(45),
       },
@@ -506,11 +506,11 @@ export function instructorName(id: string): string {
 }
 
 /* ============================================================
- * Blackmont Internal — instructor-only training track.
+ * Blackmont Internal, instructor-only training track.
  *
  * Instructors are the *learners* here. Internal programmes reuse the
- * Programme/StudentRecord/MessageThread shapes but live in a separate
- * dataset so the student-facing track stays untouched. There is a written
+ * Programme/ConsultantRecord/MessageThread shapes but live in a separate
+ * dataset so the consultant-facing track stays untouched. There is a written
  * programme (written test) but no certificate.
  * ============================================================ */
 
@@ -943,7 +943,7 @@ export const INTERNAL_PROGRAMMES: Programme[] = [
 // Internal learner records across the three role tracks. Some ids match
 // Instructor users (u5/u6/u7); others are role-holders (Business Development,
 // HR, Project Management) so their role badge shows across the portals.
-export const INTERNAL_STUDENTS: StudentRecord[] = [
+export const INTERNAL_CONSULTANTS: ConsultantRecord[] = [
   {
     id: "u5",
     name: "Alastair Montgomery",
@@ -1176,13 +1176,13 @@ export const INTERNAL_STUDENTS: StudentRecord[] = [
 export const INTERNAL_THREADS: MessageThread[] = [
   {
     id: "it1",
-    studentId: "u5",
+    consultantId: "u5",
     programmeId: "ip1",
     unread: true,
     messages: [
       {
         id: "it1-1",
-        from: "student",
+        from: "consultant",
         text: "For the prospecting module, is the playbook the latest 2024 revision?",
         sentAt: ago(60 * 24 * 6),
       },
@@ -1190,33 +1190,33 @@ export const INTERNAL_THREADS: MessageThread[] = [
   },
   {
     id: "it2",
-    studentId: "u7",
+    consultantId: "u7",
     programmeId: "ip3",
     unread: false,
     messages: [
       {
         id: "it2-1",
-        from: "student",
+        from: "consultant",
         text: "Could you share an example risk register for the delivery planning exercise?",
         sentAt: ago(60 * 24 * 5 + 60 * 7),
       },
       {
         id: "it2-2",
         from: "instructor",
-        text: "Of course — I've added a sample risk register to the Project Planning Toolkit PDF.",
+        text: "Of course, I've added a sample risk register to the Project Planning Toolkit PDF.",
         sentAt: ago(60 * 24 * 5 + 60 * 6.5),
       },
     ],
   },
   {
     id: "it3",
-    studentId: "u13",
+    consultantId: "u13",
     programmeId: "ip1",
     unread: true,
     messages: [
       {
         id: "it3-1",
-        from: "student",
+        from: "consultant",
         text: "On the closing module, how should I handle a buyer who keeps asking for last-minute discounts?",
         sentAt: ago(60 * 24 * 1 + 60 * 3),
       },
@@ -1224,13 +1224,13 @@ export const INTERNAL_THREADS: MessageThread[] = [
   },
   {
     id: "it4",
-    studentId: "u17",
+    consultantId: "u17",
     programmeId: "ip2",
     unread: true,
     messages: [
       {
         id: "it4-1",
-        from: "student",
+        from: "consultant",
         text: "Is the updated grievance procedure covered in the People & Culture handbook?",
         sentAt: ago(60 * 24 * 3),
       },
@@ -1238,27 +1238,27 @@ export const INTERNAL_THREADS: MessageThread[] = [
   },
   {
     id: "it5",
-    studentId: "u18",
+    consultantId: "u18",
     programmeId: "ip3",
     unread: false,
     messages: [
       {
         id: "it5-1",
-        from: "student",
-        text: "Thanks for the feedback on my recovery plan — really helpful.",
+        from: "consultant",
+        text: "Thanks for the feedback on my recovery plan, really helpful.",
         sentAt: ago(60 * 24 * 4),
       },
     ],
   },
   {
     id: "it6",
-    studentId: "u19",
+    consultantId: "u19",
     programmeId: "ip1",
     unread: true,
     messages: [
       {
         id: "it6-1",
-        from: "student",
+        from: "consultant",
         text: "For the pilot approach, what's a good way to scope it so it doesn't drag on?",
         sentAt: ago(60 * 24 * 6 + 60 * 2),
       },
@@ -1266,13 +1266,13 @@ export const INTERNAL_THREADS: MessageThread[] = [
   },
   {
     id: "it7",
-    studentId: "u21",
+    consultantId: "u21",
     programmeId: "ip3",
     unread: true,
     messages: [
       {
         id: "it7-1",
-        from: "student",
+        from: "consultant",
         text: "Could you review my critical-path assumptions before I share them with the sponsor?",
         sentAt: ago(60 * 24 * 5),
       },
@@ -1284,7 +1284,7 @@ export function internalProgrammeName(id: string): string {
   return INTERNAL_PROGRAMMES.find((p) => p.id === id)?.name ?? "N/A";
 }
 
-// True when a learner record corresponds to an Instructor user — used to tag
+// True when a learner record corresponds to an Instructor user, used to tag
 // internal learners with an "(Instructor)" bracket across the portals.
 export function isInstructorLearner(id: string): boolean {
   return USERS.some((u) => u.id === id && u.role === "Instructor");

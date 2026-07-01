@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import type { AuthRole } from "@/types/userDoc";
@@ -11,7 +11,7 @@ export type { AuthRole };
 export const SESSION_COOKIE = "session";
 
 export const ROLE_HOME: Record<AuthRole, string> = {
-  Student: "/student",
+  Consultant: "/consultant",
   Instructor: "/instructor",
   Admin: "/admin",
   "Human Resources": "/internal",

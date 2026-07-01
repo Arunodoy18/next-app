@@ -1,7 +1,7 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 export const authRoleEnum = z.enum(
-  ["Student", "Instructor", "Admin", "Human Resources", "Project Management", "Business Development"],
+  ["Consultant", "Instructor", "Admin", "Human Resources", "Project Management", "Business Development"],
   { message: "Please select a role" }
 );
 

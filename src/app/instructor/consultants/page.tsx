@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import StudentDetailDialog from "@/components/student-detail-dialog";
+import ConsultantDetailDialog from "@/components/consultant-detail-dialog";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
 import { learnerRole } from "@/lib/mock-data";
@@ -38,12 +38,12 @@ const SORT_OPTIONS: Record<string, string> = {
   chats: "Pending chats",
 };
 
-export default function InstructorStudentsPage() {
-  const { programmes, students, threads, internalProgrammes, internalStudents } = usePortalStore();
+export default function InstructorConsultantsPage() {
+  const { programmes, consultants, threads, internalProgrammes, internalConsultants } = usePortalStore();
   const router = useRouter();
   const [search, setSearch] = useState("");
   // Pre-filter by programme when arriving from the overview
-  // (/instructor/students?programme=<id>).
+  // (/instructor/consultants?programme=<id>).
   const [programmeFilter, setProgrammeFilter] = useState<string>(() =>
     typeof window === "undefined"
       ? "all"
@@ -57,7 +57,7 @@ export default function InstructorStudentsPage() {
 
   const assignedProgrammes = programmes.filter((p) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(p.id));
   // Internal programmes this instructor delivers, plus their own internal
-  // enrolment — surfaced alongside their standard roster.
+  // enrolment, surfaced alongside their standard roster.
   const myInternalProgrammes = useMemo(
     () => internalProgrammes.filter((p) => p.instructorIds.includes(CURRENT_INSTRUCTOR.id)),
     [internalProgrammes]
@@ -71,21 +71,21 @@ export default function InstructorStudentsPage() {
     all: "All Programmes",
     ...Object.fromEntries([...assignedProgrammes, ...myInternalProgrammes].map((p) => [p.id, p.name])),
   };
-  const myStudents = useMemo(() => {
+  const myConsultants = useMemo(() => {
     const myInternalProgrammeIds = myInternalProgrammes.map((p) => p.id);
-    const myInternalStudents = internalStudents.filter(
+    const myInternalConsultants = internalConsultants.filter(
       (s) => myInternalProgrammeIds.includes(s.programmeId) || s.name === CURRENT_INSTRUCTOR.name
     );
-    const standard = students.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
+    const standard = consultants.filter((s) => CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId));
     // Dedupe by id in case an internal learner matches more than one rule.
-    return [...standard, ...myInternalStudents].filter(
+    return [...standard, ...myInternalConsultants].filter(
       (s, i, arr) => arr.findIndex((x) => x.id === s.id) === i
     );
-  }, [students, internalStudents, myInternalProgrammes]);
+  }, [consultants, internalConsultants, myInternalProgrammes]);
 
   const filteredAndSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let result = myStudents.filter((s) => {
+    let result = myConsultants.filter((s) => {
       if (programmeFilter !== "all" && s.programmeId !== programmeFilter) return false;
       if (q && !s.name.toLowerCase().includes(q) && !s.email.toLowerCase().includes(q)) return false;
       return true;
@@ -109,8 +109,8 @@ export default function InstructorStudentsPage() {
       if (sortBy === "progress-asc") return aProgress - bProgress;
 
       if (sortBy === "chats") {
-        const aThread = threads.find((t) => t.studentId === a.id);
-        const bThread = threads.find((t) => t.studentId === b.id);
+        const aThread = threads.find((t) => t.consultantId === a.id);
+        const bThread = threads.find((t) => t.consultantId === b.id);
         const aHasUnread = aThread?.unread ? 1 : 0;
         const bHasUnread = bThread?.unread ? 1 : 0;
         return bHasUnread - aHasUnread;
@@ -120,9 +120,9 @@ export default function InstructorStudentsPage() {
     });
 
     return result;
-  }, [myStudents, search, programmeFilter, sortBy, allProgrammes, threads]);
+  }, [myConsultants, search, programmeFilter, sortBy, allProgrammes, threads]);
 
-  // Reset to the first page when filters change — adjust state during render
+  // Reset to the first page when filters change, adjust state during render
   // (the React-recommended alternative to a setState-in-effect).
   const [prevFilters, setPrevFilters] = useState({ search, programmeFilter, sortBy });
   if (
@@ -137,23 +137,23 @@ export default function InstructorStudentsPage() {
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
   const paginated = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  const selected = myStudents.find((s) => s.id === selectedId) ?? null;
+  const selected = myConsultants.find((s) => s.id === selectedId) ?? null;
   const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
-  const goEvaluate = (studentId: string) => {
+  const goEvaluate = (consultantId: string) => {
     setSelectedId(null);
-    router.push(`/instructor/evaluations?student=${studentId}`);
+    router.push(`/instructor/evaluations?consultant=${consultantId}`);
   };
 
-  const goChat = (studentId: string) => {
-    router.push(`/instructor/messages?student=${studentId}`);
+  const goChat = (consultantId: string) => {
+    router.push(`/instructor/messages?consultant=${consultantId}`);
   };
 
   return (
     <PlaceholderGuard>
     <div className="w-full flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-normal m-0">Students</h1>
+        <h1 className="text-3xl font-normal m-0">Consultants</h1>
         <p className="text-muted-foreground mt-1">Everyone enrolled in your assigned programmes.</p>
       </div>
 
@@ -162,14 +162,14 @@ export default function InstructorStudentsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base font-medium m-0">Roster</CardTitle>
-              <CardDescription>Click a student for full progress and evaluation.</CardDescription>
+              <CardDescription>Click a consultant for full progress and evaluation.</CardDescription>
             </div>
           </div>
           <div className="w-full flex flex-col sm:flex-row gap-3 bg-muted/30 p-3 rounded-lg border border-border/50 items-center justify-between">
             <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search students"
+                placeholder="Search consultants"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 h-9 w-full sm:w-64 bg-background"
@@ -236,7 +236,7 @@ export default function InstructorStudentsPage() {
                   : null;
                 const submitted = s.writtenAnswers.length > 0;
                 const pending = s.writtenAnswers.filter((a) => a.score === null).length;
-                const thread = threads.find((t) => t.studentId === s.id);
+                const thread = threads.find((t) => t.consultantId === s.id);
                 
                 const formattedDate = new Intl.DateTimeFormat("en-GB", {
                   day: "numeric",
@@ -252,7 +252,7 @@ export default function InstructorStudentsPage() {
                     <TableCell>
                       <p className="font-medium m-0">
                         {s.name}
-                        {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
+                        {(r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
                       </p>
                       <p className="text-xs text-muted-foreground m-0">{s.email}</p>
                     </TableCell>
@@ -302,7 +302,7 @@ export default function InstructorStudentsPage() {
               {paginated.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
-                    No students match your filters.
+                    No consultants match your filters.
                   </TableCell>
                 </TableRow>
               )}
@@ -315,7 +315,7 @@ export default function InstructorStudentsPage() {
               <p className="text-sm text-muted-foreground">
                 Showing <span className="font-medium text-foreground">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to{" "}
                 <span className="font-medium text-foreground">{Math.min(page * ITEMS_PER_PAGE, filteredAndSorted.length)}</span> of{" "}
-                <span className="font-medium text-foreground">{filteredAndSorted.length}</span> students
+                <span className="font-medium text-foreground">{filteredAndSorted.length}</span> consultants
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -355,8 +355,8 @@ export default function InstructorStudentsPage() {
         </CardContent>
       </Card>
 
-      <StudentDetailDialog
-        student={selected}
+      <ConsultantDetailDialog
+        consultant={selected}
         programme={selectedProgramme}
         mode="view"
         onClose={() => setSelectedId(null)}

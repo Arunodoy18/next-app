@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 export default function AdminOverview() {
-  const { programmes, students, internalProgrammes, internalStudents } = usePortalStore();
+  const { programmes, consultants, internalProgrammes, internalConsultants } = usePortalStore();
 
   const allProgrammes = [...programmes, ...internalProgrammes];
 
@@ -47,8 +47,8 @@ export default function AdminOverview() {
   const selStandardIds = new Set(selStandard.map((p) => p.id));
   const selInternalIds = new Set(selInternal.map((p) => p.id));
 
-  const stdPool = students.filter((s) => selStandardIds.has(s.programmeId));
-  const intPool = internalStudents.filter((s) => selInternalIds.has(s.programmeId));
+  const stdPool = consultants.filter((s) => selStandardIds.has(s.programmeId));
+  const intPool = internalConsultants.filter((s) => selInternalIds.has(s.programmeId));
   const visibleLearners = [...stdPool, ...intPool];
 
   const avgProgress = visibleLearners.length
@@ -78,7 +78,7 @@ export default function AdminOverview() {
   const stats = [
     {
       icon: Users,
-      label: `${stdPool.length} student${stdPool.length === 1 ? "" : "s"} · ${intPool.length} learner${intPool.length === 1 ? "" : "s"}`,
+      label: `${stdPool.length} consultant${stdPool.length === 1 ? "" : "s"} · ${intPool.length} learner${intPool.length === 1 ? "" : "s"}`,
       value: visibleLearners.length,
       href: "/admin/users",
     },
@@ -168,12 +168,12 @@ export default function AdminOverview() {
             <CardDescription>Enrolment, progress, and evaluation status per programme.</CardDescription>
           </div>
           <Button variant="outline" size="sm" render={<Link href="/admin/performance" />}>
-            All students <ArrowRight size={13} />
+            All consultants <ArrowRight size={13} />
           </Button>
         </CardHeader>
         <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {selStandard.map((p) => {
-            const enrolled = students.filter((s) => s.programmeId === p.id);
+            const enrolled = consultants.filter((s) => s.programmeId === p.id);
             const totalModules = p.modules.length;
             const prog =
               enrolled.length && totalModules
@@ -221,7 +221,7 @@ export default function AdminOverview() {
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>
-                    {enrolled.length} student{enrolled.length === 1 ? "" : "s"} · {totalModules} module
+                    {enrolled.length} consultant{enrolled.length === 1 ? "" : "s"} · {totalModules} module
                     {totalModules === 1 ? "" : "s"}
                   </span>
                   <span>Avg quiz score: {avgQuiz !== null ? `${avgQuiz}%` : "N/A"}</span>
@@ -248,7 +248,7 @@ export default function AdminOverview() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {selInternal.map((p) => {
-              const enrolled = internalStudents.filter((s) => s.programmeId === p.id);
+              const enrolled = internalConsultants.filter((s) => s.programmeId === p.id);
               const totalModules = p.modules.length;
               const prog =
                 enrolled.length && totalModules

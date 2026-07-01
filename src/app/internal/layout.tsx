@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { PortalStoreProvider } from "@/lib/portal-store";
-import PortalShell from "@/components/portal-shell";
+import PortalShell from "@/components/layout/portal-shell";
 import { LearnerProvider, type LearnerProgramme } from "@/components/learner-context";
 import { LearnerSidebarContent, LearnerSidebarFooter } from "@/components/learner-sidebar";
 import { Badge } from "@/components/ui/badge";

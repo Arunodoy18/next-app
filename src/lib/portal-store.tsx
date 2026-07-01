@@ -1,18 +1,18 @@
-// remov1234
+﻿// remov1234
 "use client";
 
 import { createContext, useContext, useState, type ReactNode, type Dispatch, type SetStateAction } from "react";
 import {
   PROGRAMMES,
   USERS,
-  STUDENTS,
+  CONSULTANTS,
   THREADS,
   INTERNAL_PROGRAMMES,
-  INTERNAL_STUDENTS,
+  INTERNAL_CONSULTANTS,
   INTERNAL_THREADS,
   type Programme,
   type AppUser,
-  type StudentRecord,
+  type ConsultantRecord,
   type MessageThread,
 } from "@/lib/mock-data";
 
@@ -25,15 +25,15 @@ interface PortalStore {
   setProgrammes: Dispatch<SetStateAction<Programme[]>>;
   users: AppUser[];
   setUsers: Dispatch<SetStateAction<AppUser[]>>;
-  students: StudentRecord[];
-  setStudents: Dispatch<SetStateAction<StudentRecord[]>>;
+  consultants: ConsultantRecord[];
+  setConsultants: Dispatch<SetStateAction<ConsultantRecord[]>>;
   threads: MessageThread[];
   setThreads: Dispatch<SetStateAction<MessageThread[]>>;
-  // Blackmont Internal — instructor-only training track (separate dataset).
+  // Blackmont Internal, instructor-only training track (separate dataset).
   internalProgrammes: Programme[];
   setInternalProgrammes: Dispatch<SetStateAction<Programme[]>>;
-  internalStudents: StudentRecord[];
-  setInternalStudents: Dispatch<SetStateAction<StudentRecord[]>>;
+  internalConsultants: ConsultantRecord[];
+  setInternalConsultants: Dispatch<SetStateAction<ConsultantRecord[]>>;
   internalThreads: MessageThread[];
   setInternalThreads: Dispatch<SetStateAction<MessageThread[]>>;
 }
@@ -43,10 +43,10 @@ const PortalStoreContext = createContext<PortalStore | null>(null);
 export function PortalStoreProvider({ children }: { children: ReactNode }) {
   const [programmes, setProgrammes] = useState<Programme[]>(PROGRAMMES);
   const [users, setUsers] = useState<AppUser[]>(USERS);
-  const [students, setStudents] = useState<StudentRecord[]>(STUDENTS);
+  const [consultants, setConsultants] = useState<ConsultantRecord[]>(CONSULTANTS);
   const [threads, setThreads] = useState<MessageThread[]>(THREADS);
   const [internalProgrammes, setInternalProgrammes] = useState<Programme[]>(INTERNAL_PROGRAMMES);
-  const [internalStudents, setInternalStudents] = useState<StudentRecord[]>(INTERNAL_STUDENTS);
+  const [internalConsultants, setInternalConsultants] = useState<ConsultantRecord[]>(INTERNAL_CONSULTANTS);
   const [internalThreads, setInternalThreads] = useState<MessageThread[]>(INTERNAL_THREADS);
 
   return (
@@ -56,14 +56,14 @@ export function PortalStoreProvider({ children }: { children: ReactNode }) {
         setProgrammes,
         users,
         setUsers,
-        students,
-        setStudents,
+        consultants,
+        setConsultants,
         threads,
         setThreads,
         internalProgrammes,
         setInternalProgrammes,
-        internalStudents,
-        setInternalStudents,
+        internalConsultants,
+        setInternalConsultants,
         internalThreads,
         setInternalThreads,
       }}

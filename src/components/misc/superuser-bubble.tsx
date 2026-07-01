@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 const ROLES = [
   { role: "Admin", home: "/admin" },
   { role: "Instructor", home: "/instructor" },
-  { role: "Student", home: "/student" },
+  { role: "Consultant", home: "/consultant" },
   { role: "Human Resources", home: "/internal" },
   { role: "Business Development", home: "/internal" },
   { role: "Project Management", home: "/internal" },

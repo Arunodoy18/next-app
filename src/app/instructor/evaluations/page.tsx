@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import PlaceholderGuard from "@/components/misc/placeholder-guard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import StudentDetailDialog from "@/components/student-detail-dialog";
+import ConsultantDetailDialog from "@/components/consultant-detail-dialog";
 import { usePortalStore } from "@/lib/portal-store";
 import { CURRENT_INSTRUCTOR } from "@/lib/instructor-context";
 import { learnerRole, type WrittenAnswer } from "@/lib/mock-data";
@@ -13,10 +13,10 @@ import { ROLE_BADGE } from "@/utils/badgeColor";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 export default function InstructorEvaluationsPage() {
-  const { programmes, students, setStudents, internalProgrammes, internalStudents, setInternalStudents } =
+  const { programmes, consultants, setConsultants, internalProgrammes, internalConsultants, setInternalConsultants } =
     usePortalStore();
   const [selectedId, setSelectedId] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("student")
+    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("consultant")
   );
 
   const allProgrammes = [...programmes, ...internalProgrammes];
@@ -27,38 +27,38 @@ export default function InstructorEvaluationsPage() {
   const myInternalProgrammeIds = internalProgrammes
     .filter((p) => p.instructorIds.includes(CURRENT_INSTRUCTOR.id))
     .map((p) => p.id);
-  const myInternalStudents = internalStudents.filter(
+  const myInternalConsultants = internalConsultants.filter(
     (s) => myInternalProgrammeIds.includes(s.programmeId) || s.name === CURRENT_INSTRUCTOR.name
   );
-  const standardStudents = students.filter((s) =>
+  const standardConsultants = consultants.filter((s) =>
     CURRENT_INSTRUCTOR.assignedProgrammeIds.includes(s.programmeId)
   );
-  const myStudents = [...standardStudents, ...myInternalStudents].filter(
+  const myConsultants = [...standardConsultants, ...myInternalConsultants].filter(
     (s, i, arr) => arr.findIndex((x) => x.id === s.id) === i
   );
 
-  const isPending = (s: (typeof students)[number]) => s.writtenAnswers.some((a) => a.score === null);
-  const isEvaluated = (s: (typeof students)[number]) =>
+  const isPending = (s: (typeof consultants)[number]) => s.writtenAnswers.some((a) => a.score === null);
+  const isEvaluated = (s: (typeof consultants)[number]) =>
     s.writtenAnswers.length > 0 && s.writtenAnswers.every((a) => a.score !== null);
 
-  const standardQueue = standardStudents.filter(isPending);
-  const internalQueueList = myInternalStudents.filter(isPending);
-  const standardEvaluated = standardStudents.filter(isEvaluated);
-  const internalEvaluated = myInternalStudents.filter(isEvaluated);
+  const standardQueue = standardConsultants.filter(isPending);
+  const internalQueueList = myInternalConsultants.filter(isPending);
+  const standardEvaluated = standardConsultants.filter(isEvaluated);
+  const internalEvaluated = myInternalConsultants.filter(isEvaluated);
   const queue = [...standardQueue, ...internalQueueList];
   const evaluated = [...standardEvaluated, ...internalEvaluated];
 
-  const selected = myStudents.find((s) => s.id === selectedId) ?? null;
+  const selected = myConsultants.find((s) => s.id === selectedId) ?? null;
   const selectedProgramme = selected ? allProgrammes.find((p) => p.id === selected.programmeId) ?? null : null;
 
-  const saveEvaluation = (studentId: string, answers: WrittenAnswer[]) => {
+  const saveEvaluation = (consultantId: string, answers: WrittenAnswer[]) => {
     // Route to the internal set when the learner is an internal (instructor) one.
-    const isInternal = internalStudents.some((s) => s.id === studentId);
-    const setter = isInternal ? setInternalStudents : setStudents;
-    setter((prev) => prev.map((s) => (s.id === studentId ? { ...s, writtenAnswers: answers } : s)));
+    const isInternal = internalConsultants.some((s) => s.id === consultantId);
+    const setter = isInternal ? setInternalConsultants : setConsultants;
+    setter((prev) => prev.map((s) => (s.id === consultantId ? { ...s, writtenAnswers: answers } : s)));
   };
 
-  const studentRow = (s: (typeof students)[number], pending: number) => (
+  const consultantRow = (s: (typeof consultants)[number], pending: number) => (
     <Button
       key={s.id}
       onClick={() => setSelectedId(s.id)}
@@ -71,7 +71,7 @@ export default function InstructorEvaluationsPage() {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium m-0 truncate">
           {s.name}
-          {(r => r && r !== "Student" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
+          {(r => r && r !== "Consultant" && <Badge className={`align-middle ${ROLE_BADGE[r]} ml-2`}>{r}</Badge>)(learnerRole(s.id))}
         </p>
         <p className="text-xs text-muted-foreground m-0 truncate">{programmeName(s.programmeId)}</p>
       </div>
@@ -91,7 +91,7 @@ export default function InstructorEvaluationsPage() {
     <div className="w-full flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-normal m-0">Evaluations</h1>
-        <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your students.</p>
+        <p className="text-muted-foreground mt-1">Programme-end written tests submitted by your consultants.</p>
       </div>
 
       <Card className="shadow-sm">
@@ -107,9 +107,9 @@ export default function InstructorEvaluationsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {standardQueue.map((s) => studentRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
+              {standardQueue.map((s) => consultantRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
               {internalQueueList.length > 0 && <InternalDivider />}
-              {internalQueueList.map((s) => studentRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
+              {internalQueueList.map((s) => consultantRow(s, s.writtenAnswers.filter((a) => a.score === null).length))}
             </div>
           )}
         </CardContent>
@@ -119,20 +119,20 @@ export default function InstructorEvaluationsPage() {
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-base font-medium m-0">Completed</CardTitle>
-            <CardDescription>Already evaluated. Open a student to revisit scores or feedback.</CardDescription>
+            <CardDescription>Already evaluated. Open a consultant to revisit scores or feedback.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {standardEvaluated.map((s) => studentRow(s, 0))}
+              {standardEvaluated.map((s) => consultantRow(s, 0))}
               {internalEvaluated.length > 0 && <InternalDivider />}
-              {internalEvaluated.map((s) => studentRow(s, 0))}
+              {internalEvaluated.map((s) => consultantRow(s, 0))}
             </div>
           </CardContent>
         </Card>
       )}
 
-      <StudentDetailDialog
-        student={selected}
+      <ConsultantDetailDialog
+        consultant={selected}
         programme={selectedProgramme}
         onClose={() => setSelectedId(null)}
         onSaveEvaluation={saveEvaluation}
