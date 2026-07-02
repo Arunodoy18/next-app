@@ -16,6 +16,7 @@ import {
   Lock,
   Maximize2,
   Minimize2,
+  ExternalLink,
 } from "lucide-react";
 import {
   useLearner,
@@ -30,14 +31,28 @@ import {
 const RESOURCE_ICONS: Record<string, typeof PlayCircle> = {
   video: PlayCircle,
   pdf: FileText,
+  link: ExternalLink,
 };
 
 const RESOURCE_LABELS: Record<string, string> = {
   video: "Video",
   pdf: "PDF",
+  link: "Link",
 };
 
-const SAMPLE_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+function getEmbedUrl(url: string, type: string) {
+  if (!url) return "";
+  if (type === "video" && url.includes("youtube.com/watch")) {
+    try {
+      const v = new URL(url).searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+    } catch (e) {}
+  }
+  if (type === "pdf") {
+    return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+  }
+  return url;
+}
 
 export default function LearnerContent() {
   const {
@@ -217,14 +232,14 @@ export default function LearnerContent() {
 
                       {isOpen &&
                         (fullscreenItem === resource.id ? (
-                          <div className="fixed inset-0 z-80 bg-background">
-                            {resource.type === "video" ? (
-                              <div className="w-full h-full bg-black flex flex-col items-center justify-center gap-3 text-white/60">
-                                <PlayCircle size={56} strokeWidth={1.5} />
-                                <p className="text-sm m-0">Video preview placeholder</p>
+                          <div className="fixed inset-0 z-[80] bg-background">
+                            {resource.type === "link" ? (
+                              <div className="w-full h-full bg-muted/30 flex flex-col items-center justify-center gap-3">
+                                <ExternalLink size={56} strokeWidth={1.5} className="text-muted-foreground" />
+                                <Button onClick={() => window.open(resource.url, "_blank", "noopener")}>Open Link in New Tab</Button>
                               </div>
                             ) : (
-                              <iframe src={SAMPLE_PDF_URL} className="w-full h-full" title={resource.title} />
+                              <iframe src={getEmbedUrl(resource.url, resource.type)} className="w-full h-full bg-black" title={resource.title} allowFullScreen />
                             )}
                             <div className="absolute top-0 inset-x-0 h-12 z-10 peer/top hidden md:block" />
                             <div className="absolute top-0 inset-x-0 p-3 flex items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm transition-opacity opacity-100 pointer-events-auto md:opacity-0 md:pointer-events-none md:peer-hover/top:opacity-100 md:peer-hover/top:pointer-events-auto md:hover:opacity-100 md:hover:pointer-events-auto z-20">
@@ -248,13 +263,13 @@ export default function LearnerContent() {
                           </div>
                         ) : (
                           <div className="rounded-lg border border-border overflow-hidden">
-                            {resource.type === "video" ? (
-                              <div className="w-full aspect-video bg-black flex flex-col items-center justify-center gap-2 text-white/60">
-                                <PlayCircle size={48} strokeWidth={1.5} />
-                                <p className="text-sm m-0">Video preview placeholder</p>
+                            {resource.type === "link" ? (
+                              <div className="w-full h-100 bg-muted/30 flex flex-col items-center justify-center gap-3">
+                                <ExternalLink size={48} strokeWidth={1.5} className="text-muted-foreground" />
+                                <Button onClick={() => window.open(resource.url, "_blank", "noopener")}>Open Link in New Tab</Button>
                               </div>
                             ) : (
-                              <iframe src={SAMPLE_PDF_URL} className="w-full h-100" title={resource.title} />
+                              <iframe src={getEmbedUrl(resource.url, resource.type)} className={`w-full ${resource.type === "video" ? "aspect-video" : "h-100"} bg-black`} title={resource.title} allowFullScreen />
                             )}
                             <div className="p-3 flex items-center justify-between border-t border-border">
                               <Button type="button" variant="outline" size="sm" onClick={() => setFullscreenItem(resource.id)}>
