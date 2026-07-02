@@ -11,6 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { ExternalLink } from "lucide-react";
 
+function getEmbedUrl(url: string, type: string) {
+  if (!url) return "";
+  if (type === "video" && url.includes("youtube.com/watch")) {
+    try {
+      const v = new URL(url).searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+    } catch (e) {}
+  }
+  if (type === "pdf") {
+    return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+  }
+  return url;
+}
+
 export interface PreviewTarget {
   type: "video" | "pdf" | "link";
   title: string;
@@ -72,10 +86,9 @@ export default function ResourcePreviewDialog({
                 );
               }
 
-              // Vimeo links get normalized to their embed URL; any other video
-              // URL (YouTube, direct MP4, etc.) is embedded as-is.
-              const embedUrl =
-                view.type === "video" ? vimeoEmbedUrl(view.url) ?? view.url : view.url;
+              // Apply existing vimeo logic, then fallback to getEmbedUrl (which handles youtube/pdf)
+              const vimeoUrl = view.type === "video" ? vimeoEmbedUrl(view.url) : null;
+              const embedUrl = vimeoUrl ?? getEmbedUrl(view.url, view.type);
 
               return (
                 <iframe
